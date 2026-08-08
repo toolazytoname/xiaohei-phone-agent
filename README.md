@@ -1,6 +1,6 @@
 # Xiaohei Phone Agent
 
-[简体中文](README.zh-CN.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [DSP candidates](docs/dsp-device-candidates.md) · [Roadmap](docs/roadmap.md) · [Security](SECURITY.md)
+[简体中文](README.zh-CN.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [DSP candidates](docs/dsp-device-candidates.md) · [OEM design reference](docs/oem-wakeword-design-reference.md) · [Roadmap](docs/roadmap.md) · [Security](SECURITY.md)
 
 > Wake it. Say it. Let your phone act — locally when possible, visibly, and with confirmation when it matters.
 

@@ -1,4 +1,5 @@
 .DS_Store
+apps/android/xiaohei-android/build/
 .idea/
 .vscode/
 .gradle/

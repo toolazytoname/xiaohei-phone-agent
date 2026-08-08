@@ -69,7 +69,10 @@ for script in scripts/*.sh; do
   bash -n "$script"
 done
 
-forbidden_binary="$(find . -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.uim' -o -name '*.udm' -o -name '*.so' -o -name '*.gguf' -o -name '*.jks' -o -name '*.keystore' -o -name '*.pem' -o -name '*.key' \) -print -quit)"
+forbidden_binary="$(find . \
+  -path './apps/android/xiaohei-android/build' -prune -o \
+  -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.uim' -o -name '*.udm' -o -name '*.so' -o -name '*.gguf' -o -name '*.jks' -o -name '*.keystore' -o -name '*.pem' -o -name '*.key' \) \
+  -print -quit)"
 if [[ -n "$forbidden_binary" ]]; then
   printf 'FAIL forbidden binary or secret material: %s\n' "$forbidden_binary" >&2
   exit 1
