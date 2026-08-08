@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/wakeword-event.v1.schema.json",
+  "title": "Xiaohei Wakeword Event v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event_id",
+    "source",
+    "keyword_id",
+    "occurred_at",
+    "capture_available"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "event_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "source": {
+      "enum": ["app_button", "quick_settings", "shortcut", "hardware_intent", "android_assistant", "cpu_kws", "dsp"]
+    },
+    "device_profile": {
+      "type": "string",
+      "maxLength": 128
+    },
+    "keyword_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "confidence": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "capture_available": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/action-request.v1.schema.json",
+  "title": "Xiaohei Action Request v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "request_id",
+    "target",
+    "action",
+    "risk",
+    "requires_confirmation",
+    "confirmation_state",
+    "dry_run",
+    "created_at",
+    "redaction"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "target": {
+      "enum": ["android_app", "android_notification", "android_accessibility", "local_service"]
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "risk": {
+      "enum": ["low", "medium", "high"]
+    },
+    "requires_confirmation": {
+      "type": "boolean"
+    },
+    "confirmation_state": {
+      "enum": ["not_required", "pending", "confirmed", "rejected", "expired"]
+    },
+    "dry_run": {
+      "type": "boolean"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "redaction": {
+      "type": "object",
+      "required": ["public_log_safe"],
+      "properties": {
+        "public_log_safe": {
+          "type": "boolean"
+        },
+        "sensitive_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "risk": {
+            "const": "high"
+          }
+        },
+        "required": ["risk"]
+      },
+      "then": {
+        "properties": {
+          "requires_confirmation": {
+            "const": true
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

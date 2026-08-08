@@ -1,0 +1,54 @@
+schema_version: 1
+product:
+  id: xiaohei-phone-agent
+  name_en: Xiaohei Phone Agent
+  name_zh_cn: 小黑 AI 手机助手
+  maturity: experimental
+  repository: https://github.com/toolazytoname/xiaohei-phone-agent
+device_validation:
+  profile: oneplus8t-lineageos21
+  validated:
+    - qualcomm-adsp-lpi-wakeword-callback
+    - clean-probe-rollback
+  pending:
+    - production-android14-wakeword-broker
+    - physical-unplug-power-qualification
+    - custom-xiaohei-keyword
+compatibility_tiers:
+  - id: base
+    root_required: false
+    wake_sources:
+      - app-button
+      - quick-settings
+      - shortcut
+  - id: android-assistant
+    root_required: false
+    availability: runtime-detected
+  - id: cpu-kws
+    root_required: false
+    availability: explicit-opt-in
+    low_power: false
+  - id: vendor-dsp
+    root_required: profile-dependent
+    availability: explicit-device-profile
+    low_power: true
+integrations:
+  - oneplus-8t-mobile-lab
+  - android-ai-stack
+  - android-device-test
+  - pocket-pentest
+  - happy-relay-deploy
+public_boundary:
+  allow:
+    - source-code
+    - schemas
+    - redacted-fixtures
+    - reproducible-validation-docs
+  deny:
+    - oem-binaries
+    - signing-keys
+    - model-weights
+    - provider-credentials
+    - private-endpoints
+    - device-identifiers
+    - private-conversation-data
