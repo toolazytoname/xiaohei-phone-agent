@@ -17,4 +17,6 @@ Still required before this profile can ship as a supported backend:
 - Cold-boot, start/stop, permission failure, uninstall, and rollback automation.
 - A custom “Xiaohei” model or an explicit decision to retain another phrase.
 
+The implementation boundary is now explicit: [DSP Companion contract](dsp-companion-contract.md). The ordinary Xiaohei app stays unprivileged; a local, device-gated companion owns only the SoundTrigger lifecycle and emits a redacted event.
+
 中文：这是小黑首个高级唤醒参考设备，不是通用兼容边界。DSP 声学闭环与干净回滚已经通过，但正式 Broker、合法本地资产提取、物理拔线功耗和长期稳定性尚未完成，因此当前不能作为普通用户可下载后端发布。
