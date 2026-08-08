@@ -30,7 +30,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         root.setPadding(pad, pad, pad, pad);
 
         TextView title = new TextView(this);
-        title.setText("小黑 / Xiaohei\n第一条安全动作链路");
+        title.setText("小黑 / Xiaohei\n基础 Profile：手动事件 → 打开相册");
         title.setTextSize(24);
         root.addView(title);
 

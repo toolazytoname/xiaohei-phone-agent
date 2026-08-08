@@ -14,20 +14,35 @@ final class WakewordBroker {
     }
 
     private final Listener listener;
+    private final WakewordProfile profile;
+    private final ManualWakewordBackend manualBackend;
     private State state = State.OFF;
 
     WakewordBroker(Listener listener) {
+        this(listener, WakewordProfile.baseManualGallery(), new ManualWakewordBackend());
+    }
+
+    WakewordBroker(Listener listener, WakewordProfile profile, ManualWakewordBackend manualBackend) {
         this.listener = listener;
+        this.profile = profile;
+        this.manualBackend = manualBackend;
     }
 
     State state() { return state; }
 
     void armManualMode() {
         transition(State.ARMING, "基础模式：等待手动测试事件");
+        manualBackend.arm(profile, new WakewordBackend.Callback() {
+            @Override public void onHit(String keywordId, int confidence, boolean captureAvailable) {
+                dispatch(new WakewordEvent(WakewordEvent.Source.APP_BUTTON, keywordId, confidence, captureAvailable));
+            }
+            @Override public void onError(String safeDetail) { transition(State.ERROR, safeDetail); }
+        });
         transition(State.ARMED, "基础模式已就绪；未开启常驻麦克风");
     }
 
     void disarm() {
+        manualBackend.disarm();
         transition(State.OFF, "已关闭");
     }
 
@@ -36,7 +51,7 @@ final class WakewordBroker {
             transition(State.ERROR, "请先启用基础模式");
             return;
         }
-        dispatch(new WakewordEvent(WakewordEvent.Source.APP_BUTTON, "manual-test", 100, false));
+        manualBackend.emitTestHit();
     }
 
     void dispatchDspHit(String keywordId, int confidence, boolean captureAvailable) {
