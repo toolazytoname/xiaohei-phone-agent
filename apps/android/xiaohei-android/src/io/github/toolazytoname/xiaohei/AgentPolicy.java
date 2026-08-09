@@ -25,7 +25,7 @@ final class AgentPolicy {
         // account flows, and destructive flows. Never click them from an Agent task.
         if (containsAny(target, "ok", "accept", "agree", "同意", "接受")
                 || containsAny(surface, "权限", "permission", "允许", "allow", "授权",
-                    "grant", "同意", "accept", "账户", "账号", "account", "登录", "sign in"))
+                    "grant", "同意", "accept", "登录", "sign in"))
             return Decision.REQUIRE_CONFIRMATION;
         return Decision.ALLOW;
     }
