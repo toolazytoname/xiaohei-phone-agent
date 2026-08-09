@@ -7,13 +7,15 @@ platform="$sdk_root/platforms/android-36/android.jar"
 build_tools="$sdk_root/build-tools/36.0.0"
 build_dir="$project_dir/build"
 keystore="${ANDROID_DEBUG_KEYSTORE:-$HOME/.android/debug.keystore}"
+local_asr_apk="${XIAOHEI_LOCAL_ASR_APK:-}"
 
 for required in "$platform" "$build_tools/aapt2" "$build_tools/zipalign" "$build_tools/apksigner" "$build_tools/d8"; do
   [[ -e "$required" ]] || { printf 'missing Android build dependency: %s\n' "$required" >&2; exit 1; }
 done
 
 mkdir -p "$build_dir/compiled" "$build_dir/generated" "$build_dir/classes" "$build_dir/dex"
-rm -f "$build_dir"/*.apk "$build_dir/dex/classes.dex"
+rm -rf "$build_dir/asr"
+rm -f "$build_dir"/*.apk "$build_dir/dex"/classes*.dex
 
 if [[ ! -s "$keystore" ]]; then
   mkdir -p "$(dirname "$keystore")"
@@ -22,13 +24,36 @@ if [[ ! -s "$keystore" ]]; then
 fi
 
 "$build_tools/aapt2" compile --dir "$project_dir/res" -o "$build_dir/compiled/resources.zip"
-"$build_tools/aapt2" link -I "$platform" --manifest "$project_dir/AndroidManifest.xml" \
-  --java "$build_dir/generated" --min-sdk-version 26 --target-sdk-version 35 \
-  --version-code 1 --version-name 0.1.0 -o "$build_dir/unsigned.apk" "$build_dir/compiled/resources.zip"
+if [[ -n "$local_asr_apk" ]]; then
+  [[ -s "$local_asr_apk" ]] || { printf 'missing local ASR APK: %s\n' "$local_asr_apk" >&2; exit 1; }
+  mkdir -p "$build_dir/asr"
+  (cd "$build_dir/asr" && unzip -q "$local_asr_apk" 'assets/*' 'lib/arm64-v8a/*' 'classes*.dex')
+fi
+
+if [[ -n "$local_asr_apk" ]]; then
+  "$build_tools/aapt2" link -I "$platform" --manifest "$project_dir/AndroidManifest.xml" \
+    --java "$build_dir/generated" --min-sdk-version 26 --target-sdk-version 35 \
+    --version-code 1 --version-name 0.1.0 -A "$build_dir/asr/assets" \
+    -o "$build_dir/unsigned.apk" "$build_dir/compiled/resources.zip"
+else
+  "$build_tools/aapt2" link -I "$platform" --manifest "$project_dir/AndroidManifest.xml" \
+    --java "$build_dir/generated" --min-sdk-version 26 --target-sdk-version 35 \
+    --version-code 1 --version-name 0.1.0 \
+    -o "$build_dir/unsigned.apk" "$build_dir/compiled/resources.zip"
+fi
 find "$project_dir/src" "$build_dir/generated" -name '*.java' -print0 | \
   xargs -0 javac -encoding UTF-8 -source 8 -target 8 -classpath "$platform" -d "$build_dir/classes"
 "$build_tools/d8" --min-api 26 --output "$build_dir/dex" $(find "$build_dir/classes" -name '*.class' -print)
 (cd "$build_dir/dex" && zip -q -u "$build_dir/unsigned.apk" classes.dex)
+if [[ -n "$local_asr_apk" ]]; then
+  next_dex=2
+  for source_dex in "$build_dir/asr"/classes*.dex; do
+    cp "$source_dex" "$build_dir/dex/classes${next_dex}.dex"
+    (cd "$build_dir/dex" && zip -q -u "$build_dir/unsigned.apk" "classes${next_dex}.dex")
+    next_dex=$((next_dex + 1))
+  done
+  (cd "$build_dir/asr" && zip -q -0 -u "$build_dir/unsigned.apk" lib/arm64-v8a/*.so)
+fi
 "$build_tools/zipalign" -f 4 "$build_dir/unsigned.apk" "$build_dir/aligned.apk"
 "$build_tools/apksigner" sign --ks "$keystore" --ks-key-alias androiddebugkey --ks-pass pass:android \
   --key-pass pass:android --out "$build_dir/xiaohei-debug.apk" "$build_dir/aligned.apk"
