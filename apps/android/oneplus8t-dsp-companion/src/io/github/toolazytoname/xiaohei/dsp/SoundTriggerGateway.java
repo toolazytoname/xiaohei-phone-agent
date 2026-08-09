@@ -232,6 +232,8 @@ final class SoundTriggerGateway {
             : "MODEL_LOADED(handle=" + modelHandle + ")";
     }
 
+    static synchronized String currentState() { return state(); }
+
     private static ArrayList<SoundTrigger.ModuleProperties> modules() {
         ArrayList<SoundTrigger.ModuleProperties> modules = new ArrayList<>();
         int status = SoundTrigger.listModulesAsOriginator(modules, identity());

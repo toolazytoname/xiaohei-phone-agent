@@ -3,6 +3,9 @@ package io.github.toolazytoname.xiaohei;
 import android.app.Activity;
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -17,6 +20,15 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private TextView stateView;
     private TextView historyView;
     private Button armButton;
+    private TextView dspStateView;
+    private DspProfileClient dspProfile;
+    private final BroadcastReceiver dspStatusReceiver = new BroadcastReceiver() {
+        @Override public void onReceive(Context context, Intent intent) {
+            String state = intent.getStringExtra("state");
+            String detail = intent.getStringExtra("detail");
+            dspStateView.setText("DSP：" + state + "\n" + detail);
+        }
+    };
     private final GalleryActionAdapter gallery = new GalleryActionAdapter();
     private WakewordBroker broker;
     private VoiceCommandSession voiceSession;
@@ -25,17 +37,26 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         super.onCreate(savedInstanceState);
         broker = new WakewordBroker(this);
         voiceSession = new VoiceCommandSession(this, this);
+        dspProfile = new DspProfileClient(this);
         setShowWhenLocked(true);
         setTurnScreenOn(true);
         setContentView(buildView());
         onStateChanged(broker.state(), "尚未启用");
+        consumeControlIntent(getIntent());
         consumeWakeIntent(getIntent());
     }
 
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        consumeControlIntent(intent);
         consumeWakeIntent(intent);
+    }
+
+    private void consumeControlIntent(Intent intent) {
+        if (intent == null || !intent.getBooleanExtra("rollback_disarm", false)) return;
+        dspProfile.disarm();
+        intent.removeExtra("rollback_disarm");
     }
 
     private void consumeWakeIntent(Intent intent) {
@@ -72,6 +93,28 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         });
         root.addView(armButton);
 
+        dspStateView = new TextView(this);
+        dspStateView.setText(dspProfile.isInstalled()
+            ? "DSP：正在读取状态" : "DSP：此设备未安装增强 profile");
+        dspStateView.setPadding(0, pad, 0, 0);
+        root.addView(dspStateView);
+
+        Button dspArmButton = new Button(this);
+        dspArmButton.setText("启动 DSP 低功耗唤醒");
+        dspArmButton.setEnabled(dspProfile.isInstalled());
+        dspArmButton.setOnClickListener(v -> {
+            if (!dspProfile.arm()) dspStateView.setText("DSP：启动失败；请检查设备 profile");
+        });
+        root.addView(dspArmButton);
+
+        Button dspDisarmButton = new Button(this);
+        dspDisarmButton.setText("停止并释放 DSP");
+        dspDisarmButton.setEnabled(dspProfile.isInstalled());
+        dspDisarmButton.setOnClickListener(v -> {
+            if (!dspProfile.disarm()) dspStateView.setText("DSP：停止失败；请检查设备 profile");
+        });
+        root.addView(dspDisarmButton);
+
         Button testButton = new Button(this);
         testButton.setText("模拟“小布小布”命中 → 听取命令");
         testButton.setOnClickListener(v -> broker.dispatchManualHit());
@@ -87,6 +130,23 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         historyView.setPadding(0, pad, 0, 0);
         root.addView(historyView);
         return root;
+    }
+
+    @Override protected void onStart() {
+        super.onStart();
+        registerReceiver(dspStatusReceiver, new IntentFilter(DspProfileClient.STATUS_EVENT),
+            "io.github.toolazytoname.xiaohei.permission.WAKEWORD_EVENT", null,
+            Context.RECEIVER_EXPORTED);
+        if (dspProfile.isInstalled()) {
+            DspProfileClient.Status status = dspProfile.status();
+            if (status == null) dspStateView.setText("DSP：状态查询失败；请检查 Companion 版本");
+            else dspStateView.setText("DSP：" + status.state + "\n" + status.detail);
+        }
+    }
+
+    @Override protected void onStop() {
+        unregisterReceiver(dspStatusReceiver);
+        super.onStop();
     }
 
     @Override public void onStateChanged(WakewordBroker.State state, String detail) {

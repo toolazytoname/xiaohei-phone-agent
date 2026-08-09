@@ -34,6 +34,8 @@ The public module builds without those inputs and remains a preflight-only packa
 - The companion receives only `MANAGE_SOUND_TRIGGER` and `CAPTURE_AUDIO_HOTWORD` through a partition-matched privapp allowlist. Android 14 middleware also requires user-revocable runtime `RECORD_AUDIO` before attach; the Companion does not create a normal AudioRecord stream during standby. Android Assistant session display remains the ordinary app's responsibility.
 - Three cold boots and three arm/disarm cycles pass before any acoustic test.
 
+The daily control surface is split deliberately: `DspControlService` is a signature-gated foreground owner for arm/disarm, and `DspStatusProvider` is a signature-gated read-only query. Status reads never start a background service. The debug Activity is not the production lifecycle owner.
+
 ## Current gate status (2026-08-09)
 
 - PASS: unique UID, allowlisted permissions, module discovery, attach and detach.
