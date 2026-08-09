@@ -18,7 +18,7 @@ tracked_status="$(git -C "$repo_root" status --porcelain --untracked-files=no)"
   exit 1
 }
 
-XIAOHEI_EXPECT_RELEASE=1 "$repo_root/scripts/scan-release-apk.sh" "$apk"
+XIAOHEI_EXPECT_RELEASE=1 bash "$repo_root/scripts/scan-release-apk.sh" "$apk"
 mkdir -p "$output"
 
 python3 - "$repo_root" "$apk" "$sbom" "$output" "$build_tools/aapt2" "$build_tools/apksigner" <<'PY'
