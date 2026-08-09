@@ -43,6 +43,7 @@ The daily control surface is split deliberately: `DspControlService` is a signat
 - PASS: `startRecognition` entered Qualcomm LPI with `captureRequested=false`; a screen-off acoustic trigger reached the Companion callback at second-stage confidence 99.
 - PASS: automatic re-arm produced a second independent callback, followed by explicit stop, unload, and detach.
 - PASS: callback forwarding into the ordinary app through the selected Android `VoiceInteractionService`; Android 14 allowed the Assistant-owned visible launch while rejecting direct background Activity attempts.
-- NOT RUN: cold-boot repetition and power measurements.
+- PASS: three cold boots retained Assistant selection and completed bounded DSP lifecycle/acoustic checks without a residual recorder.
+- NOT RUN: three physical-unplug DSP OFF/ARMED power A/B measurements and the 8–24 hour idle run.
 
 This contract deliberately extracts the useful part of the OEM design—model lifecycle and re-arm—from its obsolete system UID, daemon, cross-user, and Oplus service dependencies.

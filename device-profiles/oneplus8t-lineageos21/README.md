@@ -9,14 +9,13 @@ Validated on 2026-08-08:
 - Screen-off acoustic input reached the second-stage RNN at confidence 99 and produced an Android callback.
 - Temporary APK, systemless libraries, and the single Magisk probe were removed; baseline services recovered.
 
-Still required before this profile can ship as a supported backend:
+Current product-profile status:
 
-- Minimal Android 14 broker with a unique UID. A local preflight Companion now passes module list and bounded `attach → detach` as a removable `system_ext` package; model load/unload, recognition, and callback delivery remain unfinished.
+- The unique-UID Android 14 Companion now owns bounded attach/load/start/callback/re-arm/stop/unload/detach. Three cold boots and three screen-off acoustic command chains passed on the physical device.
 - Local extraction/build flow for legally held OEM assets; no blob redistribution.
 - Three physical-unplug power A/B runs and an 8–24 hour idle regression.
-- Cold-boot, start/stop, permission failure, uninstall, and rollback automation.
-- A custom “Xiaohei” model or an explicit decision to retain another phrase.
+- Public redistribution remains impossible without OEM asset rights. The DSP phrase remains the locally held OEM phrase; “Xiaohei Xiaohei” is currently an independently controlled CPU fallback.
 
 The implementation boundary is now explicit: [DSP Companion contract](dsp-companion-contract.md). The ordinary Xiaohei app stays unprivileged; a local, device-gated companion owns only the SoundTrigger lifecycle and emits a redacted event.
 
-中文：这是小黑首个高级唤醒参考设备，不是通用兼容边界。DSP 声学闭环与干净回滚已经通过，但正式 Broker、合法本地资产提取、物理拔线功耗和长期稳定性尚未完成，因此当前不能作为普通用户可下载后端发布。
+中文：这是小黑首个高级唤醒参考设备，不是通用兼容边界。正式 Companion、三轮冷启动、DSP 声学闭环和干净回滚已通过；但 OEM 资产再分发权、物理拔线功耗和长期稳定性尚未完成，因此仍不能作为普通用户可下载后端发布。
