@@ -30,6 +30,10 @@ if [[ "$variant" == release ]]; then
     printf 'refusing public release signed by Android debug key\n' >&2
     exit 1
   fi
+  if [[ ( -n "$local_asr_apk" || -n "$local_kws_apk" ) && "${XIAOHEI_MODEL_REDISTRIBUTION_APPROVED:-0}" != 1 ]]; then
+    printf 'release build with ASR/KWS assets requires XIAOHEI_MODEL_REDISTRIBUTION_APPROVED=1 after documented rights review\n' >&2
+    exit 1
+  fi
 else
   key_alias="androiddebugkey"
   store_pass="android"
