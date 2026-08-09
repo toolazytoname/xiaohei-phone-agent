@@ -71,6 +71,8 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         setShowWhenLocked(true);
         setTurnScreenOn(true);
         setContentView(buildView());
+        if (!getSharedPreferences("user_controls", MODE_PRIVATE).getBoolean("onboarding_seen", false))
+            startActivity(new Intent(this, OnboardingActivity.class));
         onStateChanged(broker.state(), "尚未启用");
         consumeControlIntent(getIntent());
         consumeWakeIntent(getIntent());
