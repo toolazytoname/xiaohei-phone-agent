@@ -15,6 +15,7 @@ Device: OnePlus 8T / Android 14
 - A bounded 256 KiB `agent-trace.v1.jsonl` export stores no tree, screenshot, prompt, or token. Two success rows and one deny row parsed as JSON; the sensitive target became `[REDACTED_POLICY_TARGET]`. The trace was cleared and Accessibility revoked afterward.
 - Agent execution is now package-bound: the expected package must match the active Accessibility event and root snapshot. A real cross-app Calculator task clicked `1` exactly once with package `com.android.calculator2` and a successful trace. A race redirected to Settings produced zero clicks and was then stopped by disabling the service.
 - Local policy is now tighter: even in an allowlisted app, generic Allow, Confirm, Next, Continue, and Accept controls are never clicked automatically. Visible permission and account/sign-in surfaces require user handoff; payment, transfer, card, OTP, and password surfaces remain denied. Unit cases cover a Contacts notification prompt, generic Next, and a payment-amount surface.
+- Safe-entry testing found that Aperture's “Album” handed off to the Termux file receiver on this OnePlus build. It is no longer advertised as a stable safe entry. The executor now checks the package again after every click: a handoff records `package_changed` and stops immediately rather than counting as success or continuing.
 
 ## Enforced bounds
 

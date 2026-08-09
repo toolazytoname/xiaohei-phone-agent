@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.Arrays;
 
@@ -19,6 +21,14 @@ public final class AgentActivity extends Activity {
     private EditText taskInput;
     private Button confirmProposal;
     private PhoneAgentClient.Proposal pendingProposal;
+    private final TaskCard[] safeCards = new TaskCard[] {
+        new TaskCard("系统设置：网络和互联网", "com.android.settings", "网络和互联网"),
+        new TaskCard("计算器：数字 1", "com.android.calculator2", "1"),
+        new TaskCard("文件：Documents", "com.android.documentsui", "Documents"),
+        new TaskCard("照片：相册", "org.lineageos.glimpse", "相册"),
+        new TaskCard("日历：今天", "org.lineageos.etar", "今天"),
+        new TaskCard("浏览器：更多", "org.lineageos.jelly", "更多")
+    };
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +94,23 @@ public final class AgentActivity extends Activity {
         calculator.setText("真机验收：计算器 → 1（跨 App 单步）");
         calculator.setOnClickListener(v -> runAppTask("com.android.calculator2", "1"));
         root.addView(calculator);
+        TextView safeCardLabel = new TextView(this);
+        safeCardLabel.setText("常用安全入口（固定 App + 精确标签；仍需无障碍授权）");
+        safeCardLabel.setPadding(0, pad, 0, 0);
+        root.addView(safeCardLabel);
+        Spinner safeCardSpinner = new Spinner(this);
+        String[] safeCardNames = new String[safeCards.length];
+        for (int i = 0; i < safeCards.length; i++) safeCardNames[i] = safeCards[i].name;
+        safeCardSpinner.setAdapter(new ArrayAdapter<String>(this,
+            android.R.layout.simple_spinner_dropdown_item, safeCardNames));
+        root.addView(safeCardSpinner);
+        Button launchSafeCard = new Button(this);
+        launchSafeCard.setText("执行所选安全入口（单步）");
+        launchSafeCard.setOnClickListener(v -> {
+            TaskCard card = safeCards[safeCardSpinner.getSelectedItemPosition()];
+            runAppTask(card.packageName, card.label);
+        });
+        root.addView(launchSafeCard);
         Button stopGate = new Button(this);
         stopGate.setText("安全验收：启动等待任务（随后测试全局停止）");
         stopGate.setOnClickListener(v -> runSettingsTask("不存在的验收目标"));
@@ -228,5 +255,16 @@ public final class AgentActivity extends Activity {
 
     private static String truncate(String value, int max) {
         return value.length() <= max ? value : value.substring(0, max) + "\n…[truncated]";
+    }
+
+    private static final class TaskCard {
+        final String name;
+        final String packageName;
+        final String label;
+        TaskCard(String name, String packageName, String label) {
+            this.name = name;
+            this.packageName = packageName;
+            this.label = label;
+        }
     }
 }

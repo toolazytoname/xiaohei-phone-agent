@@ -147,6 +147,13 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         handler.postDelayed(() -> {
             AgentSnapshot after = AgentSnapshot.capture(getRootInActiveWindow());
             Log.i(TAG, "step=" + steps + " after=" + after.version + " package=" + after.packageName);
+            if (!pendingPackage.equals(after.packageName)) {
+                AgentTraceStore.append(this, taskId, steps, before.version, after.version,
+                    before.packageName, pendingLabel, "allow", true, "package_changed");
+                executing = false;
+                stopInternal("动作后离开目标 App；已停止，未继续执行");
+                return;
+            }
             AgentTraceStore.append(this, taskId, steps, before.version, after.version,
                 before.packageName, pendingLabel, "allow", true, "success");
             executing = false;
