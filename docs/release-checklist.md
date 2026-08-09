@@ -2,7 +2,7 @@
 
 A public artifact must satisfy every item below. A locally signed acceptance APK is not a public release.
 
-- Release variant has no `application-debuggable` flag and uses a non-debug signing key kept outside the repository.
+- Release variant has no `application-debuggable` flag and uses a non-debug signing key kept outside the repository; follow [signing governance](signing-governance.md).
 - Version code/name are monotonic; APK SHA-256 and CycloneDX SBOM are published together.
 - Offline-ASR model redistribution license has been reviewed and recorded. Upstream code licensing alone is insufficient.
 - Generic APK and device-specific OnePlus enhancement are separate artifacts. Private OEM assets never enter Git, SBOM, APK, logs, or Release uploads unless redistribution rights are proven.
