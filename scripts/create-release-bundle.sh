@@ -78,10 +78,11 @@ apk_name = f"xiaohei-{version}-generic-arm64.apk"
 sbom_name = f"xiaohei-{version}.cdx.json"
 shutil.copy2(apk, output / apk_name)
 shutil.copy2(sbom, output / sbom_name)
-for suffix in ("md", "zh-CN.md"):
-    source = repo / "docs" / f"release-notes-{version}.{suffix}"
-    if source.is_file():
-        shutil.copy2(source, output / source.name)
+for prefix in ("release-notes", "release-scope", "malware-scan"):
+    for suffix in ("md", "zh-CN.md"):
+        source = repo / "docs" / f"{prefix}-{version}.{suffix}"
+        if source.is_file():
+            shutil.copy2(source, output / source.name)
 
 provenance = {
     "schema_version": 1,

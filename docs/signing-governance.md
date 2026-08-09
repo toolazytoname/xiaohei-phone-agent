@@ -14,6 +14,8 @@ Status: internal pre-public-release policy. This document identifies a release c
 
 The PKCS#12 keystore is outside the public repository. Its password is stored in the local macOS Keychain, not in shell history, Git, a release note, or an APK.
 
+An `age`/X25519 recovery bundle can be prepared with `scripts/prepare-signing-recovery.sh`. The script exports only the public certificate beside the encrypted archive, records hashes without paths or aliases, and can perform a decrypt-and-hash drill when an identity file is supplied. A bundle on the signing Mac remains **staging**, not an offline copy; the gate closes only after the owner moves a verified copy and the recovery identity to separately controlled offline storage.
+
 ## Release procedure
 
 1. Retrieve the release password only into the current process environment.

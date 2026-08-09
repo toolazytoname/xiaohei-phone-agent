@@ -14,6 +14,8 @@
 
 PKCS#12 keystore 位于公开仓库之外。口令只在本机 macOS Keychain 中，不能进入 shell history、Git、Release Notes 或 APK。
 
+可用 `scripts/prepare-signing-recovery.sh` 制作 `age`/X25519 恢复包。脚本只把公有证书与加密归档放在一起，以无路径、无 alias 的哈希清单标识工件；提供 identity 文件时还会执行解密和哈希复核。仍放在签名 Mac 上的恢复包只能叫**待移出暂存**，不能叫离线副本；只有所有者把已验证副本及恢复 identity 放到独立控制的离线介质后，门禁才关闭。
+
 ## 发布流程
 
 1. 只把发布口令读入当前进程环境。

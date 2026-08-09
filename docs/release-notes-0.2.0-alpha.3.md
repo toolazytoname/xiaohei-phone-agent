@@ -19,4 +19,4 @@ The intended public generic candidate contains no embedded ASR/KWS model weights
 
 ## Remaining gates
 
-No public APK has been uploaded. Exact-candidate malware evidence, encrypted offline signing-key recovery, physical idle/power, final provenance, and public release approval remain tracked. Embedded-model distribution also remains blocked on explicit rights review.
+No public APK has been uploaded. [Exact-candidate ClamAV scanning](malware-scan-0.2.0-alpha.3.md), release provenance, and an encrypted recovery decrypt drill now pass. Physical idle/power, moving the recovery bundle to separately controlled offline media, and final public-upload approval remain tracked. Embedded-model distribution also remains blocked on explicit rights review.

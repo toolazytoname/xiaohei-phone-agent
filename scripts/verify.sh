@@ -30,6 +30,8 @@ required_files=(
   docs/release-scope-0.2.0-alpha.3.zh-CN.md
   docs/release-notes-0.2.0-alpha.3.md
   docs/release-notes-0.2.0-alpha.3.zh-CN.md
+  docs/malware-scan-0.2.0-alpha.3.md
+  docs/malware-scan-0.2.0-alpha.3.zh-CN.md
   contracts/wakeword-event.v1.schema.json
   contracts/action-request.v1.schema.json
   contracts/agent-step-result.v1.schema.json
@@ -66,6 +68,8 @@ import urllib.parse
 root = pathlib.Path(sys.argv[1]).resolve()
 failures = []
 for markdown in root.rglob("*.md"):
+    if any(part in {".git", "build", "dist", "local", "private"} for part in markdown.relative_to(root).parts):
+        continue
     text = markdown.read_text(encoding="utf-8")
     for raw_target in re.findall(r"\]\(([^)]+)\)", text):
         target = raw_target.strip().split(maxsplit=1)[0].strip("<>")
@@ -91,7 +95,7 @@ for script in scripts/*.sh; do
 done
 
 forbidden_binary="$(find . \
-  -path '*/build' -prune -o \
+  \( -path '*/build' -o -path './dist' -o -path './local' -o -path './private' \) -prune -o \
   -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.uim' -o -name '*.udm' -o -name '*.so' -o -name '*.gguf' -o -name '*.jks' -o -name '*.keystore' -o -name '*.pem' -o -name '*.key' \) \
   -print -quit)"
 if [[ -n "$forbidden_binary" ]]; then
