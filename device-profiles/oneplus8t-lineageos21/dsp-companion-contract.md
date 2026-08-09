@@ -24,6 +24,8 @@ Qualcomm module 0 + locally supplied stock SVA model
 
 The local build/integration process may read the user's legally held OTA to obtain a stock `.uim` and required matching libraries. Those inputs, the generated companion APK, platform keys, device serials, and runtime logs are never committed or released from this repository.
 
+The public module builds without those inputs and remains a preflight-only package. A private lifecycle build must inject the model and the reviewed minimum runtime closure through explicit environment variables. The 32-bit RNN plugin must retain the `vendor_file` SELinux label or the vendor HAL cannot resolve it.
+
 ## Gates before enabling real arm
 
 - `ro.product.device=OnePlus8T` and a reviewed ROM fingerprint allowlist.
@@ -31,5 +33,11 @@ The local build/integration process may read the user's legally held OTA to obta
 - Every local input hash matches the reviewed profile.
 - The companion receives only `MANAGE_SOUND_TRIGGER` and `CAPTURE_AUDIO_HOTWORD` through a partition-matched privapp allowlist. Android 14 middleware also requires user-revocable runtime `RECORD_AUDIO` before attach; the Companion does not create a normal AudioRecord stream during standby.
 - Three cold boots and three arm/disarm cycles pass before any acoustic test.
+
+## Current gate status (2026-08-09)
+
+- PASS: unique UID, allowlisted permissions, module discovery, attach and detach.
+- PASS: locally supplied stock model `load → unload`; HAL load succeeded, middleware returned handle 1, and HAL unload returned status 0.
+- NOT RUN in this Companion: `startRecognition`, acoustic trigger, callback forwarding, re-arm, cold-boot repetition, and power measurements.
 
 This contract deliberately extracts the useful part of the OEM design—model lifecycle and re-arm—from its obsolete system UID, daemon, cross-user, and Oplus service dependencies.

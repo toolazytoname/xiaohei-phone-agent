@@ -9,10 +9,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/** A narrow preflight probe: it never loads a model or captures audio. */
+/** A narrow lifecycle probe: it never starts recognition or captures audio. */
 public final class ProbeActivity extends Activity {
     private static final int REQUEST_RECORD_AUDIO = 52;
     private TextView status;
+    private boolean loadAfterPermission;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +27,7 @@ public final class ProbeActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(pad, pad, pad, pad);
         TextView title = new TextView(this);
-        title.setText("小黑 DSP 伴随组件\nOnePlus 8T 预检（不加载模型）");
+        title.setText("小黑 DSP 伴随组件\nOnePlus 8T 模型生命周期（不启动识别）");
         title.setTextSize(23);
         root.addView(title);
         status = new TextView(this);
@@ -41,6 +42,14 @@ public final class ProbeActivity extends Activity {
         attach.setText("Attach 模块（不加载模型）");
         attach.setOnClickListener(v -> attachWithPermission());
         root.addView(attach);
+        Button load = new Button(this);
+        load.setText("加载私有模型（不启动识别）");
+        load.setOnClickListener(v -> loadWithPermission());
+        root.addView(load);
+        Button unload = new Button(this);
+        unload.setText("卸载模型（保持 Attach）");
+        unload.setOnClickListener(v -> show(SoundTriggerGateway.unloadModel(this)));
+        root.addView(unload);
         Button detach = new Button(this);
         detach.setText("Detach 并释放模块");
         detach.setOnClickListener(v -> show(SoundTriggerGateway.detach(this)));
@@ -58,16 +67,28 @@ public final class ProbeActivity extends Activity {
 
     private void attachWithPermission() {
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            loadAfterPermission = false;
             requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO }, REQUEST_RECORD_AUDIO);
             return;
         }
         show(SoundTriggerGateway.attach(this));
     }
 
+    private void loadWithPermission() {
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            loadAfterPermission = true;
+            requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO }, REQUEST_RECORD_AUDIO);
+            return;
+        }
+        show(SoundTriggerGateway.loadModel(this));
+    }
+
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
         super.onRequestPermissionsResult(requestCode, permissions, results);
         if (requestCode != REQUEST_RECORD_AUDIO) return;
-        if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED) attachWithPermission();
+        if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED) {
+            if (loadAfterPermission) loadWithPermission(); else attachWithPermission();
+        }
         else status.setText("预检：未通过\n用户未授予 RECORD_AUDIO；未 attach");
     }
 

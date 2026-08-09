@@ -25,6 +25,21 @@ public final class SoundTrigger {
 
     public static class RecognitionEvent { }
 
+    public abstract static class SoundModel { }
+
+    public static final class KeyphraseSoundModel extends SoundModel {
+        public KeyphraseSoundModel(UUID uuid, UUID vendorUuid, byte[] data, Keyphrase[] keyphrases) {
+            throw new UnsupportedOperationException("compile-only stub");
+        }
+    }
+
+    public static final class Keyphrase {
+        public Keyphrase(int id, int recognitionModes, java.util.Locale locale,
+                String text, int[] users) {
+            throw new UnsupportedOperationException("compile-only stub");
+        }
+    }
+
     public static final class ModuleProperties {
         public int getId() { throw new UnsupportedOperationException("compile-only stub"); }
         public UUID getUuid() { throw new UnsupportedOperationException("compile-only stub"); }
