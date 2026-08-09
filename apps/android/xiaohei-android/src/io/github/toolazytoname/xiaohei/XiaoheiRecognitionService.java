@@ -44,9 +44,7 @@ public final class XiaoheiRecognitionService extends RecognitionService {
         try (LocalAsrEngine engine = new LocalAsrEngine(this)) {
             int minimum = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT);
-            audio = new AudioRecord(MediaRecorder.AudioSource.MIC, 16000,
-                AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
-                Math.max(minimum * 2, 3200));
+            audio = createRecognitionAudioRecord(minimum);
             if (audio.getState() != AudioRecord.STATE_INITIALIZED) {
                 error(callback, SpeechRecognizer.ERROR_AUDIO);
                 return;
@@ -95,6 +93,18 @@ public final class XiaoheiRecognitionService extends RecognitionService {
         values.add(text);
         bundle.putStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION, values);
         return bundle;
+    }
+
+    /** Prefer the platform's voice path; some devices apply recognition-tuned
+     * processing there. Keep a MIC fallback for ROMs that do not implement it. */
+    private static AudioRecord createRecognitionAudioRecord(int minimum) {
+        int bufferSize = Math.max(minimum * 2, 3200);
+        AudioRecord recognition = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION,
+            16000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
+        if (recognition.getState() == AudioRecord.STATE_INITIALIZED) return recognition;
+        recognition.release();
+        return new AudioRecord(MediaRecorder.AudioSource.MIC, 16000,
+            AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
     }
 
     private static void error(Callback callback, int code) {

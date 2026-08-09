@@ -4,9 +4,11 @@ public final class CommandRouterTest {
     public static void main(String[] args) {
         Object[][] cases = {
             {"打开相册", "OPEN_GALLERY"}, {"看看照片", "OPEN_GALLERY"}, {"打开图片", "OPEN_GALLERY"},
+            {"打开像册", "OPEN_GALLERY"}, {"打开想册", "OPEN_GALLERY"}, {"打开相簿", "OPEN_GALLERY"},
             {"打开系统设置", "OPEN_SETTINGS"}, {"打开设置", "OPEN_SETTINGS"}, {"设置", "OPEN_SETTINGS"},
             {"打开WiFi", "OPEN_WIFI_SETTINGS"}, {"无线网络设置", "OPEN_WIFI_SETTINGS"}, {"打开WIFI设置", "OPEN_WIFI_SETTINGS"},
             {"打开蓝牙", "OPEN_BLUETOOTH_SETTINGS"}, {"蓝牙设置", "OPEN_BLUETOOTH_SETTINGS"}, {"请打开蓝牙设置", "OPEN_BLUETOOTH_SETTINGS"},
+            {"打开兰牙", "OPEN_BLUETOOTH_SETTINGS"}, {"打开蓝芽", "OPEN_BLUETOOTH_SETTINGS"},
             {"打开相机", "OPEN_CAMERA"}, {"打开照相机", "OPEN_CAMERA"}, {"我要拍照", "OPEN_CAMERA"},
             {"打开浏览器", "OPEN_BROWSER"}, {"打开网页", "OPEN_BROWSER"}, {"浏览器", "OPEN_BROWSER"},
             {"打开拨号盘", "OPEN_DIALER"}, {"显示电话键盘", "OPEN_DIALER"}, {"拨号", "OPEN_DIALER"},
@@ -16,7 +18,8 @@ public final class CommandRouterTest {
             {"把音量调大", "VOLUME_UP"}, {"音量大一点", "VOLUME_UP"}, {"把音量调小", "VOLUME_DOWN"}
             ,{"微信有没有未读消息", "QUERY_UNREAD_WECHAT"}, {"有没有未读通知", "QUERY_UNREAD_ALL"},
             {"回复微信说我晚点到", "DRAFT_WECHAT_REPLY"}, {"帮我回复微信未读消息", "DRAFT_WECHAT_REPLY"},
-            {"回复消息说收到", "DRAFT_MESSAGE_REPLY"}
+            {"回复消息说收到", "DRAFT_MESSAGE_REPLY"}, {"威信有没有未读消息", "QUERY_UNREAD_WECHAT"},
+            {"打开wi-fi", "OPEN_WIFI_SETTINGS"}
         };
         for (Object[] row : cases) {
             String actual = CommandRouter.route((String) row[0]).action.name();

@@ -1,5 +1,7 @@
 package io.github.toolazytoname.xiaohei;
 
+import java.util.Locale;
+
 /** Deterministic router. Unknown text never becomes an Android action. */
 final class CommandRouter {
     enum Action {
@@ -19,7 +21,7 @@ final class CommandRouter {
     }
 
     static Request route(String transcript) {
-        String text = transcript == null ? "" : transcript.replaceAll("[\\s，。！？,.!?]", "");
+        String text = normalize(transcript);
         if (text.contains("回复微信") || (text.contains("微信") && text.contains("帮我回复"))) {
             int say = text.indexOf("说");
             return new Request(Action.DRAFT_WECHAT_REPLY,
@@ -76,6 +78,20 @@ final class CommandRouter {
     }
 
     private static Request request(Action action) { return new Request(action, ""); }
+
+    /**
+     * ASR output is untrusted input. These are deliberately small, known
+     * command-word confusions rather than a general fuzzy matcher: broad fuzzy
+     * matching could turn an unrelated sentence into an Android action.
+     */
+    private static String normalize(String transcript) {
+        String text = transcript == null ? "" : transcript.replaceAll("[\\s，。！？,.!?]", "");
+        text = text.replace("wi-fi", "wifi").replace("Wi-Fi", "WiFi").toUpperCase(Locale.ROOT);
+        text = text.replace("像册", "相册").replace("想册", "相册").replace("相簿", "相册");
+        text = text.replace("兰牙", "蓝牙").replace("蓝芽", "蓝牙");
+        text = text.replace("威信", "微信").replace("微讯", "微信");
+        return text;
+    }
 
     private static boolean containsAny(String text, String... needles) {
         for (String needle : needles) if (text.contains(needle)) return true;

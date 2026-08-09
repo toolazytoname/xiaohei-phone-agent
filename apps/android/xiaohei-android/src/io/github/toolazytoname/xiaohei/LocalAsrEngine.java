@@ -11,6 +11,9 @@ import java.lang.reflect.Method;
 /** Reflection boundary for the optional, locally bundled sherpa-onnx runtime. */
 final class LocalAsrEngine implements AutoCloseable {
     private static final String MODEL = "sherpa-onnx-streaming-zipformer-zh-14M-2023-02-23/";
+    // Keep this versioned so an app upgrade can add new command words instead of
+    // reusing a stale file copied by an older install.
+    private static final String COMMAND_HOTWORDS = "xiaohei-command-hotwords-v1.txt";
     private final Object recognizer;
     private final Object stream;
 
@@ -20,6 +23,7 @@ final class LocalAsrEngine implements AutoCloseable {
         String decoder = copyAsset(context, MODEL + "decoder-epoch-99-avg-1.onnx", modelDir);
         String joiner = copyAsset(context, MODEL + "joiner-epoch-99-avg-1.int8.onnx", modelDir);
         String tokens = copyAsset(context, MODEL + "tokens.txt", modelDir);
+        String hotwords = copyAsset(context, COMMAND_HOTWORDS, modelDir);
 
         Object feature = configure("com.k2fsa.sherpa.onnx.FeatureConfig",
             new String[] { "setSampleRate", "setFeatureDim", "setDither" },
@@ -31,15 +35,18 @@ final class LocalAsrEngine implements AutoCloseable {
             new Object[] { encoder, decoder, joiner });
         Class<?> transducerClass = Class.forName("com.k2fsa.sherpa.onnx.OnlineTransducerModelConfig");
         Object model = configure("com.k2fsa.sherpa.onnx.OnlineModelConfig",
-            new String[] { "setTransducer", "setTokens", "setNumThreads", "setDebug" },
-            new Class<?>[] { transducerClass, String.class, int.class, boolean.class },
-            new Object[] { transducer, tokens, 2, false });
+            new String[] { "setTransducer", "setTokens", "setNumThreads", "setDebug", "setModelingUnit" },
+            new Class<?>[] { transducerClass, String.class, int.class, boolean.class, String.class },
+            new Object[] { transducer, tokens, 2, false, "cjkchar" });
         Class<?> featureClass = Class.forName("com.k2fsa.sherpa.onnx.FeatureConfig");
         Class<?> modelClass = Class.forName("com.k2fsa.sherpa.onnx.OnlineModelConfig");
         Object config = configure("com.k2fsa.sherpa.onnx.OnlineRecognizerConfig",
-            new String[] { "setFeatConfig", "setModelConfig", "setEnableEndpoint" },
-            new Class<?>[] { featureClass, modelClass, boolean.class },
-            new Object[] { feature, model, true });
+            new String[] { "setFeatConfig", "setModelConfig", "setEnableEndpoint",
+                "setDecodingMethod", "setMaxActivePaths", "setHotwordsFile", "setHotwordsScore" },
+            new Class<?>[] { featureClass, modelClass, boolean.class,
+                String.class, int.class, String.class, float.class },
+            new Object[] { feature, model, true,
+                "modified_beam_search", 4, hotwords, 2.0f });
         Class<?> configClass = Class.forName("com.k2fsa.sherpa.onnx.OnlineRecognizerConfig");
         Constructor<?> ctor = Class.forName("com.k2fsa.sherpa.onnx.OnlineRecognizer")
             .getConstructor(AssetManager.class, configClass);
