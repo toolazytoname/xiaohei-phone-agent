@@ -37,6 +37,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private Button confirmDraftButton;
     private Button cancelDraftButton;
     private String pendingReplyContent;
+    private XiaoheiNotificationListener.MessageTarget pendingReplyTarget;
     private Button armButton;
     private TextView dspStateView;
     private TextView cpuKwsStateView;
@@ -56,7 +57,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private final BroadcastReceiver notificationAccessReceiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
             if (!intent.getBooleanExtra("granted", false))
-                clearReplyDraft("通知访问已撤销；已清除待确认草稿，未打开微信");
+                clearReplyDraft("通知访问已撤销；已清除待确认草稿，未打开消息 App");
         }
     };
     private final ActionDispatcher actions = new ActionDispatcher();
@@ -70,7 +71,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         @Override public void run() {
             if (!notificationAccessWatchActive) return;
             if (pendingReplyContent != null && !XiaoheiNotificationListener.accessGranted(MainActivity.this))
-                clearReplyDraft("通知访问已撤销；已清除待确认草稿，未打开微信");
+                clearReplyDraft("通知访问已撤销；已清除待确认草稿，未打开消息 App");
             if (notificationAccessWatchActive) mainHandler.postDelayed(this, 1000);
         }
     };
@@ -291,14 +292,14 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         draftView.setVisibility(View.GONE);
         root.addView(draftView);
         confirmDraftButton = new Button(this);
-        confirmDraftButton.setText("确认目标与内容，打开微信（不自动发送）");
+        confirmDraftButton.setText("确认目标与内容，打开消息 App（不自动发送）");
         confirmDraftButton.setVisibility(View.GONE);
-        confirmDraftButton.setOnClickListener(v -> openWechatForManualSend());
+        confirmDraftButton.setOnClickListener(v -> openMessagingForManualSend());
         root.addView(confirmDraftButton);
         cancelDraftButton = new Button(this);
         cancelDraftButton.setText("取消草稿");
         cancelDraftButton.setVisibility(View.GONE);
-        cancelDraftButton.setOnClickListener(v -> clearReplyDraft("草稿已取消，没有打开微信"));
+        cancelDraftButton.setOnClickListener(v -> clearReplyDraft("草稿已取消，没有打开消息 App"));
         root.addView(cancelDraftButton);
 
         historyView = new TextView(this);
@@ -454,7 +455,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             return;
         }
         if (request.action == CommandRouter.Action.DRAFT_WECHAT_REPLY) {
-            prepareWechatDraft(request.argument);
+            prepareMessageDraft(request.argument, "com.tencent.mm");
+            return;
+        }
+        if (request.action == CommandRouter.Action.DRAFT_MESSAGE_REPLY) {
+            prepareMessageDraft(request.argument, null);
             return;
         }
         if (request.action == CommandRouter.Action.AMBIGUOUS) {
@@ -494,46 +499,50 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         broker.finishCommand(summary.detail + "；已重新就绪");
     }
 
-    private void prepareWechatDraft(String content) {
+    private void prepareMessageDraft(String content, String preferredPackage) {
         clearReplyDraft(null);
         if (content == null || content.isEmpty()) {
-            historyView.setText("回复草稿：还缺少完整回复内容；请说“回复微信说……”");
-            broker.finishCommand("需要回复内容；没有打开微信；已重新就绪");
+            historyView.setText("回复草稿：还缺少完整回复内容；请说“回复消息说……”");
+            broker.finishCommand("需要回复内容；没有打开消息 App；已重新就绪");
             return;
         }
-        String target = XiaoheiNotificationListener.latestWechatTarget(this, privacyLockedAtLaunch);
+        XiaoheiNotificationListener.MessageTarget target =
+            XiaoheiNotificationListener.latestMessageTarget(this, preferredPackage, privacyLockedAtLaunch);
         if (target == null) {
-            historyView.setText("回复草稿：微信通知已消失、服务未连接或仍在锁屏；未创建草稿");
-            broker.finishCommand("没有可绑定的微信通知；未执行；已重新就绪");
+            historyView.setText("回复草稿：受支持消息通知已消失、服务未连接或仍在锁屏；未创建草稿");
+            broker.finishCommand("没有可绑定的消息通知；未执行；已重新就绪");
             return;
         }
         pendingReplyContent = content;
-        draftView.setText("待确认草稿\nApp：微信\n目标：" + target + "\n完整内容：" + content
-            + "\n确认后只打开微信，仍由你亲自点击发送。");
+        pendingReplyTarget = target;
+        draftView.setText("待确认草稿\nApp：" + target.appLabel + "\n目标：" + target.conversation
+            + "\n完整内容：" + content + "\n确认后只打开消息 App，仍由你亲自点击发送。");
         draftView.setVisibility(View.VISIBLE);
+        confirmDraftButton.setText("确认目标与内容，打开 " + target.appLabel + "（不自动发送）");
         confirmDraftButton.setVisibility(View.VISIBLE);
         cancelDraftButton.setVisibility(View.VISIBLE);
         historyView.setText("草稿已生成，等待你确认目标和完整内容");
         broker.finishCommand("草稿待确认；没有自动发送；已重新就绪");
     }
 
-    private void openWechatForManualSend() {
-        if (pendingReplyContent == null || XiaoheiNotificationListener.latestWechatTarget(
-                this, privacyLockedNow()) == null) {
+    private void openMessagingForManualSend() {
+        if (pendingReplyContent == null || !XiaoheiNotificationListener.messageTargetStillActive(
+                this, pendingReplyTarget, privacyLockedNow())) {
             clearReplyDraft("通知已消失或手机已锁屏；操作已取消");
             return;
         }
-        Intent launch = getPackageManager().getLaunchIntentForPackage("com.tencent.mm");
+        Intent launch = getPackageManager().getLaunchIntentForPackage(pendingReplyTarget.packageName);
         if (launch == null) {
-            clearReplyDraft("未安装微信；草稿未发送");
+            clearReplyDraft("消息 App 不可启动；草稿未发送");
             return;
         }
         startActivity(launch);
-        clearReplyDraft("已打开微信；小黑没有输入或点击发送");
+        clearReplyDraft("已打开消息 App；小黑没有输入或点击发送");
     }
 
     private void clearReplyDraft(String message) {
         pendingReplyContent = null;
+        pendingReplyTarget = null;
         if (draftView != null) draftView.setVisibility(View.GONE);
         if (confirmDraftButton != null) confirmDraftButton.setVisibility(View.GONE);
         if (cancelDraftButton != null) cancelDraftButton.setVisibility(View.GONE);

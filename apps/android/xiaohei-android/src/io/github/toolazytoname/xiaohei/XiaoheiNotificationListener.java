@@ -2,8 +2,10 @@ package io.github.toolazytoname.xiaohei;
 
 import android.app.KeyguardManager;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.os.Build;
 import android.provider.Settings;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -18,6 +20,18 @@ public final class XiaoheiNotificationListener extends NotificationListenerServi
         final boolean ok;
         final String detail;
         Summary(boolean ok, String detail) { this.ok = ok; this.detail = detail; }
+    }
+    static final class MessageTarget {
+        final String packageName;
+        final String appLabel;
+        final String conversation;
+        final String notificationKey;
+        MessageTarget(String packageName, String appLabel, String conversation, String notificationKey) {
+            this.packageName = packageName;
+            this.appLabel = appLabel;
+            this.conversation = conversation;
+            this.notificationKey = notificationKey;
+        }
     }
 
     private static volatile XiaoheiNotificationListener active;
@@ -45,10 +59,14 @@ public final class XiaoheiNotificationListener extends NotificationListenerServi
     }
 
     static boolean accessGranted(Context context) {
+        ComponentName ours = new ComponentName(context, XiaoheiNotificationListener.class);
+        if (Build.VERSION.SDK_INT >= 27) {
+            NotificationManager manager = context.getSystemService(NotificationManager.class);
+            return manager != null && manager.isNotificationListenerAccessGranted(ours);
+        }
         String flat = Settings.Secure.getString(context.getContentResolver(),
             "enabled_notification_listeners");
         if (flat == null) return false;
-        ComponentName ours = new ComponentName(context, XiaoheiNotificationListener.class);
         for (String item : flat.split(":"))
             if (ours.equals(ComponentName.unflattenFromString(item))) return true;
         return false;
@@ -85,20 +103,53 @@ public final class XiaoheiNotificationListener extends NotificationListenerServi
     }
 
     static String latestWechatTarget(Context context, boolean privacyLocked) {
+        MessageTarget target = latestMessageTarget(context, "com.tencent.mm", privacyLocked);
+        return target == null ? null : target.conversation;
+    }
+
+    static MessageTarget latestMessageTarget(Context context, String preferredPackage,
+            boolean privacyLocked) {
         if (!accessGranted(context) || privacyLocked
                 || context.getSystemService(KeyguardManager.class).isKeyguardLocked()) return null;
         XiaoheiNotificationListener service = active;
         if (service == null) return null;
         StatusBarNotification newest = null;
         for (StatusBarNotification item : service.getActiveNotifications()) {
-            if (!"com.tencent.mm".equals(item.getPackageName())) continue;
+            if (!supportedMessagePackage(item.getPackageName())) continue;
+            if (preferredPackage != null && !preferredPackage.equals(item.getPackageName())) continue;
+            if ((item.getNotification().flags & Notification.FLAG_ONGOING_EVENT) != 0) continue;
             if (newest == null || item.getPostTime() > newest.getPostTime()) newest = item;
         }
         if (newest == null) return null;
-        if (newest.getNotification().visibility == Notification.VISIBILITY_SECRET)
-            return "微信隐私会话";
-        CharSequence title = newest.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE);
-        return title == null || title.length() == 0 ? "最近微信会话" : title.toString();
+        String appLabel;
+        try {
+            appLabel = context.getPackageManager().getApplicationLabel(
+                context.getPackageManager().getApplicationInfo(newest.getPackageName(), 0)).toString();
+        } catch (Exception missing) { appLabel = newest.getPackageName(); }
+        String conversation;
+        if (newest.getNotification().visibility == Notification.VISIBILITY_SECRET) {
+            conversation = "隐私会话";
+        } else {
+            CharSequence title = newest.getNotification().extras.getCharSequence(Notification.EXTRA_TITLE);
+            conversation = title == null || title.length() == 0 ? "最近会话" : title.toString();
+        }
+        return new MessageTarget(newest.getPackageName(), appLabel, conversation, newest.getKey());
+    }
+
+    static boolean messageTargetStillActive(Context context, MessageTarget target, boolean privacyLocked) {
+        if (target == null || !accessGranted(context) || privacyLocked
+                || context.getSystemService(KeyguardManager.class).isKeyguardLocked()) return false;
+        XiaoheiNotificationListener service = active;
+        if (service == null) return false;
+        for (StatusBarNotification item : service.getActiveNotifications()) {
+            if (target.notificationKey.equals(item.getKey())
+                    && target.packageName.equals(item.getPackageName())) return true;
+        }
+        return false;
+    }
+
+    private static boolean supportedMessagePackage(String packageName) {
+        return "com.tencent.mm".equals(packageName) || "com.android.messaging".equals(packageName);
     }
 
     private static String join(List<String> values) {

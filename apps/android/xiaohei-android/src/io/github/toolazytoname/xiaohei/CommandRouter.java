@@ -5,7 +5,8 @@ final class CommandRouter {
     enum Action {
         OPEN_GALLERY, OPEN_SETTINGS, OPEN_WIFI_SETTINGS, OPEN_BLUETOOTH_SETTINGS, OPEN_CAMERA, OPEN_BROWSER,
         OPEN_DIALER, OPEN_ALARMS, NAVIGATE, TORCH_ON, TORCH_OFF, VOLUME_UP, VOLUME_DOWN,
-        QUERY_UNREAD_WECHAT, QUERY_UNREAD_ALL, DRAFT_WECHAT_REPLY, AMBIGUOUS, UNKNOWN
+        QUERY_UNREAD_WECHAT, QUERY_UNREAD_ALL, DRAFT_WECHAT_REPLY, DRAFT_MESSAGE_REPLY,
+        AMBIGUOUS, UNKNOWN
     }
 
     static final class Request {
@@ -22,6 +23,11 @@ final class CommandRouter {
         if (text.contains("回复微信") || (text.contains("微信") && text.contains("帮我回复"))) {
             int say = text.indexOf("说");
             return new Request(Action.DRAFT_WECHAT_REPLY,
+                say >= 0 && say + 1 < text.length() ? text.substring(say + 1) : "");
+        }
+        if (text.contains("回复消息") || text.contains("回复未读消息")) {
+            int say = text.indexOf("说");
+            return new Request(Action.DRAFT_MESSAGE_REPLY,
                 say >= 0 && say + 1 < text.length() ? text.substring(say + 1) : "");
         }
         if (text.contains("微信") && (text.contains("未读") || text.contains("消息")))
