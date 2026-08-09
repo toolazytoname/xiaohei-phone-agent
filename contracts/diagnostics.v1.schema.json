@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/diagnostics.v1.schema.json",
+  "title": "Xiaohei redacted diagnostics v1",
+  "type": "object",
+  "required": ["schema_version", "app_version", "android_api", "device_family", "assistant_state", "dsp_state", "cpu_kws_state", "capabilities", "permissions", "public_log_safe"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "app_version": { "type": "string", "maxLength": 64 },
+    "android_api": { "type": "integer", "minimum": 26 },
+    "device_family": { "type": "string", "maxLength": 128 },
+    "assistant_state": { "type": "string", "maxLength": 64 },
+    "dsp_state": { "type": "string", "maxLength": 64 },
+    "cpu_kws_state": { "type": "string", "maxLength": 64 },
+    "config_schema": { "type": "integer", "minimum": 0 },
+    "capabilities": { "type": "object", "additionalProperties": { "type": "boolean" } },
+    "permissions": { "type": "object", "additionalProperties": { "type": "boolean" } },
+    "public_log_safe": { "const": true }
+  },
+  "additionalProperties": false
+}

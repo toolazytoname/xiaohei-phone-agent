@@ -516,15 +516,10 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     private void shareDiagnostics() {
         DspProfileClient.Status dsp = dspProfile.status();
-        String report = "Xiaohei diagnostics\n"
-            + "app=0.2.0-alpha.2\n"
-            + "android=" + Build.VERSION.RELEASE + " api=" + Build.VERSION.SDK_INT + "\n"
-            + "device=" + Build.MANUFACTURER + " " + Build.MODEL + "\n"
-            + "assistant_state=" + broker.state() + "\n"
-            + "dsp=" + (dsp == null ? "unavailable" : dsp.state) + "\n"
-            + "asr_available=" + voiceSession.isAvailable() + "\n";
+        String report = DiagnosticReport.build(this, broker.state(), dsp);
+        Log.i("XiaoheiDiagnostics", report);
         Intent share = new Intent(Intent.ACTION_SEND).setType("text/plain")
-            .putExtra(Intent.EXTRA_SUBJECT, "Xiaohei diagnostics")
+            .putExtra(Intent.EXTRA_SUBJECT, "Xiaohei redacted diagnostics v1")
             .putExtra(Intent.EXTRA_TEXT, report);
         startActivity(Intent.createChooser(share, "导出脱敏诊断"));
     }

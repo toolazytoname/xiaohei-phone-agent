@@ -27,6 +27,7 @@ required_files=(
   contracts/wakeword-event.v1.schema.json
   contracts/action-request.v1.schema.json
   contracts/agent-step-result.v1.schema.json
+  contracts/diagnostics.v1.schema.json
   manifests/product.yaml
 )
 

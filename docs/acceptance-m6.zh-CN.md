@@ -16,7 +16,9 @@
 - code 3 事务式卸载先验证 DSP `DETACHED`，移除主 App 和 Assistant Role，保留 Companion；全新安装恢复 code 3 与 Assistant Role，Accessibility 默认关闭。
 - 可复用页面 harness 在真机依次打开 14 个 Android 设置页面和 11 个系统 App：25/25 落到预期包或已记录的系统权限/Safety Center 中转页，0 启动失败、0 小黑 Fatal/ANR；没有为联系人或时钟自动授予权限。
 - alpha.2 全新安装暴露并修复“声明 CAMERA 后打开外部相机仍需运行时权限”的首装问题；拒绝权限时 0 动作并返回可恢复状态。压力 harness 临时授权后在精确 alpha.2 完成 100/100、0 失败、0 Fatal/ANR、0 录音残留，并恢复 CAMERA 为未授权。
+- 真机 `diagnostics.v1` 导出版本化 JSON，包含 Assistant/DSP/CPU 状态、能力/权限布尔值和配置 schema；不含序列号、Endpoint、Token、通知正文、UI 树或私有路径，并标记 `public_log_safe=true`。
+- 已清点精确 native 版本和哈希。可复现 OSV 查询对工程推断的 PyPI 坐标 `onnxruntime@1.27.0` 与 `sherpa-onnx@1.13.4` 返回 0 条已知记录；文档明确该映射局限，不能据此声称绝对安全。
 
 ## 尚未满足的 M6 门禁
 
-当前仍不是公开 Beta。还缺：8–24 小时物理拔线待机/功耗、本地静态门禁之外的外部恶意软件/依赖复核、正式签名治理、模型再分发批准、备份/恢复覆盖、完整诊断包，以及真正正式签名且可复现的 APK。25 页面启动矩阵不能替代另一项 10–15 App Phone Agent 任务矩阵。
+当前仍不是公开 Beta。还缺：8–24 小时物理拔线待机/功耗、静态/OSV 之外的独立恶意软件引擎复核、正式签名治理、模型再分发批准、备份/恢复覆盖，以及真正正式签名且可复现的 APK。25 页面启动矩阵不能替代另一项 10–15 App Phone Agent 任务矩阵。
