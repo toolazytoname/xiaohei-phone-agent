@@ -16,6 +16,13 @@ Candidate: `0.2.0-alpha.2` (`versionCode=3`), debug signed
 - Listening snapshot: total PSS about 149 MB, total RSS about 284 MB, thermal status 0. This is not a battery-life result.
 - A small deterministic acoustic baseline played 10 near-negative Mandarin phrases (`Xiaobai`, `Xiaoai`, OEM `Xiaobu`, `Xiaomi`, reordered/partial Xiaohei, and ordinary commands): 0/10 false accepts. Five positive “Xiaohei Xiaohei” samples at speech rates 120/135/150/165/180 produced 5/5 detections; every session returned to `LISTENING`. This used one synthetic Mac voice in a quiet environment, not a production accuracy corpus.
 
+## Independent generic profile and synthetic probe
+
+- A clean Android 14 AOSP ARM64 virtual device independently installed the combined candidate with SHA-256 `70e23a097c2c82ba06d7c989a274b20be3f1da5f2874724e6c6f1647d99d1008`. It reported no DSP profile, kept CPU KWS off by default, started it only through a visible action, showed `LISTENING` and a private foreground notification, then stopped with no active service or recording client.
+- Uninstall left no package, app process, active service, notification-listener grant, accessibility grant, or recording client. The exact profile and claim boundary are recorded in [`device-profiles/generic-android-api34-arm64`](../device-profiles/generic-android-api34-arm64/README.md).
+- A pinned offline evaluator ran 72 disposable macOS-synthesis cases at the product threshold: 36 positive cases across nine system voices with clean, quiet, 10 dB-noise, and synthetic-reverb variants; and 36 near/ordinary negatives. All 36 negatives were rejected, but only the four variants of the standard `Tingting` voice were detected. The other 32 positive variants were misses. This is a useful robustness warning, not a passed accuracy gate; the audio was not committed and no person or physical distance is represented.
+- The public promise is deliberately narrow: “Xiaohei Xiaohei” is an experimental, opt-in foreground CPU fallback. The OnePlus DSP profile still uses the validated OEM phrase. No custom DSP-keyword claim is made.
+
 ## Product boundary and open gates
 
-CPU KWS is opt-in, foreground, microphone-visible, higher-power, and disabled by default. It is a portable fallback, not low-power DSP. M7 still needs multi-speaker/noise/distance accuracy and unplugged power tests, an independently verified second device/profile, and either custom DSP keyword support or a narrowed public promise.
+CPU KWS is opt-in, foreground, microphone-visible, higher-power, and disabled by default. It is a portable fallback, not low-power DSP. The second independent generic profile and narrowed public promise now have evidence. M7 still needs real multi-speaker/noise/distance accuracy and unplugged power tests; the synthetic probe's misses prevent an accuracy promotion.

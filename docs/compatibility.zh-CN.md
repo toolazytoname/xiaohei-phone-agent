@@ -10,7 +10,7 @@
 |---|---|---|---|
 | A — 基础唤起 | App 按钮、快捷设置、桌面快捷方式、设备支持的硬件/耳机 Intent | 面向广泛 Android；首个 APK 发布时再声明精确最低 SDK | 需要用户主动唤起 |
 | B — Android 助手 | 助手手势/按键和 VoiceInteraction 会话 | 取决于用户选择小黑以及 OEM SystemUI 行为 | 本身不保证能使用厂商 DSP |
-| C — CPU 唤醒词 | 可选前台 KWS 服务 | 取得麦克风权限后可覆盖较多硬件 | 明显更耗电，必须展示前台服务 |
+| C — CPU 唤醒词 | 可选前台 KWS 服务 | 已在 Android 14 ARM64 验证通用生命周期；声学支持仍为实验性 | 明显更耗电，必须展示前台服务；尚未通过多说话人鲁棒性门禁 |
 | D — 厂商 DSP | 息屏低功耗唤醒词 | 只支持明确通过验证的硬件/ROM profile | 通常需要 system/root/OEM 集成与合法本地资产 |
 
 Android 官方说明，被用户选中的 `VoiceInteractionService` 会由系统保持运行，用于语音交互和 hotword 相关场景；但公开服务契约并没有承诺任意下载 APK 都能使用各厂商 DSP。因此小黑把“系统助手唤起”和“DSP 唤醒”作为两个独立能力。
@@ -38,5 +38,7 @@ Android 官方说明，被用户选中的 `VoiceInteractionService` 会由系统
 ## 宣发边界
 
 可以说：“小黑是一款具有广泛兼容基础模式、并支持可选低功耗设备后端的 Android Phone Agent 产品。”
+
+目前自定义“小黑小黑”只代表可选前台 CPU 兜底。OnePlus DSP profile 使用已经验证的原厂词；小黑不宣称具备可迁移的自定义 DSP 唤醒词。
 
 不能说：“任意 Android 手机下载这个 APK，就能获得常驻 DSP 语音唤醒。”
