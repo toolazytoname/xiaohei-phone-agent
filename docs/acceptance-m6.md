@@ -27,6 +27,7 @@ Stress baseline: `0.2.0-alpha.1` (`versionCode=2`); current incremental candidat
 - ClamAV 1.5.4 with 3,627,998 signatures independently scanned the exact generic release candidate and the exact private combined-model debug candidate (`5b5077f9fe12413ee268457a981c863057e546995c675d851343177dc6bc6e17`): two files scanned, zero infected. The result is bounded malware-engine evidence, not a vulnerability guarantee.
 - An `age`/X25519 recovery archive was generated outside the repository, its identity stored in the local Keychain, and a full decrypt/hash drill matched the release keystore and certificate `1c0cf5bf518c3b63037dae70388974551bb1f0f851084328a48af13ebcc12c07`. It remains on the signing Mac as restricted **staging**; without separately controlled offline media, the offline-recovery gate is not yet closed.
 - The full local-ASR/KWS debug alpha.3 candidate was upgraded over TLS Wireless ADB on the OnePlus 8T. It is `versionCode=4`, passed the exact static scan, left notification/Accessibility access disabled, and started no recording service. Its model weights remain private and outside Git/public Release assets.
+- The v2 device-side idle monitor was independently exercised on the clean Android 14 ARM64 emulator with a zero-duration, screen-off run. Its completed raw TSV contained `requested_at`, `sampling_started_at`, and `preflight_wait_s`; collection passed with one non-interactive, unpowered, no-call, no-recorder, no-Xiaohei-wakelock sample. This validates the monitor's evidence format only, not physical OnePlus power.
 
 ## Open M6 gates
 
