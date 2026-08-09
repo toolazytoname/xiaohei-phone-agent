@@ -21,11 +21,14 @@ adb_cmd=(adb -s "$serial")
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 remote_script=/data/local/tmp/xiaohei-idle-monitor.sh
 remote_output="/sdcard/Download/xiaohei-idle-${mode}.tsv"
+existing=$("${adb_cmd[@]}" shell "ps -A -o PID,ARGS | grep '[x]iaohei-idle-monitor.sh' | grep ' $mode '" | tr -d '\r' || true)
+[[ -z "$existing" ]] || { printf 'FAIL monitor already running for mode=%s: %s\n' "$mode" "$existing" >&2; exit 1; }
 "${adb_cmd[@]}" push "$repo_root/scripts/device-idle-monitor.sh" "$remote_script" >/dev/null
 "${adb_cmd[@]}" shell chmod 0755 "$remote_script"
-"${adb_cmd[@]}" shell "nohup $remote_script $duration $interval $mode $remote_output >/data/local/tmp/xiaohei-idle-monitor.log 2>&1 </dev/null &"
+"${adb_cmd[@]}" shell "setsid /system/bin/sh $remote_script $duration $interval $mode $remote_output >/data/local/tmp/xiaohei-idle-monitor.log 2>&1 </dev/null &"
 sleep 1
-pid=$("${adb_cmd[@]}" shell pidof sh | tr -d '\r' || true)
+pid=$("${adb_cmd[@]}" shell "ps -A -o PID,ARGS | grep '[x]iaohei-idle-monitor.sh' | grep ' $mode '" | tr -d '\r' || true)
 printf 'started device-side idle monitor mode=%s duration_s=%s interval_s=%s\n' "$mode" "$duration" "$interval"
 printf 'unplug power/USB within 10 minutes; reconnect after the duration and collect %s\n' "$remote_output"
-printf 'shell_processes=%s\n' "$pid"
+[[ -n "$pid" ]] || { printf 'FAIL idle monitor did not remain running\n' >&2; exit 1; }
+printf 'shell_process=%s\n' "$pid"

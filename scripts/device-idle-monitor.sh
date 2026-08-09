@@ -7,11 +7,13 @@ mode="${3:-unspecified}"
 output="${4:-/sdcard/Download/xiaohei-idle-latest.tsv}"
 
 case "$duration:$interval" in *[!0-9:]*|'') exit 2 ;; esac
+printf 'monitor started mode=%s duration=%s interval=%s\n' "$mode" "$duration" "$interval" >&2
 start_wait=$(date +%s)
 while dumpsys battery | grep -Eq 'USB powered: true|AC powered: true|Wireless powered: true'; do
   now=$(date +%s)
   if [ $((now - start_wait)) -ge 600 ]; then
     printf 'FAIL\tcharger_not_removed\n' > "$output"
+    printf 'monitor failed: charger_not_removed\n' >&2
     exit 3
   fi
   sleep 5
@@ -38,3 +40,4 @@ while :; do
   sleep "$interval"
 done
 printf '# COMPLETE\n' >> "$output"
+printf 'monitor complete\n' >&2
