@@ -4,6 +4,8 @@
 
 This plan separates a one-off demo from a product that can be installed, used daily, diagnosed, upgraded, and removed safely. Xiaohei does not copy one vendor's private services. It aims for a comparable user experience using public Android capabilities, explicit user grants, and narrowly scoped device integrations.
 
+> **Status reading:** the checkboxes below are the original capability backlog, not a live completion ledger. The authoritative current M0–M7 evidence is the bilingual [delivery evidence matrix](delivery-evidence-matrix.md): M0/M2/M3/M4/M5 are complete at their stated scope; M1/M6/M7 retain the explicitly listed physical power, acoustic, recovery-media, and/or publication gates. Do not infer completion from an unchecked backlog item, or completion of a physical gate from an implementation alone.
+
 ## 1. Delivery targets
 
 ### First device product
