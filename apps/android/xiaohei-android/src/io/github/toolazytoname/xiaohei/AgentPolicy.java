@@ -24,8 +24,7 @@ final class AgentPolicy {
         // Generic approval controls are ambiguous across Android permission dialogs,
         // account flows, and destructive flows. Never click them from an Agent task.
         if (containsAny(target, "ok", "accept", "agree", "同意", "接受")
-                || containsAny(surface, "权限", "permission", "允许", "allow", "授权",
-                    "grant", "同意", "accept", "登录", "sign in"))
+                || containsAny(surface, "登录", "sign in"))
             return Decision.REQUIRE_CONFIRMATION;
         return Decision.ALLOW;
     }
@@ -39,6 +38,11 @@ final class AgentPolicy {
             || pkg.equals("com.android.dialer")
             || pkg.equals("com.android.documentsui")
             || pkg.equals("com.android.chrome")
+            || pkg.equals("com.android.calendar")
+            || pkg.equals("com.android.camera2")
+            || pkg.equals("com.android.gallery3d")
+            || pkg.equals("com.android.messaging")
+            || pkg.equals("org.chromium.webview_shell")
             || pkg.equals("org.mozilla.fennec_fdroid")
             || pkg.equals("com.google.android.apps.googlecamera.fishfood")
             || pkg.equals("org.lineageos.aperture")

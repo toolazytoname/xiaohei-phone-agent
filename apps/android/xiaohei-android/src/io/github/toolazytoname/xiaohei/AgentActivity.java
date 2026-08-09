@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Build;
@@ -135,6 +136,12 @@ public final class AgentActivity extends Activity {
             runAppTask(card.packageName, card.label);
         });
         root.addView(launchSafeCard);
+        if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+            Button matrix = new Button(this);
+            matrix.setText("调试验收：运行 10 App 语义矩阵");
+            matrix.setOnClickListener(v -> startActivity(new Intent(this, AgentMatrixActivity.class)));
+            root.addView(matrix);
+        }
         Button stopGate = new Button(this);
         stopGate.setText("安全验收：启动等待任务（随后测试全局停止）");
         stopGate.setOnClickListener(v -> runSettingsTask("不存在的验收目标"));

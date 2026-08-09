@@ -26,6 +26,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private static final String ACTION_CAPTURE_VISUAL =
         "io.github.toolazytoname.xiaohei.action.CAPTURE_VISUAL_RECOVERY";
     private static volatile XiaoheiAccessibilityService active;
+    private static volatile String lastTaskResult;
     /** One-shot local preview. Never persisted, traced, or sent to a model. */
     private static volatile Bitmap visualRecoveryPreview;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -43,6 +44,11 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private boolean executing;
 
     static boolean isConnected() { return active != null; }
+    static boolean isTaskRunning() {
+        XiaoheiAccessibilityService service = active;
+        return service != null && service.pendingLabel != null;
+    }
+    static String lastTaskResult() { return lastTaskResult; }
     static AgentSnapshot observeNow() {
         XiaoheiAccessibilityService service = active;
         return service == null ? null : AgentSnapshot.capture(service.getRootInActiveWindow());
@@ -104,6 +110,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
                 || labels.isEmpty() || labels.size() > 8 || pendingLabel != null) return false;
         for (String label : labels) if (label == null || label.trim().isEmpty()) return false;
         pendingLabels = new java.util.ArrayList<>();
+        lastTaskResult = null;
         for (String label : labels) pendingLabels.add(label.trim());
         pendingIndex = 0;
         pendingLabel = pendingLabels.get(0);
@@ -200,6 +207,15 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
             showNotification("没有可恢复的 Agent 任务；未截取屏幕");
             return;
         }
+        // A real notification action is delivered while SystemUI owns the active window.
+        // The explicit user action authorizes dismissing only the notification shade; the
+        // original package and policy are re-checked after the target window is visible again.
+        executing = true;
+        performGlobalAction(GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE);
+        handler.postDelayed(this::captureVisualRecoveryAfterShade, 650);
+    }
+
+    private void captureVisualRecoveryAfterShade() {
         AgentSnapshot before = AgentSnapshot.capture(getRootInActiveWindow());
         if (!pendingPackage.equals(before.packageName) || !AgentPolicy.packageAllowed(before.packageName)
                 || AgentPolicy.assess(before.packageName, before.visibleText(), pendingLabel)
@@ -207,7 +223,6 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
             stopInternal("视觉恢复已拒绝：目标页面不安全或已改变");
             return;
         }
-        executing = true;
         handler.removeCallbacksAndMessages(null);
         takeScreenshot(android.view.Display.DEFAULT_DISPLAY, getMainExecutor(),
             new TakeScreenshotCallback() {
@@ -292,6 +307,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
 
     private void complete(String detail) {
         Log.i(TAG, "task=complete steps=" + steps + " detail=" + detail);
+        lastTaskResult = "success:" + steps;
         pendingLabel = null;
         pendingPackage = null;
         pendingLabels = null;
@@ -300,7 +316,10 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     }
 
     private void stopInternal(String reason) {
-        if (pendingLabel != null) Log.i(TAG, "task=stopped steps=" + steps + " reason=" + reason);
+        if (pendingLabel != null) {
+            Log.i(TAG, "task=stopped steps=" + steps + " reason=" + reason);
+            lastTaskResult = "stopped:" + reason;
+        }
         pendingLabel = null;
         pendingPackage = null;
         pendingLabels = null;
