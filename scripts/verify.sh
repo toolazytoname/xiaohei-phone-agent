@@ -24,6 +24,12 @@ required_files=(
   docs/product-delivery-plan.zh-CN.md
   docs/threat-model.md
   docs/threat-model.zh-CN.md
+  docs/release-checklist.md
+  docs/release-checklist.zh-CN.md
+  docs/release-scope-0.2.0-alpha.3.md
+  docs/release-scope-0.2.0-alpha.3.zh-CN.md
+  docs/release-notes-0.2.0-alpha.3.md
+  docs/release-notes-0.2.0-alpha.3.zh-CN.md
   contracts/wakeword-event.v1.schema.json
   contracts/action-request.v1.schema.json
   contracts/agent-step-result.v1.schema.json
@@ -41,6 +47,15 @@ done
 for schema in contracts/*.json; do
   python3 -m json.tool "$schema" >/dev/null
 done
+
+python3 - scripts/*.py <<'PY'
+import pathlib
+import sys
+
+for raw in sys.argv[1:]:
+    path = pathlib.Path(raw)
+    compile(path.read_text(encoding="utf-8"), str(path), "exec")
+PY
 
 python3 - "$repo_root" <<'PY'
 import pathlib

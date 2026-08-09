@@ -7,19 +7,35 @@ apk="${XIAOHEI_APK:-}"
 asr_apk="${XIAOHEI_LOCAL_ASR_APK:-}"
 kws_apk="${XIAOHEI_LOCAL_KWS_APK:-}"
 mkdir -p "$(dirname "$output")"
-python3 - "$output" "$apk" "$asr_apk" "$kws_apk" <<'PY'
+sdk_root="${ANDROID_SDK_ROOT:-/opt/homebrew/share/android-commandlinetools}"
+aapt2="${ANDROID_AAPT2:-$sdk_root/build-tools/36.0.0/aapt2}"
+python3 - "$output" "$apk" "$asr_apk" "$kws_apk" "$aapt2" <<'PY'
 import datetime
 import hashlib
 import json
 import pathlib
+import re
+import subprocess
 import sys
 
-output, apk, asr, kws = map(pathlib.Path, sys.argv[1:])
+output, apk, asr, kws, aapt2 = map(pathlib.Path, sys.argv[1:])
+version = "0.2.0-alpha.3"
+if apk.is_file() and aapt2.is_file():
+    badging = subprocess.run(
+        (str(aapt2), "dump", "badging", str(apk)),
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    match = re.search(r"versionName='([^']+)'", badging)
+    if not match:
+        raise SystemExit("cannot read APK versionName")
+    version = match.group(1)
 components = [{
     "type": "application",
-    "bom-ref": "pkg:generic/xiaohei-android@0.2.0-alpha.2",
+    "bom-ref": f"pkg:generic/xiaohei-android@{version}",
     "name": "xiaohei-android",
-    "version": "0.2.0-alpha.2",
+    "version": version,
     "licenses": [{"license": {"id": "MIT"}}],
 }]
 if asr.is_file():

@@ -1,12 +1,12 @@
 # 小黑 AI 手机助手
 
-[English](README.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [手机离线操作卡](docs/phone-operation-card.zh-CN.md) · [交付证据矩阵](docs/delivery-evidence-matrix.zh-CN.md) · [厂商级交付计划](docs/product-delivery-plan.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [安全策略](SECURITY.md)
+[English](README.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [手机离线操作卡](docs/phone-operation-card.zh-CN.md) · [交付证据矩阵](docs/delivery-evidence-matrix.zh-CN.md) · [发布范围](docs/release-scope-0.2.0-alpha.3.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [安全策略](SECURITY.md)
 
 > 唤醒它，说出需求，让手机行动——尽量本地、过程可见，高风险动作必须确认。
 
 小黑是一款面向 Android 的开源、本地优先 AI 手机助手。它把用户主动入口或常驻唤醒、短语音命令、与模型无关的意图路由、明确的安全策略和可观察的手机操作组合成一个独立产品。
 
-**当前状态：**可安装的内部 Alpha `0.2.0-alpha.2`，尚无公开二进制 Release。源码构建已提供按钮、快捷设置、系统助手、离线中文 ASR、确定性动作、通知汇总、确认式草稿和有界可见 Phone Agent；可选 CPU KWS 识别“小黑小黑”，OnePlus profile 提供独立控制的低功耗 DSP 路径。
+**当前状态：**可安装的 `0.2.0-alpha.3` 发布候选，尚未上传公开二进制 Release。计划公开的通用包不内嵌模型权重；私有本地构建增加离线中文 ASR 与实验性 CPU KWS，OnePlus profile 则提供独立控制、使用原厂词的低功耗 DSP 路径。
 
 **兼容性承诺：**基础版小黑不要求 OnePlus 手机或 Qualcomm DSP。不兼容的唤醒后端必须隐藏或明确显示“不支持”，不能乐观安装后再报错。详见[兼容性分层](docs/compatibility.zh-CN.md)。
 
@@ -14,7 +14,7 @@
 
 - “小黑小黑，打开相册。”——唤醒助手并打开指定应用。
 - “小黑小黑，微信有没有未读消息？”——优先从通知层汇总未读状态，不遍历聊天页面。
-- “小黑小黑，帮我回复未读消息。”——先生成草稿、展示收件人和内容，用户确认后再发送。
+- “小黑小黑，帮我回复未读消息。”——先生成草稿并展示目标和内容；确认只打开目标 App，最终发送由用户亲自完成。
 - “小黑小黑，切到本地模型。”——使用本地或远端模型配置，但模型切换不连带启停其他服务。
 
 ## 产品原则
@@ -55,13 +55,13 @@ flowchart LR
 |---|---|---|
 | Qualcomm ADSP/LPI 唤醒 | 已验证 | OnePlus 8T 息屏声学输入进入二阶段 RNN 并收到 Android callback |
 | 干净回滚 | 已验证 | 临时 APK、私有库和 Magisk 探针已移除，SoundTrigger 恢复基线 |
-| 通用 Android 唤起入口 | 主设备已验证 | 按钮、快捷设置、Assistant；源码基础包不依赖 root |
+| 通用 Android 唤起入口 | 已在 OnePlus 与干净 AOSP ARM64 验证 | 按钮、快捷设置、设备支持时的 Assistant；源码基础包不依赖 root |
 | 离线命令到动作 | 已验证 | 12 个确定性动作、37 条路由、100 次动作压力回归 |
 | Android 14 DSP Broker | OnePlus 8T 已验证 | 三轮息屏声学闭环和事务式回滚 |
 | 物理拔线功耗资格 | 待执行 | DSP OFF/ARMED 三轮 A/B 和 8–24 小时静置回归 |
-| 通知与确认式草稿 | 基础纵切已验证 | 只读当前通知，不自动发送 |
-| 可见 Phone Agent | 基础纵切已验证 | 策略保护的设置两步任务和脱敏轨迹导出 |
-| 自定义“小黑小黑” | CPU 兜底已验证 | DSP 原生模型、语料准确率和功耗门禁仍缺 |
+| 通知与确认式草稿 | M4 已完成 | 绑定精确当前通知、草稿易失、确认只开 App；不自动发送 |
+| 可见 Phone Agent | M5 已完成 | AOSP 十 App 10/10、包绑定、全局停止与内存视觉恢复 |
+| 自定义“小黑小黑” | 实验性 CPU 兜底 | 单一已验证环境可用，但合成多音色漏检和功耗门禁仍缺；不宣称自定义 DSP |
 
 ## 目录结构
 
