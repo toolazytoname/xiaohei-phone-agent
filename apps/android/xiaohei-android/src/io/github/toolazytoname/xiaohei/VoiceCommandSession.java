@@ -32,6 +32,8 @@ final class VoiceCommandSession implements RecognitionListener {
         return SpeechRecognizer.isRecognitionAvailable(context);
     }
 
+    boolean isActive() { return active; }
+
     void start() {
         if (!isAvailable()) {
             listener.onSpeechError("当前系统没有可用的语音识别服务；请配置独立 ASR 渠道");

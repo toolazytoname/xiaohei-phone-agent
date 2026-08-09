@@ -32,12 +32,12 @@ fi
 
 if [[ -n "$local_asr_apk" ]]; then
   "$build_tools/aapt2" link -I "$platform" --manifest "$project_dir/AndroidManifest.xml" \
-    --java "$build_dir/generated" --min-sdk-version 26 --target-sdk-version 35 \
+    --java "$build_dir/generated" --debug-mode --min-sdk-version 26 --target-sdk-version 35 \
     --version-code 1 --version-name 0.1.0 -A "$build_dir/asr/assets" \
     -o "$build_dir/unsigned.apk" "$build_dir/compiled/resources.zip"
 else
   "$build_tools/aapt2" link -I "$platform" --manifest "$project_dir/AndroidManifest.xml" \
-    --java "$build_dir/generated" --min-sdk-version 26 --target-sdk-version 35 \
+    --java "$build_dir/generated" --debug-mode --min-sdk-version 26 --target-sdk-version 35 \
     --version-code 1 --version-name 0.1.0 \
     -o "$build_dir/unsigned.apk" "$build_dir/compiled/resources.zip"
 fi

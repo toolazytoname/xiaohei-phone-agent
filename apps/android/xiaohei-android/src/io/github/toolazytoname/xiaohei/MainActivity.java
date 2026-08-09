@@ -6,21 +6,27 @@ import android.content.pm.PackageManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ScrollView;
 
 /** First vertical slice: a manual wake event is routed to the safe gallery action. */
 public final class MainActivity extends Activity implements WakewordBroker.Listener, VoiceCommandSession.Listener {
+    private static final String ACTION_TAG = "XiaoheiAction";
     private static final int REQUEST_RECORD_AUDIO = 41;
+    private static final int REQUEST_CAMERA = 42;
     private TextView stateView;
     private TextView historyView;
     private Button armButton;
@@ -33,7 +39,8 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             dspStateView.setText("DSP：" + state + "\n" + detail);
         }
     };
-    private final GalleryActionAdapter gallery = new GalleryActionAdapter();
+    private final ActionDispatcher actions = new ActionDispatcher();
+    private CommandRouter.Request pendingCameraRequest;
     private WakewordBroker broker;
     private VoiceCommandSession voiceSession;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -49,6 +56,8 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         onStateChanged(broker.state(), "尚未启用");
         consumeControlIntent(getIntent());
         consumeWakeIntent(getIntent());
+        consumeDebugTranscript(getIntent());
+        consumeTalkIntent(getIntent());
     }
 
     @Override protected void onNewIntent(Intent intent) {
@@ -56,6 +65,27 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         setIntent(intent);
         consumeControlIntent(intent);
         consumeWakeIntent(intent);
+        consumeDebugTranscript(intent);
+        consumeTalkIntent(intent);
+    }
+
+    private void consumeTalkIntent(Intent intent) {
+        if (intent == null || !intent.getBooleanExtra("start_talk", false)) return;
+        intent.removeExtra("start_talk");
+        if (broker.state() == WakewordBroker.State.OFF || broker.state() == WakewordBroker.State.ERROR)
+            broker.armManualMode();
+        broker.dispatchManualHit();
+    }
+
+    private void consumeDebugTranscript(Intent intent) {
+        if (intent == null || (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0)
+            return;
+        String transcript = intent.getStringExtra("debug_transcript");
+        if (transcript == null || transcript.isEmpty()) return;
+        intent.removeExtra("debug_transcript");
+        if (broker.state() == WakewordBroker.State.OFF) broker.armManualMode();
+        broker.beginVoiceCommand();
+        dispatchTranscript(transcript);
     }
 
     private void consumeControlIntent(Intent intent) {
@@ -81,7 +111,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         root.setPadding(pad, pad, pad, pad);
 
         TextView title = new TextView(this);
-        title.setText("小黑 / Xiaohei\nM1：短命令 → 打开相册");
+        title.setText("小黑 / Xiaohei\nM2：离线短命令助手");
         title.setTextSize(24);
         root.addView(title);
 
@@ -117,24 +147,52 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         dspDisarmButton.setEnabled(dspProfile.isInstalled());
         dspDisarmButton.setOnClickListener(v -> {
             if (!dspProfile.disarm()) dspStateView.setText("DSP：停止失败；请检查设备 profile");
+            else refreshDspStatus();
         });
         root.addView(dspDisarmButton);
 
-        Button testButton = new Button(this);
-        testButton.setText("模拟“小布小布”命中 → 听取命令");
-        testButton.setOnClickListener(v -> broker.dispatchManualHit());
-        root.addView(testButton);
+        Button talkButton = new Button(this);
+        talkButton.setText("按一下开始说话（通用模式）");
+        talkButton.setOnClickListener(v -> {
+            if (broker.state() == WakewordBroker.State.OFF || broker.state() == WakewordBroker.State.ERROR)
+                broker.armManualMode();
+            broker.dispatchManualHit();
+        });
+        root.addView(talkButton);
+
+        Button stopAllButton = new Button(this);
+        stopAllButton.setText("全部停止：语音 + DSP");
+        stopAllButton.setOnClickListener(v -> {
+            voiceSession.stop();
+            dspProfile.disarm();
+            broker.disarm();
+            dspStateView.setText("DSP：正在停止并释放");
+            historyView.setText("已请求全局停止；不会继续执行待处理命令");
+            refreshDspStatus();
+        });
+        root.addView(stopAllButton);
 
         Button fixedCommandButton = new Button(this);
         fixedCommandButton.setText("测试固定命令：“打开相册”");
         fixedCommandButton.setOnClickListener(v -> dispatchTranscript("打开相册"));
         root.addView(fixedCommandButton);
 
+        Button diagnosticsButton = new Button(this);
+        diagnosticsButton.setText("导出脱敏诊断");
+        diagnosticsButton.setOnClickListener(v -> shareDiagnostics());
+        root.addView(diagnosticsButton);
+
         historyView = new TextView(this);
         historyView.setGravity(Gravity.START);
         historyView.setPadding(0, pad, 0, 0);
         root.addView(historyView);
-        return root;
+        TextView supported = new TextView(this);
+        supported.setPadding(0, pad, 0, pad);
+        supported.setText("支持：相册、设置、Wi‑Fi、蓝牙、相机、浏览器、拨号盘、闹钟、导航到…、手电筒开关、音量大小");
+        root.addView(supported);
+        ScrollView scroll = new ScrollView(this);
+        scroll.addView(root);
+        return scroll;
     }
 
     @Override protected void onStart() {
@@ -142,16 +200,27 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         registerReceiver(dspStatusReceiver, new IntentFilter(DspProfileClient.STATUS_EVENT),
             "io.github.toolazytoname.xiaohei.permission.WAKEWORD_EVENT", null,
             Context.RECEIVER_EXPORTED);
-        if (dspProfile.isInstalled()) {
-            DspProfileClient.Status status = dspProfile.status();
-            if (status == null) dspStateView.setText("DSP：状态查询失败；请检查 Companion 版本");
-            else dspStateView.setText("DSP：" + status.state + "\n" + status.detail);
-        }
+        refreshDspStatus();
     }
 
     @Override protected void onStop() {
         unregisterReceiver(dspStatusReceiver);
         super.onStop();
+    }
+
+    @Override protected void onPause() {
+        if (voiceSession != null && voiceSession.isActive()) {
+            voiceSession.stop();
+            broker.finishCommand("会话被来电或界面切换中断；麦克风已释放，可重新唤起");
+        }
+        super.onPause();
+    }
+
+    private void refreshDspStatus() {
+        if (!dspProfile.isInstalled()) return;
+        DspProfileClient.Status status = dspProfile.status();
+        if (status == null) dspStateView.setText("DSP：状态查询失败；请检查 Companion 版本");
+        else dspStateView.setText("DSP：" + status.state + "\n" + status.detail);
     }
 
     @Override public void onStateChanged(WakewordBroker.State state, String detail) {
@@ -184,6 +253,12 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         if (requestCode == REQUEST_RECORD_AUDIO) {
             if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED) voiceSession.start();
             else broker.failCommand("未授予麦克风权限；已停止命令会话");
+        } else if (requestCode == REQUEST_CAMERA && pendingCameraRequest != null) {
+            CommandRouter.Request pending = pendingCameraRequest;
+            pendingCameraRequest = null;
+            if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED)
+                executeRequest("手电筒", pending);
+            else broker.finishCommand("未授予相机权限；手电筒未改变；已重新就绪");
         }
     }
 
@@ -201,21 +276,53 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     private void dispatchTranscript(String text) {
         broker.beginThinking();
-        if (CommandRouter.route(text) == CommandRouter.Action.OPEN_GALLERY) {
-            broker.beginAction("已识别“" + text + "”；正在打开相册");
-            boolean opened = gallery.openGallery(this);
-            historyView.setText("命令：" + text + "\n动作：打开相册/系统图片选择器" +
-                (opened ? "（已发起）" : "（设备无可用图片应用）"));
-            broker.finishCommand(opened ? "动作已发起；已重新就绪" : "没有可用图片应用；已重新就绪");
-        } else {
-            historyView.setText("命令：" + text + "\n暂只支持：打开相册");
-            broker.finishCommand("未匹配命令；已重新就绪");
+        CommandRouter.Request request = CommandRouter.route(text);
+        if (request.action == CommandRouter.Action.AMBIGUOUS) {
+            historyView.setText("命令：" + text + "\n检测到多个目标，未执行。请一次只说一个动作。");
+            broker.finishCommand("需要确认：请一次只说一个动作；已重新就绪");
+            return;
         }
+        if (request.action == CommandRouter.Action.UNKNOWN) {
+            historyView.setText("命令：" + text + "\n未匹配允许的短命令");
+            broker.finishCommand("未匹配命令；已重新就绪");
+            return;
+        }
+        if ((request.action == CommandRouter.Action.TORCH_ON
+                || request.action == CommandRouter.Action.TORCH_OFF)
+                && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            pendingCameraRequest = request;
+            requestPermissions(new String[] { Manifest.permission.CAMERA }, REQUEST_CAMERA);
+            return;
+        }
+        executeRequest(text, request);
+    }
+
+    private void executeRequest(String text, CommandRouter.Request request) {
+        broker.beginAction("已识别“" + text + "”；正在执行 " + request.action);
+        ActionDispatcher.Result result = actions.execute(this, request);
+        Log.i(ACTION_TAG, "action=" + request.action + " ok=" + result.ok);
+        historyView.setText("命令：" + text + "\n动作：" + result.detail);
+        broker.finishCommand((result.ok ? "动作已完成" : "动作失败") + "；已重新就绪");
     }
 
     @Override public void onSpeechError(String safeDetail) {
         historyView.setText("短命令会话结束：" + safeDetail);
         broker.finishCommand(safeDetail + "；已重新就绪");
+    }
+
+    private void shareDiagnostics() {
+        DspProfileClient.Status dsp = dspProfile.status();
+        String report = "Xiaohei diagnostics\n"
+            + "app=0.1.0-m2\n"
+            + "android=" + Build.VERSION.RELEASE + " api=" + Build.VERSION.SDK_INT + "\n"
+            + "device=" + Build.MANUFACTURER + " " + Build.MODEL + "\n"
+            + "assistant_state=" + broker.state() + "\n"
+            + "dsp=" + (dsp == null ? "unavailable" : dsp.state) + "\n"
+            + "asr_available=" + voiceSession.isAvailable() + "\n";
+        Intent share = new Intent(Intent.ACTION_SEND).setType("text/plain")
+            .putExtra(Intent.EXTRA_SUBJECT, "Xiaohei diagnostics")
+            .putExtra(Intent.EXTRA_TEXT, report);
+        startActivity(Intent.createChooser(share, "导出脱敏诊断"));
     }
 
     @Override protected void onDestroy() {
