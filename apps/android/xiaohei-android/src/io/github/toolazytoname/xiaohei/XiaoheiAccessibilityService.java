@@ -173,16 +173,45 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     }
 
     private static AccessibilityNodeInfo find(AccessibilityNodeInfo node, String label) {
+        AccessibilityNodeInfo clickableMatch = findClickableMatch(node, label);
+        return clickableMatch != null ? clickableMatch : findAnyMatch(node, label);
+    }
+
+    /** Prefer an exact label that can actually be acted on over passive output text. */
+    private static AccessibilityNodeInfo findClickableMatch(AccessibilityNodeInfo node, String label) {
         if (node == null) return null;
-        CharSequence text = node.getText();
-        CharSequence desc = node.getContentDescription();
-        if ((text != null && text.toString().equals(label))
-                || (desc != null && desc.toString().equals(label))) return node;
+        if (matches(node, label) && hasClickableAncestor(node)) return node;
         for (int i = 0; i < node.getChildCount(); i++) {
-            AccessibilityNodeInfo found = find(node.getChild(i), label);
+            AccessibilityNodeInfo found = findClickableMatch(node.getChild(i), label);
             if (found != null) return found;
         }
         return null;
+    }
+
+    private static AccessibilityNodeInfo findAnyMatch(AccessibilityNodeInfo node, String label) {
+        if (node == null) return null;
+        if (matches(node, label)) return node;
+        for (int i = 0; i < node.getChildCount(); i++) {
+            AccessibilityNodeInfo found = findAnyMatch(node.getChild(i), label);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private static boolean matches(AccessibilityNodeInfo node, String label) {
+        CharSequence text = node.getText();
+        CharSequence desc = node.getContentDescription();
+        return (text != null && text.toString().equals(label))
+            || (desc != null && desc.toString().equals(label));
+    }
+
+    private static boolean hasClickableAncestor(AccessibilityNodeInfo node) {
+        AccessibilityNodeInfo current = node;
+        while (current != null) {
+            if (current.isClickable()) return true;
+            current = current.getParent();
+        }
+        return false;
     }
 
     private void complete(String detail) {
