@@ -395,6 +395,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     }
 
     @Override public void onSpeechReady() {
+        Log.i("XiaoheiVoice", "speech_ready");
         historyView.setText("正在听，请说：打开相册");
     }
 

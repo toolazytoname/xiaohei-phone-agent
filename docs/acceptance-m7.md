@@ -2,7 +2,7 @@
 
 Date: 2026-08-09  
 Device: OnePlus 8T (`KB2000`), Android 14 / LineageOS 21  
-Candidate: `0.2.0-alpha.1` (`versionCode=2`), debug signed
+Candidate: `0.2.0-alpha.2` (`versionCode=3`), debug signed
 
 ## Proven on the physical device
 
@@ -11,9 +11,10 @@ Candidate: `0.2.0-alpha.1` (`versionCode=2`), debug signed
 - The only keyword is `x iǎo h ēi x iǎo h ēi @小黑小黑`. Two independent Mandarin acoustic trials both produced `keyword=小黑小黑` on the first utterance.
 - KWS released recording before the visible Assistant session acquired the microphone. After local ASR ended, CPU KWS returned to `LISTENING`.
 - The second trial reached the command router. ASR did not yield the intended allowlisted command, so the router returned `未匹配命令` and performed no action. This is a safe denial, not a successful speech-to-action claim.
+- An event-synchronized alpha.2 trial completed the full acoustic chain: `keyword=小黑小黑` at 12:12:36.973, local ASR `speech_ready` at 12:12:38.481, spoken “Open Gallery”, `OPEN_GALLERY ok=true` at 12:12:42.311, and the system Photo Picker foreground. CPU KWS then returned to `LISTENING`.
 - The independent stop control changed state to `OFF`, destroyed the foreground service, and released active recording. DSP remained `DETACHED`; CPU KWS never changed DSP state.
 - Listening snapshot: total PSS about 149 MB, total RSS about 284 MB, thermal status 0. This is not a battery-life result.
 
 ## Product boundary and open gates
 
-CPU KWS is opt-in, foreground, microphone-visible, higher-power, and disabled by default. It is a portable fallback, not low-power DSP. M7 still needs an accurate wake-to-action acoustic chain, corpus false-accept/false-reject and unplugged power tests, an independently verified second device/profile, and either custom DSP keyword support or a narrowed public promise.
+CPU KWS is opt-in, foreground, microphone-visible, higher-power, and disabled by default. It is a portable fallback, not low-power DSP. M7 still needs corpus false-accept/false-reject and unplugged power tests, an independently verified second device/profile, and either custom DSP keyword support or a narrowed public promise.
