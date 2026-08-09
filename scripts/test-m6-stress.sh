@@ -19,6 +19,16 @@ adb_cmd shell dumpsys package "$package" | grep -q DEBUGGABLE || {
   exit 1
 }
 adb_cmd shell am force-stop "$package"
+camera_was_granted=0
+if adb_cmd shell dumpsys package "$package" | grep -A20 'runtime permissions:' | \
+    grep -q 'android.permission.CAMERA: granted=true'; then camera_was_granted=1; fi
+restore_camera_permission() {
+  if [[ "$camera_was_granted" -eq 0 ]]; then
+    adb_cmd shell pm revoke "$package" android.permission.CAMERA >/dev/null 2>&1 || true
+  fi
+}
+trap restore_camera_permission EXIT
+adb_cmd shell pm grant "$package" android.permission.CAMERA
 sleep 1
 adb_cmd logcat -G 8M
 adb_cmd logcat -c

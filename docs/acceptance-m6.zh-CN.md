@@ -15,6 +15,7 @@
 - 真机迁移通过：code 2→3 正常升级保留 schema v1；普通 3→2 降级被 Android 拒绝；显式维护降级保留配置；再次升级恢复 code 3 并保留 Assistant Role。
 - code 3 事务式卸载先验证 DSP `DETACHED`，移除主 App 和 Assistant Role，保留 Companion；全新安装恢复 code 3 与 Assistant Role，Accessibility 默认关闭。
 - 可复用页面 harness 在真机依次打开 14 个 Android 设置页面和 11 个系统 App：25/25 落到预期包或已记录的系统权限/Safety Center 中转页，0 启动失败、0 小黑 Fatal/ANR；没有为联系人或时钟自动授予权限。
+- alpha.2 全新安装暴露并修复“声明 CAMERA 后打开外部相机仍需运行时权限”的首装问题；拒绝权限时 0 动作并返回可恢复状态。压力 harness 临时授权后在精确 alpha.2 完成 100/100、0 失败、0 Fatal/ANR、0 录音残留，并恢复 CAMERA 为未授权。
 
 ## 尚未满足的 M6 门禁
 

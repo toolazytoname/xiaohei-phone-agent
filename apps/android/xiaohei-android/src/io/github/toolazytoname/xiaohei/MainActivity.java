@@ -54,6 +54,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     };
     private final ActionDispatcher actions = new ActionDispatcher();
     private CommandRouter.Request pendingCameraRequest;
+    private String pendingCameraText;
     private WakewordBroker broker;
     private VoiceCommandSession voiceSession;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -377,10 +378,12 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             pendingCpuKwsStart = false;
         } else if (requestCode == REQUEST_CAMERA && pendingCameraRequest != null) {
             CommandRouter.Request pending = pendingCameraRequest;
+            String pendingText = pendingCameraText;
             pendingCameraRequest = null;
+            pendingCameraText = null;
             if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED)
-                executeRequest("手电筒", pending);
-            else broker.finishCommand("未授予相机权限；手电筒未改变；已重新就绪");
+                executeRequest(pendingText == null ? "相机功能" : pendingText, pending);
+            else broker.finishCommand("未授予相机权限；相机相关动作未执行；已重新就绪");
         } else if (requestCode == REQUEST_NOTIFICATIONS) {
             if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED) {
                 getSharedPreferences("user_controls", MODE_PRIVATE).edit()
@@ -426,10 +429,12 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             broker.finishCommand("未匹配命令；已重新就绪");
             return;
         }
-        if ((request.action == CommandRouter.Action.TORCH_ON
+        if ((request.action == CommandRouter.Action.OPEN_CAMERA
+                || request.action == CommandRouter.Action.TORCH_ON
                 || request.action == CommandRouter.Action.TORCH_OFF)
                 && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             pendingCameraRequest = request;
+            pendingCameraText = text;
             requestPermissions(new String[] { Manifest.permission.CAMERA }, REQUEST_CAMERA);
             return;
         }

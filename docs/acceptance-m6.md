@@ -15,6 +15,7 @@ Stress baseline: `0.2.0-alpha.1` (`versionCode=2`); current incremental candidat
 - Real-device migration passed: normal code 2→3 upgrade preserved config schema v1; normal 3→2 downgrade was rejected by Android; explicit maintenance downgrade preserved config; re-upgrade restored code 3 and retained the Assistant role.
 - Transactional uninstall from code 3 stopped/verified DSP `DETACHED`, removed the app and Assistant role, and preserved the Companion. Fresh install restored code 3 and the Assistant role with Accessibility disabled.
 - The reusable surface harness opened 14 Android Settings surfaces and 11 system apps on the physical phone: 25/25 expected package or documented system permission/Safety Center interstitials, zero launch failure, and zero Xiaohei Fatal/ANR. It did not auto-grant Contacts or Clock permissions.
+- Fresh alpha.2 exposed and fixed a first-install camera permission issue caused by declaring CAMERA for torch support. Denial produced zero action and a recoverable state. With the stress harness temporarily granting and then restoring CAMERA, the exact alpha.2 candidate passed 100/100 actions, zero failures, zero Fatal/ANR, and zero recording residue.
 
 ## Open M6 gates
 
