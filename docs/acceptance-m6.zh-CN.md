@@ -14,7 +14,8 @@
 - Alpha.2（`versionCode=3`）新增双语威胁模型和精确 APK 静态门禁。组合候选包通过签名、ZIP 安全路径、凭据特征、权限允许列表、导出组件权限门及 native 库清单；已记录 SHA-256。CycloneDX 现覆盖 App 及固定的 ASR/KWS 输入。
 - 真机迁移通过：code 2→3 正常升级保留 schema v1；普通 3→2 降级被 Android 拒绝；显式维护降级保留配置；再次升级恢复 code 3 并保留 Assistant Role。
 - code 3 事务式卸载先验证 DSP `DETACHED`，移除主 App 和 Assistant Role，保留 Companion；全新安装恢复 code 3 与 Assistant Role，Accessibility 默认关闭。
+- 可复用页面 harness 在真机依次打开 14 个 Android 设置页面和 11 个系统 App：25/25 落到预期包或已记录的系统权限/Safety Center 中转页，0 启动失败、0 小黑 Fatal/ANR；没有为联系人或时钟自动授予权限。
 
 ## 尚未满足的 M6 门禁
 
-当前仍不是公开 Beta。还缺：8–24 小时物理拔线待机/功耗、20+ App/页面矩阵、本地静态门禁之外的外部恶意软件/依赖复核、正式签名治理、模型再分发批准、备份/恢复覆盖、完整诊断包，以及真正正式签名且可复现的 APK。
+当前仍不是公开 Beta。还缺：8–24 小时物理拔线待机/功耗、本地静态门禁之外的外部恶意软件/依赖复核、正式签名治理、模型再分发批准、备份/恢复覆盖、完整诊断包，以及真正正式签名且可复现的 APK。25 页面启动矩阵不能替代另一项 10–15 App Phone Agent 任务矩阵。
