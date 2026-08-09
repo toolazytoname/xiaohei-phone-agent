@@ -29,7 +29,7 @@ The local build/integration process may read the user's legally held OTA to obta
 - `ro.product.device=OnePlus8T` and a reviewed ROM fingerprint allowlist.
 - Qualcomm SoundTrigger module 0 reports the expected vendor implementation.
 - Every local input hash matches the reviewed profile.
-- The companion receives only its two SoundTrigger permissions through a partition-matched privapp allowlist.
+- The companion receives only `MANAGE_SOUND_TRIGGER` and `CAPTURE_AUDIO_HOTWORD` through a partition-matched privapp allowlist. Android 14 middleware also requires user-revocable runtime `RECORD_AUDIO` before attach; the Companion does not create a normal AudioRecord stream during standby.
 - Three cold boots and three arm/disarm cycles pass before any acoustic test.
 
 This contract deliberately extracts the useful part of the OEM design—model lifecycle and re-arm—from its obsolete system UID, daemon, cross-user, and Oplus service dependencies.
