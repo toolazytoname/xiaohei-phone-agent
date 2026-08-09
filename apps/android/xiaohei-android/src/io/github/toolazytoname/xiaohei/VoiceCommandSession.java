@@ -1,6 +1,7 @@
 package io.github.toolazytoname.xiaohei;
 
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
@@ -37,7 +38,8 @@ final class VoiceCommandSession implements RecognitionListener {
             return;
         }
         stop();
-        recognizer = SpeechRecognizer.createSpeechRecognizer(context);
+        recognizer = SpeechRecognizer.createSpeechRecognizer(context,
+            new ComponentName(context, XiaoheiRecognitionService.class));
         recognizer.setRecognitionListener(this);
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN");

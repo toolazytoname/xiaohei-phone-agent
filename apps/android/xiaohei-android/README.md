@@ -4,7 +4,7 @@ This is the first runnable product slice: a manual wake event, or a signature-ga
 
 It is deliberately not a DSP implementation. A verified device-specific Companion sends only a redacted, signature-protected event after its own arm/start lifecycle succeeds. Android 14 does not allow an arbitrary background component to launch UI, so Xiaohei uses its user-selected `VoiceInteractionService` to create the visible Assistant session. A high-priority notification is the explicit fallback when Xiaohei is not the selected Assistant.
 
-`XiaoheiRecognitionService` is a stable, app-owned ASR boundary. A source-only build returns an honest unavailable error. A local product build may bundle the official sherpa-onnx arm64 Chinese 14M Zipformer APK as a pinned build input; Xiaohei then performs an at-most-eight-second offline transcription and releases `AudioRecord` on result, error, or cancellation. It is not a runtime dependency on another installed app.
+`XiaoheiRecognitionService` is a stable, app-owned ASR boundary. `VoiceCommandSession` addresses that component explicitly instead of following Android's global speech-recognizer setting. A source-only build returns an honest unavailable error. A local product build may bundle the official sherpa-onnx arm64 Chinese 14M Zipformer APK as a pinned build input; Xiaohei then performs an at-most-eight-second offline transcription and releases `AudioRecord` on result, error, or cancellation. It is not a runtime dependency on another installed app.
 
 Build locally:
 
