@@ -41,6 +41,7 @@ public final class XiaoheiRecognitionService extends RecognitionService {
 
     private void recognize(Callback callback, long maximumMs) {
         AudioRecord audio = null;
+        long startedAt = System.currentTimeMillis();
         try (LocalAsrEngine engine = new LocalAsrEngine(this)) {
             int minimum = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT);
@@ -49,6 +50,8 @@ public final class XiaoheiRecognitionService extends RecognitionService {
                 error(callback, SpeechRecognizer.ERROR_AUDIO);
                 return;
             }
+            Log.i(TAG, "capture_started source=" + audio.getAudioSource()
+                + " maximum_ms=" + maximumMs);
             callback.readyForSpeech(new Bundle());
             audio.startRecording();
             callback.beginningOfSpeech();
@@ -69,8 +72,19 @@ public final class XiaoheiRecognitionService extends RecognitionService {
             callback.endOfSpeech();
             if (cancelled) return;
             String text = engine.text();
-            if (text.isEmpty()) error(callback, SpeechRecognizer.ERROR_NO_MATCH);
-            else callback.results(results(text));
+            if (text.isEmpty()) {
+                Log.i(TAG, "recognition_finished outcome=no_match elapsed_ms="
+                    + (System.currentTimeMillis() - startedAt));
+                error(callback, SpeechRecognizer.ERROR_NO_MATCH);
+            } else {
+                // Transcript logging is intentionally debug-only: release
+                // builds expose an outcome and length, never spoken content.
+                String detail = (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0
+                    ? " transcript=" + text : " transcript_chars=" + text.length();
+                Log.i(TAG, "recognition_finished outcome=result elapsed_ms="
+                    + (System.currentTimeMillis() - startedAt) + detail);
+                callback.results(results(text));
+            }
         } catch (SecurityException denied) {
             Log.e(TAG, "microphone permission denied", denied);
             error(callback, SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS);

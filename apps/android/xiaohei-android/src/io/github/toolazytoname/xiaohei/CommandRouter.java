@@ -1,7 +1,5 @@
 package io.github.toolazytoname.xiaohei;
 
-import java.util.Locale;
-
 /** Deterministic router. Unknown text never becomes an Android action. */
 final class CommandRouter {
     enum Action {
@@ -86,7 +84,10 @@ final class CommandRouter {
      */
     private static String normalize(String transcript) {
         String text = transcript == null ? "" : transcript.replaceAll("[\\s，。！？,.!?]", "");
-        text = text.replace("wi-fi", "wifi").replace("Wi-Fi", "WiFi").toUpperCase(Locale.ROOT);
+        // Normalize the ASCII command token only. Upper-casing the complete
+        // transcript would also mutate user-provided arguments such as a
+        // navigation destination or a message draft.
+        text = text.replaceAll("(?i)wi-?fi", "WIFI");
         text = text.replace("像册", "相册").replace("想册", "相册").replace("相簿", "相册");
         text = text.replace("兰牙", "蓝牙").replace("蓝芽", "蓝牙");
         text = text.replace("威信", "微信").replace("微讯", "微信");

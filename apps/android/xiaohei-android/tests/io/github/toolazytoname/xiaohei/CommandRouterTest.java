@@ -19,7 +19,7 @@ public final class CommandRouterTest {
             ,{"微信有没有未读消息", "QUERY_UNREAD_WECHAT"}, {"有没有未读通知", "QUERY_UNREAD_ALL"},
             {"回复微信说我晚点到", "DRAFT_WECHAT_REPLY"}, {"帮我回复微信未读消息", "DRAFT_WECHAT_REPLY"},
             {"回复消息说收到", "DRAFT_MESSAGE_REPLY"}, {"威信有没有未读消息", "QUERY_UNREAD_WECHAT"},
-            {"打开wi-fi", "OPEN_WIFI_SETTINGS"}
+            {"打开wi-fi", "OPEN_WIFI_SETTINGS"}, {"打开WI-FI", "OPEN_WIFI_SETTINGS"}
         };
         for (Object[] row : cases) {
             String actual = CommandRouter.route((String) row[0]).action.name();
@@ -32,6 +32,8 @@ public final class CommandRouterTest {
             throw new AssertionError("multiple targets must require clarification");
         if (!"天安门".equals(CommandRouter.route("导航到天安门").argument))
             throw new AssertionError("navigation target was not preserved");
+        if (!"ABC公园".equals(CommandRouter.route("导航到ABC公园").argument))
+            throw new AssertionError("mixed-case navigation target was not preserved");
         if (!"我晚点到".equals(CommandRouter.route("回复微信说我晚点到").argument))
             throw new AssertionError("reply content was not preserved");
         if (!"收到".equals(CommandRouter.route("回复消息说收到").argument))
