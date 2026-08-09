@@ -6,6 +6,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.hardware.HardwareBuffer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -20,7 +22,12 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private static final String TAG = "XiaoheiAgent";
     private static final String CHANNEL = "xiaohei_agent";
     private static final int NOTIFICATION_ID = 1210;
+    private static final long RECOVERY_HANDOFF_MS = 15_000;
+    private static final String ACTION_CAPTURE_VISUAL =
+        "io.github.toolazytoname.xiaohei.action.CAPTURE_VISUAL_RECOVERY";
     private static volatile XiaoheiAccessibilityService active;
+    /** One-shot local preview. Never persisted, traced, or sent to a model. */
+    private static volatile Bitmap visualRecoveryPreview;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private String pendingLabel;
     private String pendingPackage;
@@ -30,6 +37,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private long deadline;
     private int steps;
     private int recoveries;
+    private boolean recoveryScheduled;
     private String lastActionKey;
     private long lastActionAt;
     private boolean executing;
@@ -55,6 +63,12 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         XiaoheiAccessibilityService service = active;
         if (service != null) service.stopInternal(reason);
     }
+    static Bitmap consumeVisualRecoveryPreview() {
+        Bitmap preview = visualRecoveryPreview;
+        visualRecoveryPreview = null;
+        return preview;
+    }
+    static boolean hasVisualRecoveryPreview() { return visualRecoveryPreview != null; }
 
     @Override protected void onServiceConnected() {
         active = this;
@@ -62,7 +76,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     }
 
     @Override public void onAccessibilityEvent(AccessibilityEvent event) {
-        if (pendingLabel == null || executing) return;
+        if (pendingLabel == null || executing || recoveryScheduled) return;
         if (System.currentTimeMillis() > deadline) {
             stopInternal("任务超时，未执行");
             return;
@@ -71,6 +85,11 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         if (pkg == null || !pkg.toString().equals(pendingPackage)) return;
         executing = true;
         handler.postDelayed(this::executePendingStep, 350);
+    }
+
+    @Override public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && ACTION_CAPTURE_VISUAL.equals(intent.getAction())) captureVisualRecovery();
+        return START_NOT_STICKY;
     }
 
     @Override public void onInterrupt() { stopInternal("系统中断"); }
@@ -93,6 +112,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         deadline = System.currentTimeMillis() + 60_000;
         steps = 0;
         recoveries = 0;
+        recoveryScheduled = false;
         lastActionKey = null;
         showNotification("等待目标页面：" + pendingLabel);
         Log.i(TAG, "task=start id=" + taskId + " max_steps=8 timeout_ms=60000 labels=" + pendingLabels.size());
@@ -130,7 +150,11 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
             if (recoveries++ == 0) {
                 Log.i(TAG, "step=observe version=" + before.version + " result=not_found recovery=1");
                 trace(before, 0, "allow", false, "not_found");
-                handler.postDelayed(this::executePendingStep, 5000);
+                recoveryScheduled = true;
+                handler.postDelayed(() -> {
+                    recoveryScheduled = false;
+                    executePendingStep();
+                }, RECOVERY_HANDOFF_MS);
             } else { trace(before, 0, "allow", false, "not_found"); stopInternal("一次恢复后仍未找到目标"); }
             return;
         }
@@ -165,6 +189,58 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
                 handler.postDelayed(this::executePendingStep, 650);
             } else complete("完成 " + steps + " 个语义动作；已重新观察 snapshot " + after.version);
         }, 650);
+    }
+
+    /**
+     * User invokes this from the persistent Agent notification after semantic recovery failed.
+     * It is deliberately a local, one-shot handoff: no disk, trace, clipboard, or network use.
+     */
+    private void captureVisualRecovery() {
+        if (pendingLabel == null || executing) {
+            showNotification("没有可恢复的 Agent 任务；未截取屏幕");
+            return;
+        }
+        AgentSnapshot before = AgentSnapshot.capture(getRootInActiveWindow());
+        if (!pendingPackage.equals(before.packageName) || !AgentPolicy.packageAllowed(before.packageName)
+                || AgentPolicy.assess(before.packageName, before.visibleText(), pendingLabel)
+                    != AgentPolicy.Decision.ALLOW) {
+            stopInternal("视觉恢复已拒绝：目标页面不安全或已改变");
+            return;
+        }
+        executing = true;
+        handler.removeCallbacksAndMessages(null);
+        takeScreenshot(android.view.Display.DEFAULT_DISPLAY, getMainExecutor(),
+            new TakeScreenshotCallback() {
+                @Override public void onSuccess(ScreenshotResult result) {
+                    HardwareBuffer buffer = result.getHardwareBuffer();
+                    Bitmap hardware = Bitmap.wrapHardwareBuffer(buffer, result.getColorSpace());
+                    Bitmap preview = hardware == null ? null
+                        : hardware.copy(Bitmap.Config.ARGB_8888, false);
+                    buffer.close();
+                    if (preview == null) {
+                        stopInternal("视觉恢复失败：系统没有返回可显示图像");
+                        return;
+                    }
+                    visualRecoveryPreview = scalePreview(preview);
+                    stopInternal("已截取一次本机视觉预览；未上传、未执行动作");
+                }
+                @Override public void onFailure(int errorCode) {
+                    stopInternal("视觉恢复失败：系统错误 " + errorCode);
+                }
+            });
+    }
+
+    private static Bitmap scalePreview(Bitmap source) {
+        final int maxEdge = 960;
+        int width = source.getWidth();
+        int height = source.getHeight();
+        int edge = Math.max(width, height);
+        if (edge <= maxEdge) return source;
+        float ratio = (float) maxEdge / edge;
+        Bitmap scaled = Bitmap.createScaledBitmap(source, Math.round(width * ratio),
+            Math.round(height * ratio), true);
+        source.recycle();
+        return scaled;
     }
 
     private void trace(AgentSnapshot before, long after, String decision, boolean executed, String result) {
@@ -219,6 +295,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         pendingLabel = null;
         pendingPackage = null;
         pendingLabels = null;
+        recoveryScheduled = false;
         showNotification(detail);
     }
 
@@ -227,6 +304,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         pendingLabel = null;
         pendingPackage = null;
         pendingLabels = null;
+        recoveryScheduled = false;
         executing = false;
         handler.removeCallbacksAndMessages(null);
         showNotification("已停止：" + reason);
@@ -243,12 +321,17 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
             new Intent(this, AgentActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .putExtra("agent_stop", true),
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        manager.notify(NOTIFICATION_ID, new Notification.Builder(this, CHANNEL)
+        PendingIntent visual = PendingIntent.getService(this, 23,
+            new Intent(this, XiaoheiAccessibilityService.class).setAction(ACTION_CAPTURE_VISUAL),
+            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        Notification.Builder notification = new Notification.Builder(this, CHANNEL)
             .setSmallIcon(R.drawable.ic_xiaohei_tile)
             .setContentTitle("小黑 Phone Agent")
             .setContentText(detail).setStyle(new Notification.BigTextStyle().bigText(detail))
             .setContentIntent(open).setOngoing(pendingLabel != null).setOnlyAlertOnce(true)
-            .addAction(new Notification.Action.Builder(null, "停止 Agent", stop).build())
-            .build());
+            .addAction(new Notification.Action.Builder(null, "停止 Agent", stop).build());
+        if (pendingLabel != null) notification.addAction(
+            new Notification.Action.Builder(null, "一次本机视觉预览", visual).build());
+        manager.notify(NOTIFICATION_ID, notification.build());
     }
 }

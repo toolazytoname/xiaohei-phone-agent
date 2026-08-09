@@ -1,14 +1,19 @@
 package io.github.toolazytoname.xiaohei;
 
 import android.app.Activity;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Build;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -39,7 +44,9 @@ public final class AgentActivity extends Activity {
 
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        setIntent(intent);
         consume(intent);
+        if (XiaoheiAccessibilityService.hasVisualRecoveryPreview()) recreate();
     }
 
     @Override protected void onResume() {
@@ -56,6 +63,19 @@ public final class AgentActivity extends Activity {
         title.setText("可见 Phone Agent\nVisible, bounded, stoppable");
         title.setTextSize(24);
         root.addView(title);
+        Bitmap visualPreview = XiaoheiAccessibilityService.consumeVisualRecoveryPreview();
+        if (visualPreview != null) {
+            TextView visualNotice = new TextView(this);
+            visualNotice.setText("一次本机视觉预览：只在内存中显示，未写入磁盘、未进入轨迹、未上传模型。"
+                + "请人工确认页面后重新输入精确的低风险语义目标。Agent 不会根据图片自动点击。");
+            visualNotice.setPadding(0, pad, 0, pad);
+            root.addView(visualNotice);
+            ImageView image = new ImageView(this);
+            image.setImageBitmap(visualPreview);
+            image.setAdjustViewBounds(true);
+            image.setContentDescription("一次本机视觉恢复预览");
+            root.addView(image);
+        }
         state = new TextView(this);
         state.setPadding(0, pad, 0, pad);
         root.addView(state);
@@ -78,6 +98,10 @@ public final class AgentActivity extends Activity {
         access.setText("打开 Android 无障碍设置（用户主动授权）");
         access.setOnClickListener(v -> startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)));
         root.addView(access);
+        Button notificationAccess = new Button(this);
+        notificationAccess.setText("启用 Phone Agent 状态通知（停止 / 视觉恢复）");
+        notificationAccess.setOnClickListener(v -> requestAgentNotifications());
+        root.addView(notificationAccess);
         Button observe = new Button(this);
         observe.setText("观察当前语义树（不执行）");
         observe.setOnClickListener(v -> showSnapshot());
@@ -115,6 +139,10 @@ public final class AgentActivity extends Activity {
         stopGate.setText("安全验收：启动等待任务（随后测试全局停止）");
         stopGate.setOnClickListener(v -> runSettingsTask("不存在的验收目标"));
         root.addView(stopGate);
+        Button visualGate = new Button(this);
+        visualGate.setText("安全验收：文件找不到目标 → 一次本机视觉预览");
+        visualGate.setOnClickListener(v -> runAppTask("com.android.documentsui", "999"));
+        root.addView(visualGate);
         Button denyGate = new Button(this);
         denyGate.setText("安全验收：敏感目标必须拒绝");
         denyGate.setOnClickListener(v -> runSettingsTask("输入验证码"));
@@ -136,7 +164,7 @@ public final class AgentActivity extends Activity {
         root.addView(clear);
 
         TextView policy = new TextView(this);
-        policy.setText("边界：最多 8 步 / 60 秒 / 一次恢复 / 重复动作保护。支付、银行、凭据、密码和验证码页面默认拒绝；发送、删除、安装、卸载、授权和拨号需单独确认。当前不使用截图回退。");
+        policy.setText("边界：最多 8 步 / 60 秒 / 一次恢复 / 重复动作保护。支付、银行、凭据、密码和验证码页面默认拒绝；发送、删除、安装、卸载、授权和拨号需单独确认。语义恢复不足时，只有通知中的用户主动操作才能截取一次本机预览；不上传图片，也不根据图片自动点击。");
         policy.setPadding(0, pad, 0, pad);
         root.addView(policy);
         snapshot = new TextView(this);
@@ -154,8 +182,22 @@ public final class AgentActivity extends Activity {
     }
 
     private void refresh() {
+        boolean notificationGranted = Build.VERSION.SDK_INT < 33
+            || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED;
         state.setText(XiaoheiAccessibilityService.isConnected()
-            ? "状态：CONNECTED；等待用户启动任务" : "状态：未授权或服务尚未连接");
+            ? (notificationGranted ? "状态：CONNECTED；等待用户启动任务"
+                : "状态：CONNECTED；状态通知未授权，停止与视觉恢复入口不可用")
+            : "状态：未授权或服务尚未连接");
+    }
+
+    private void requestAgentNotifications() {
+        if (Build.VERSION.SDK_INT < 33 || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            state.setText("状态通知已可用：可从通知停止任务或请求一次本机视觉预览");
+            return;
+        }
+        requestPermissions(new String[] { Manifest.permission.POST_NOTIFICATIONS }, 71);
     }
 
     private void showSnapshot() {
