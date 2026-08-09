@@ -19,7 +19,7 @@ public final class AgentPolicyTest {
             throw new AssertionError("package prefixes must not grant access");
         if (AgentPolicy.packageAllowed("org.lineageos.unreviewed"))
             throw new AssertionError("package prefixes must not grant access");
-        System.out.println("PASS agent-policy allow=1 deny=3 confirm=3 package-allow=1 package-deny=1");
+        System.out.println("PASS agent-policy allow=1 deny=3 confirm=3 package-allow=1 package-deny=3");
     }
 
     private static void expect(AgentPolicy.Decision expected, String pkg, String text, String label) {
