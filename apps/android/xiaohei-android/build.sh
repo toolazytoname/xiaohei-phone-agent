@@ -86,19 +86,24 @@ if [[ -n "$local_asr_apk" || -n "$local_kws_apk" ]]; then link_args+=(-A "$build
 find "$project_dir/src" "$build_dir/generated" -name '*.java' -print0 | \
   xargs -0 javac -encoding UTF-8 -source 8 -target 8 -classpath "$platform" -d "$build_dir/classes"
 "$build_tools/d8" --min-api 26 --output "$build_dir/dex" $(find "$build_dir/classes" -name '*.class' -print)
-(cd "$build_dir/dex" && zip -q -u "$build_dir/unsigned.apk" classes.dex)
+# APK Signature Scheme v2/v3 covers ZIP metadata. Normalize generated DEX
+# timestamps and omit platform-specific ZIP extra fields before signing.
+find "$build_dir/dex" -name 'classes*.dex' -exec touch -t 198001010000 {} +
+(cd "$build_dir/dex" && zip -X -q -u "$build_dir/unsigned.apk" classes.dex)
 if [[ -n "$local_asr_apk" || -n "$local_kws_apk" ]]; then
   next_dex=2
   for source_dex in "$runtime_dir"/classes*.dex; do
     cp "$source_dex" "$build_dir/dex/classes${next_dex}.dex"
-    (cd "$build_dir/dex" && zip -q -u "$build_dir/unsigned.apk" "classes${next_dex}.dex")
+    touch -t 198001010000 "$build_dir/dex/classes${next_dex}.dex"
+    (cd "$build_dir/dex" && zip -X -q -u "$build_dir/unsigned.apk" "classes${next_dex}.dex")
     next_dex=$((next_dex + 1))
   done
-  (cd "$runtime_dir" && zip -q -0 -u "$build_dir/unsigned.apk" lib/arm64-v8a/*.so)
+  (cd "$runtime_dir" && zip -X -q -0 -u "$build_dir/unsigned.apk" lib/arm64-v8a/*.so)
 fi
 "$build_tools/zipalign" -f 4 "$build_dir/unsigned.apk" "$build_dir/aligned.apk"
 output="$build_dir/xiaohei-$variant.apk"
 "$build_tools/apksigner" sign --ks "$keystore" --ks-key-alias "$key_alias" \
-  --ks-pass "pass:$store_pass" --key-pass "pass:$key_pass" --out "$output" "$build_dir/aligned.apk"
+  --ks-pass "pass:$store_pass" --key-pass "pass:$key_pass" --v1-signing-enabled false \
+  --out "$output" "$build_dir/aligned.apk"
 "$build_tools/apksigner" verify --verbose "$output"
 printf 'built: %s variant=%s version=%s(%s)\n' "$output" "$variant" "$version_name" "$version_code"

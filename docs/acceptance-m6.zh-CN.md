@@ -19,7 +19,8 @@
 - 真机 `diagnostics.v1` 导出版本化 JSON，包含 Assistant/DSP/CPU 状态、能力/权限布尔值和配置 schema；不含序列号、Endpoint、Token、通知正文、UI 树或私有路径，并标记 `public_log_safe=true`。
 - 已清点精确 native 版本和哈希。可复现 OSV 查询对工程推断的 PyPI 坐标 `onnxruntime@1.27.0` 与 `sherpa-onnx@1.13.4` 返回 0 条已知记录；文档明确该映射局限，不能据此声称绝对安全。
 - 模型渠道备份/恢复新增版本化、有长度上限的文本格式，并通过纯 Java 往返与畸形输入测试。它只包含 ASR 模式、Agent 启用偏好、Endpoint 和模型名，绝不序列化 Token。可见恢复路径会清除 Keystore Token 并强制 Agent 关闭，因此恢复配置不会启动服务或发起付费请求。真机已确认该 UI 可见；真实用户配置备份/恢复演练仍是发布证据项。
+- v2/v3 签名前已规范构建输入：生成的 DEX 固定 ZIP 时间戳、移除 ZIP 额外元数据，并关闭 API 26 不需要的 v1 JAR 签名。同一 RSA key 和同一 ASR/KWS 输入的两次完整 debug 构建得到字节一致 SHA-256 `e4132ec99f7fc5846e2aa8977d69c27274c20e4f3474529df484ffdb87fff0dc`，并验证签名。`scripts/verify-reproducible-build.sh` 可对指定 variant 重复该门禁。
 
 ## 尚未满足的 M6 门禁
 
-当前仍不是公开 Beta。还缺：8–24 小时物理拔线待机/功耗、静态/OSV 之外的独立恶意软件引擎复核、正式签名治理、模型再分发批准、真实用户配置备份/恢复演练，以及真正正式签名且可复现的 APK。25 页面启动矩阵不能替代另一项 10–15 App Phone Agent 任务矩阵。
+当前仍不是公开 Beta。还缺：8–24 小时物理拔线待机/功耗、静态/OSV 之外的独立恶意软件引擎复核、正式签名治理、模型再分发批准、真实用户配置备份/恢复演练，以及用生产密钥重跑可复现门禁后的正式签名 APK。25 页面启动矩阵不能替代另一项 10–15 App Phone Agent 任务矩阵。
