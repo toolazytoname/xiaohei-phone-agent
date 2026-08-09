@@ -2,6 +2,8 @@
 
 A public artifact must satisfy every item below. A locally signed acceptance APK is not a public release.
 
+After generating the exact bundle, run `bash scripts/verify-release-bundle.sh /absolute/path/to/bundle` from the repository. It checks checksums in the correct bundle directory, scans the APK, and verifies the APK/SBOM/provenance binding before upload.
+
 - Release variant has no `application-debuggable` flag and uses a non-debug signing key kept outside the repository; follow [signing governance](signing-governance.md).
 - Version code/name are monotonic; APK SHA-256 and CycloneDX SBOM are published together.
 - If the candidate embeds offline-ASR/KWS assets, their exact redistribution rights have been reviewed and recorded; see [model redistribution review](model-redistribution-review.md). A generic candidate with no embedded model must record that scope in provenance. Upstream code licensing alone is insufficient for a model-bearing binary.

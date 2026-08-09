@@ -2,6 +2,8 @@
 
 公开工件必须全部满足以下条件。本地测试签名 APK 不能称为公开 Release。
 
+生成精确 bundle 后，在仓库中执行 `bash scripts/verify-release-bundle.sh /绝对路径/到/bundle`。它会在正确的 bundle 目录校验 checksum、扫描 APK，并在上传前验证 APK/SBOM/provenance 的绑定关系。
+
 - Release variant 不含 `application-debuggable`，使用仓库外保管的非 debug 正式签名密钥，并遵循[签名治理](signing-governance.zh-CN.md)。
 - versionCode/versionName 单调递增，APK SHA-256 与 CycloneDX SBOM 同时发布。
 - 若候选包内嵌离线 ASR/KWS 资产，必须单独审核并记录其精确再分发权利，见[模型再分发审查](model-redistribution-review.zh-CN.md)；无内嵌模型的通用候选包则必须在溯源中记录这一范围。仅上游代码许可证通过不足以发布含模型二进制。
