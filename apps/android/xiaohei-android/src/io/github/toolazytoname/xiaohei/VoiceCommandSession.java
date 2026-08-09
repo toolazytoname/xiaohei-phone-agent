@@ -7,6 +7,7 @@ import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 
 /** A bounded, visible command session. It never keeps audio after a result or error. */
 final class VoiceCommandSession implements RecognitionListener {
+    private static final String TAG = "XiaoheiVoice";
     interface Listener {
         void onSpeechReady();
         void onPartialTranscript(String text);
@@ -58,16 +60,19 @@ final class VoiceCommandSession implements RecognitionListener {
 
     void start() {
         if (!isAvailable()) {
+            Log.i(TAG, "session_start_rejected recognizer_unavailable");
             listener.onSpeechError("当前系统没有可用的语音识别服务；请配置独立 ASR 渠道");
             return;
         }
         stop();
         if (audioManager == null || audioManager.requestAudioFocus(focusRequest)
                 != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            Log.i(TAG, "session_start_rejected audio_focus_unavailable");
             listener.onSpeechError("音频焦点不可用；请结束通话或其他独占音频后重试");
             return;
         }
         focusHeld = true;
+        Log.i(TAG, "session_started audio_focus=exclusive local_asr=" + usesLocalAsr());
         recognizer = usesLocalAsr()
             ? SpeechRecognizer.createSpeechRecognizer(context,
                 new ComponentName(context, XiaoheiRecognitionService.class))
@@ -85,6 +90,7 @@ final class VoiceCommandSession implements RecognitionListener {
     }
 
     void stop() {
+        boolean hadSession = active || recognizer != null || focusHeld;
         active = false;
         if (recognizer != null) {
             recognizer.cancel();
@@ -95,6 +101,7 @@ final class VoiceCommandSession implements RecognitionListener {
             audioManager.abandonAudioFocusRequest(focusRequest);
             focusHeld = false;
         }
+        if (hadSession) Log.i(TAG, "session_stopped microphone_released=true");
     }
 
     private void onAudioFocusChange(int change) {
@@ -102,6 +109,7 @@ final class VoiceCommandSession implements RecognitionListener {
                 && change != AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
                 && change != AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) return;
         boolean wasActive = active;
+        Log.i(TAG, "audio_focus_lost change=" + change + " active=" + wasActive);
         stop();
         if (wasActive) listener.onSpeechError("音频被系统中断；已停止听取并释放麦克风");
     }
