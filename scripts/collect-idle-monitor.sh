@@ -11,7 +11,14 @@ output="${XIAOHEI_IDLE_OUTPUT:-xiaohei-idle-${mode}.tsv}"
 adb -s "$serial" pull "$remote" "$output" >/dev/null
 grep -q '^# COMPLETE$' "$output" || { printf 'FAIL monitor incomplete: %s\n' "$output" >&2; exit 1; }
 awk -F '\t' '
-  NR==1 {for (i=1;i<=NF;i++) if ($i ~ /^duration=/) {split($i,a,"="); expected=a[2]}}
+  NR==1 {
+    for (i=1;i<=NF;i++) {
+      if ($i ~ /^duration=/) {split($i,a,"="); expected=a[2]}
+      if ($i ~ /^requested_at=/) {split($i,a,"="); requested=a[2]}
+      if ($i ~ /^sampling_started_at=/) {split($i,a,"="); sampled=a[2]}
+      if ($i ~ /^preflight_wait_s=/) {split($i,a,"="); preflight=a[2]}
+    }
+  }
   NR==3 {start=$2; start_level=$3}
   $1 !~ /^#/ && NR>2 {
     end=$2; end_level=$3; samples++;
@@ -24,7 +31,7 @@ awk -F '\t' '
   END {
     if ((expected > 0 && (samples < 2 || end-start < expected)) || (expected == 0 && samples < 1)) bad=1;
     if (record || wake || interactive || call || powered) bad=1;
-    printf "%s idle-monitor samples=%d elapsed_s=%d level_delta=%d active_record_samples=%d xiaohei_wakelock_samples=%d interactive_samples=%d call_samples=%d powered_samples=%d\n",
-      bad ? "FAIL" : "PASS", samples, end-start, start_level-end_level, record, wake, interactive, call, powered;
+    printf "%s idle-monitor samples=%d elapsed_s=%d level_delta=%d active_record_samples=%d xiaohei_wakelock_samples=%d interactive_samples=%d call_samples=%d powered_samples=%d requested_at=%s sampling_started_at=%s preflight_wait_s=%s\n",
+      bad ? "FAIL" : "PASS", samples, end-start, start_level-end_level, record, wake, interactive, call, powered, requested, sampled, preflight;
     exit bad
   }' "$output"
