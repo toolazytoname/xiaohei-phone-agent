@@ -61,7 +61,7 @@ Xiaohei owns the product shell and orchestration. It does not duplicate the devi
 | Physical-unplug power qualification | Planned | Three DSP OFF/ARMED A/B runs plus 8–24 hour idle regression |
 | Notifications and confirmed drafts | M4 complete | Exact current notification, volatile preview, confirm opens app only; no automatic send |
 | Visible Phone Agent | M5 complete | 10/10 AOSP app matrix, package binding, global stop, and memory-only visual recovery |
-| Custom “Xiaohei” keyword | Experimental CPU fallback | One verified setup works, but synthetic multi-voice misses and power gates remain; no custom DSP claim |
+| Custom “Xiaohei” keyword | Experimental CPU fallback | One verified setup works, but real multi-speaker accuracy and power gates remain; no custom DSP claim |
 
 ## Repository layout
 
