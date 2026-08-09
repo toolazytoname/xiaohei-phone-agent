@@ -47,6 +47,8 @@ done
 mkdir -p "$build_dir/compiled" "$build_dir/generated" "$build_dir/classes" "$build_dir/dex"
 rm -rf "$build_dir/asr" "$build_dir/kws" "$build_dir/assets"
 rm -f "$build_dir"/*.apk "$build_dir/dex"/classes*.dex
+mkdir -p "$build_dir/assets"
+cp -R "$project_dir/assets/." "$build_dir/assets/"
 
 if [[ ! -s "$keystore" ]]; then
   mkdir -p "$(dirname "$keystore")"
@@ -85,7 +87,7 @@ fi
 link_args=(-I "$platform" --manifest "$project_dir/AndroidManifest.xml" --java "$build_dir/generated"
   --min-sdk-version 26 --target-sdk-version 35 --version-code "$version_code" --version-name "$version_name")
 if [[ "$variant" == debug ]]; then link_args+=(--debug-mode); fi
-if [[ -n "$local_asr_apk" || -n "$local_kws_apk" ]]; then link_args+=(-A "$build_dir/assets"); fi
+link_args+=(-A "$build_dir/assets")
 "$build_tools/aapt2" link "${link_args[@]}" -o "$build_dir/unsigned.apk" "$build_dir/compiled/resources.zip"
 find "$project_dir/src" "$build_dir/generated" -name '*.java' -print0 | \
   xargs -0 javac -encoding UTF-8 -source 8 -target 8 -classpath "$platform" -d "$build_dir/classes"
