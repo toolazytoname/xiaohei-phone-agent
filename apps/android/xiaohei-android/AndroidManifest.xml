@@ -29,6 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ModelConfigActivity" android:exported="false" />
         <receiver
             android:name=".WakewordReceiver"
             android:exported="true"

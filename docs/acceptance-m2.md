@@ -9,4 +9,6 @@ The daily UI now offers one-tap offline speech, a global voice-and-DSP stop, a s
 
 An ambiguous two-target utterance was stopped without an action and asked the user to provide one target. The bounded device harness then completed 30 action-level runs with exactly 30 `ok=true` records and zero failures or duplicate records.
 
-Open M2 gates: separate ASR/Phone-Agent configuration, the planned foreground notification, a real reboot recovery run on this M2 build, and a real incoming-call interruption run (the equivalent activity interruption path is already verified). Accessibility, root shell, automatic dialing, and background submission are not used.
+ASR and Phone Agent now have a separate configuration screen. The device rejected an enabled plain-HTTP remote endpoint, accepted HTTPS, encrypted a dummy token into ciphertext/IV backed by Android Keystore, and never stored the plaintext. The test token and test profile were then removed; changing this configuration did not start a service.
+
+Open M2 gates: the planned foreground notification, a real reboot recovery run on this M2 build, and a real incoming-call interruption run (the equivalent activity interruption path is already verified). Accessibility, root shell, automatic dialing, and background submission are not used.

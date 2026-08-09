@@ -177,6 +177,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         fixedCommandButton.setOnClickListener(v -> dispatchTranscript("打开相册"));
         root.addView(fixedCommandButton);
 
+        Button channelsButton = new Button(this);
+        channelsButton.setText("模型渠道：ASR / Phone Agent 独立配置");
+        channelsButton.setOnClickListener(v -> startActivity(new Intent(this, ModelConfigActivity.class)));
+        root.addView(channelsButton);
+
         Button diagnosticsButton = new Button(this);
         diagnosticsButton.setText("导出脱敏诊断");
         diagnosticsButton.setOnClickListener(v -> shareDiagnostics());
