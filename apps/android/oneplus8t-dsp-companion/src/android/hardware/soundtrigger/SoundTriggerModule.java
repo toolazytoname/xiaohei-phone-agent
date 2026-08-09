@@ -10,6 +10,14 @@ public final class SoundTriggerModule {
         throw new UnsupportedOperationException("compile-only stub");
     }
 
+    public int startRecognition(int soundModelHandle, SoundTrigger.RecognitionConfig config) {
+        throw new UnsupportedOperationException("compile-only stub");
+    }
+
+    public int stopRecognition(int soundModelHandle) {
+        throw new UnsupportedOperationException("compile-only stub");
+    }
+
     public void detach() {
         throw new UnsupportedOperationException("compile-only stub");
     }

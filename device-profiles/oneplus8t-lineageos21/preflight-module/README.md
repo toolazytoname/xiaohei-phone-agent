@@ -12,8 +12,8 @@ The module is removable with Magisk. A successful preflight is only permission e
 The public build contains no proprietary wake model. For a local lifecycle test, extract a model from an APK you own and inject it only into the ignored build output:
 
 ```bash
-./extract-private-model.sh /path/to/OVoiceManagerServiceOnePlus.apk ../../../../local/sm4_xiaobuxiaobu.uim
-XIAOHEI_WAKE_MODEL=../../../../local/sm4_xiaobuxiaobu.uim ./build-module.sh
+./extract-private-model.sh /path/to/OVoiceManagerServiceOnePlus.apk /path/outside/repo/sm4_xiaobuxiaobu.uim
+XIAOHEI_WAKE_MODEL=/path/outside/repo/sm4_xiaobuxiaobu.uim ./build-module.sh
 ```
 
 This enables only the explicit `load → unload` buttons. It does not start recognition.

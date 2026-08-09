@@ -27,7 +27,7 @@ public final class ProbeActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(pad, pad, pad, pad);
         TextView title = new TextView(this);
-        title.setText("小黑 DSP 伴随组件\nOnePlus 8T 模型生命周期（不启动识别）");
+        title.setText("小黑 DSP 伴随组件\nOnePlus 8T 低功耗识别探针");
         title.setTextSize(23);
         root.addView(title);
         status = new TextView(this);
@@ -50,6 +50,14 @@ public final class ProbeActivity extends Activity {
         unload.setText("卸载模型（保持 Attach）");
         unload.setOnClickListener(v -> show(SoundTriggerGateway.unloadModel(this)));
         root.addView(unload);
+        Button start = new Button(this);
+        start.setText("启动低功耗识别（等待小布小布）");
+        start.setOnClickListener(v -> show(SoundTriggerGateway.startRecognition(this)));
+        root.addView(start);
+        Button stop = new Button(this);
+        stop.setText("停止识别（保留模型）");
+        stop.setOnClickListener(v -> show(SoundTriggerGateway.stopRecognition(this)));
+        root.addView(stop);
         Button detach = new Button(this);
         detach.setText("Detach 并释放模块");
         detach.setOnClickListener(v -> show(SoundTriggerGateway.detach(this)));

@@ -40,6 +40,22 @@ public final class SoundTrigger {
         }
     }
 
+    public static final class ConfidenceLevel { }
+
+    public static final class KeyphraseRecognitionExtra {
+        public KeyphraseRecognitionExtra(int id, int recognitionModes,
+                int coarseConfidenceLevel, ConfidenceLevel[] confidenceLevels) {
+            throw new UnsupportedOperationException("compile-only stub");
+        }
+    }
+
+    public static final class RecognitionConfig {
+        public RecognitionConfig(boolean captureRequested, boolean allowMultipleTriggers,
+                KeyphraseRecognitionExtra[] keyphrases, byte[] data) {
+            throw new UnsupportedOperationException("compile-only stub");
+        }
+    }
+
     public static final class ModuleProperties {
         public int getId() { throw new UnsupportedOperationException("compile-only stub"); }
         public UUID getUuid() { throw new UnsupportedOperationException("compile-only stub"); }

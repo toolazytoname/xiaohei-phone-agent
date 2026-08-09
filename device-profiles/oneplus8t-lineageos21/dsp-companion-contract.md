@@ -38,6 +38,8 @@ The public module builds without those inputs and remains a preflight-only packa
 
 - PASS: unique UID, allowlisted permissions, module discovery, attach and detach.
 - PASS: locally supplied stock model `load → unload`; HAL load succeeded, middleware returned handle 1, and HAL unload returned status 0.
-- NOT RUN in this Companion: `startRecognition`, acoustic trigger, callback forwarding, re-arm, cold-boot repetition, and power measurements.
+- PASS: `startRecognition` entered Qualcomm LPI with `captureRequested=false`; a screen-off acoustic trigger reached the Companion callback at second-stage confidence 99.
+- PASS: automatic re-arm produced a second independent callback, followed by explicit stop, unload, and detach.
+- NOT RUN: callback forwarding into the ordinary Xiaohei app, cold-boot repetition, and power measurements.
 
 This contract deliberately extracts the useful part of the OEM design—model lifecycle and re-arm—from its obsolete system UID, daemon, cross-user, and Oplus service dependencies.
