@@ -14,7 +14,8 @@ Candidate: `0.2.0-alpha.2` (`versionCode=3`), debug signed
 - An event-synchronized alpha.2 trial completed the full acoustic chain: `keyword=小黑小黑` at 12:12:36.973, local ASR `speech_ready` at 12:12:38.481, spoken “Open Gallery”, `OPEN_GALLERY ok=true` at 12:12:42.311, and the system Photo Picker foreground. CPU KWS then returned to `LISTENING`.
 - The independent stop control changed state to `OFF`, destroyed the foreground service, and released active recording. DSP remained `DETACHED`; CPU KWS never changed DSP state.
 - Listening snapshot: total PSS about 149 MB, total RSS about 284 MB, thermal status 0. This is not a battery-life result.
+- A small deterministic acoustic baseline played 10 near-negative Mandarin phrases (`Xiaobai`, `Xiaoai`, OEM `Xiaobu`, `Xiaomi`, reordered/partial Xiaohei, and ordinary commands): 0/10 false accepts. Five positive “Xiaohei Xiaohei” samples at speech rates 120/135/150/165/180 produced 5/5 detections; every session returned to `LISTENING`. This used one synthetic Mac voice in a quiet environment, not a production accuracy corpus.
 
 ## Product boundary and open gates
 
-CPU KWS is opt-in, foreground, microphone-visible, higher-power, and disabled by default. It is a portable fallback, not low-power DSP. M7 still needs corpus false-accept/false-reject and unplugged power tests, an independently verified second device/profile, and either custom DSP keyword support or a narrowed public promise.
+CPU KWS is opt-in, foreground, microphone-visible, higher-power, and disabled by default. It is a portable fallback, not low-power DSP. M7 still needs multi-speaker/noise/distance accuracy and unplugged power tests, an independently verified second device/profile, and either custom DSP keyword support or a narrowed public promise.
