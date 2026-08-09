@@ -12,6 +12,8 @@ import java.util.List;
 
 /** Reads only the current system notification surface. No notification content is persisted. */
 public final class XiaoheiNotificationListener extends NotificationListenerService {
+    static final String ACCESS_CHANGED_EVENT =
+        "io.github.toolazytoname.xiaohei.NOTIFICATION_ACCESS_CHANGED";
     static final class Summary {
         final boolean ok;
         final String detail;
@@ -20,9 +22,27 @@ public final class XiaoheiNotificationListener extends NotificationListenerServi
 
     private static volatile XiaoheiNotificationListener active;
 
-    @Override public void onListenerConnected() { active = this; }
-    @Override public void onListenerDisconnected() { active = null; }
-    @Override public void onDestroy() { if (active == this) active = null; super.onDestroy(); }
+    @Override public void onListenerConnected() {
+        active = this;
+        publishAccessChanged(true);
+    }
+    @Override public void onListenerDisconnected() {
+        active = null;
+        publishAccessChanged(false);
+    }
+    @Override public void onDestroy() {
+        if (active == this) {
+            active = null;
+            publishAccessChanged(false);
+        }
+        super.onDestroy();
+    }
+
+    private void publishAccessChanged(boolean granted) {
+        // No notification metadata or draft content crosses this local event.
+        sendBroadcast(new android.content.Intent(ACCESS_CHANGED_EVENT)
+            .setPackage(getPackageName()).putExtra("granted", granted));
+    }
 
     static boolean accessGranted(Context context) {
         String flat = Settings.Secure.getString(context.getContentResolver(),

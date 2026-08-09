@@ -52,12 +52,27 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             showCpuKwsStatus(intent.getStringExtra("state"), intent.getStringExtra("detail"));
         }
     };
+    private final BroadcastReceiver notificationAccessReceiver = new BroadcastReceiver() {
+        @Override public void onReceive(Context context, Intent intent) {
+            if (!intent.getBooleanExtra("granted", false))
+                clearReplyDraft("通知访问已撤销；已清除待确认草稿，未打开微信");
+        }
+    };
     private final ActionDispatcher actions = new ActionDispatcher();
     private CommandRouter.Request pendingCameraRequest;
     private String pendingCameraText;
     private WakewordBroker broker;
     private VoiceCommandSession voiceSession;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private boolean notificationAccessWatchActive;
+    private final Runnable notificationAccessWatch = new Runnable() {
+        @Override public void run() {
+            if (!notificationAccessWatchActive) return;
+            if (pendingReplyContent != null && !XiaoheiNotificationListener.accessGranted(MainActivity.this))
+                clearReplyDraft("通知访问已撤销；已清除待确认草稿，未打开微信");
+            if (notificationAccessWatchActive) mainHandler.postDelayed(this, 1000);
+        }
+    };
     private boolean privacyLockedAtLaunch;
     private boolean pendingCpuKwsStart;
 
@@ -295,13 +310,21 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             Context.RECEIVER_EXPORTED);
         registerReceiver(cpuKwsStatusReceiver, new IntentFilter(CpuWakewordService.STATUS_EVENT),
             Context.RECEIVER_NOT_EXPORTED);
+        registerReceiver(notificationAccessReceiver,
+            new IntentFilter(XiaoheiNotificationListener.ACCESS_CHANGED_EVENT),
+            Context.RECEIVER_NOT_EXPORTED);
         refreshDspStatus();
         refreshCpuKwsStatus();
+        notificationAccessWatchActive = true;
+        mainHandler.post(notificationAccessWatch);
     }
 
     @Override protected void onStop() {
         unregisterReceiver(dspStatusReceiver);
         unregisterReceiver(cpuKwsStatusReceiver);
+        unregisterReceiver(notificationAccessReceiver);
+        notificationAccessWatchActive = false;
+        mainHandler.removeCallbacks(notificationAccessWatch);
         super.onStop();
     }
 

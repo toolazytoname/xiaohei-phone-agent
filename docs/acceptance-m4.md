@@ -11,6 +11,7 @@ Device: OnePlus 8T / Android 14
 - A test-only, clearly labelled local fixture posted one notification under the WeChat package ID because real WeChat and a test account are absent. “Reply on WeChat saying I will arrive later” displayed App, target “Test Contact”, and the complete draft. Cancel opened nothing.
 - Confirming the visible preview opened only the fixture app. Xiaohei did not populate a field, invoke RemoteInput, click Send, or simulate Accessibility. When the notification was removed before confirmation, the fresh check cancelled the action.
 - The fixture was uninstalled after the run; `com.tencent.mm` is absent again.
+- The product now also treats notification-listener disconnect as a privacy event: it publishes only a package-local access boolean, never notification metadata, and clears any visible pending draft. Because some Android builds do not reliably deliver the listener-disconnect callback, the foreground draft view additionally polls only the access-granted boolean while a draft exists and clears within one second after revocation. This implementation passed compilation/static verification; a fresh end-to-end revoke run remains required below.
 
 ## Safety boundary
 
