@@ -27,6 +27,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private static final String ACTION_TAG = "XiaoheiAction";
     private static final int REQUEST_RECORD_AUDIO = 41;
     private static final int REQUEST_CAMERA = 42;
+    private static final int REQUEST_NOTIFICATIONS = 43;
     private TextView stateView;
     private TextView historyView;
     private Button armButton;
@@ -89,6 +90,14 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     }
 
     private void consumeControlIntent(Intent intent) {
+        if (intent != null && intent.getBooleanExtra("global_stop", false)) {
+            voiceSession.stop();
+            dspProfile.disarm();
+            broker.disarm();
+            intent.removeExtra("global_stop");
+            refreshDspStatus();
+            return;
+        }
         if (intent == null || !intent.getBooleanExtra("rollback_disarm", false)) return;
         dspProfile.disarm();
         intent.removeExtra("rollback_disarm");
@@ -172,6 +181,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         });
         root.addView(stopAllButton);
 
+        Button notificationButton = new Button(this);
+        notificationButton.setText("开启常驻状态通知");
+        notificationButton.setOnClickListener(v -> enableStatusNotification());
+        root.addView(notificationButton);
+
         Button fixedCommandButton = new Button(this);
         fixedCommandButton.setText("测试固定命令：“打开相册”");
         fixedCommandButton.setOnClickListener(v -> dispatchTranscript("打开相册"));
@@ -232,6 +246,9 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         if (stateView == null) return;
         stateView.setText("状态：" + state + "\n" + detail);
         armButton.setText(state == WakewordBroker.State.ARMED ? "关闭基础模式" : "启用基础模式");
+        if (getSharedPreferences("user_controls", MODE_PRIVATE)
+                .getBoolean("status_notification", false))
+            StatusNotification.show(this, state);
     }
 
     @Override public void onWakewordHit(WakewordEvent event) {
@@ -264,6 +281,13 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED)
                 executeRequest("手电筒", pending);
             else broker.finishCommand("未授予相机权限；手电筒未改变；已重新就绪");
+        } else if (requestCode == REQUEST_NOTIFICATIONS) {
+            if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED) {
+                getSharedPreferences("user_controls", MODE_PRIVATE).edit()
+                    .putBoolean("status_notification", true).apply();
+                StatusNotification.show(this, broker.state());
+                historyView.setText("常驻状态通知已开启；通知内可全部停止");
+            } else historyView.setText("未开启状态通知；不影响语音与 DSP 功能");
         }
     }
 
@@ -328,6 +352,18 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             .putExtra(Intent.EXTRA_SUBJECT, "Xiaohei diagnostics")
             .putExtra(Intent.EXTRA_TEXT, report);
         startActivity(Intent.createChooser(share, "导出脱敏诊断"));
+    }
+
+    private void enableStatusNotification() {
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] { Manifest.permission.POST_NOTIFICATIONS }, REQUEST_NOTIFICATIONS);
+            return;
+        }
+        getSharedPreferences("user_controls", MODE_PRIVATE).edit()
+            .putBoolean("status_notification", true).apply();
+        StatusNotification.show(this, broker.state());
+        historyView.setText("常驻状态通知已开启；通知内可全部停止");
     }
 
     @Override protected void onDestroy() {

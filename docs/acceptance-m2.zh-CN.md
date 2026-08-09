@@ -40,6 +40,8 @@
 - 脱敏诊断导出只包含版本、Android/设备型号、助手/DSP 状态和 ASR 可用性，不包含转写、Token 或 URL。
 - 离线 ASR 不依赖网络状态。
 - ASR 与 Phone Agent 已拆成独立配置：远端 Agent 只接受 HTTPS（本机 localhost/127.0.0.1 可用 HTTP）；真机验证明文 HTTP 被拒绝、HTTPS 被接受，测试 Token 只落为 Android Keystore 支持的密文和 IV。测试配置随后已清除，保存配置不会启动服务。
+- 用户主动开启后，常驻状态通知真实显示当前状态和“全部停止”；从 `ARMED` 点击通知动作后回到 `OFF / DSP DETACHED`。
+- 当前 M2 构建完成一次受控重启：`boot_completed=1`，Assistant Role 与快捷磁贴仍在；打开产品为 `OFF / DSP DETACHED`，状态通知恢复，无遗留命令会话。
 
 ## 30 次真机动作回归
 
@@ -47,5 +49,4 @@
 
 ## 尚未满足的 M2 门禁
 
-- 计划中的前台通知仍待实现。
-- 仍需在当前 M2 构建上做一次真实重启恢复，以及真实来电中断；等价的 Activity 中断释放路径已通过。
+- 仍需一次真实来电中断；等价的 Activity 中断释放路径已通过。
