@@ -10,10 +10,14 @@ device_validation:
   validated:
     - qualcomm-adsp-lpi-wakeword-callback
     - clean-probe-rollback
+    - offline-chinese-command-actions
+    - notification-confirmed-draft-foundation
+    - visible-two-step-phone-agent
+    - cpu-kws-xiaohei-acoustic-hit
   pending:
-    - production-android14-wakeword-broker
     - physical-unplug-power-qualification
-    - custom-xiaohei-keyword
+    - custom-dsp-xiaohei-keyword
+    - independent-second-device-profile
 compatibility_tiers:
   - id: base
     root_required: false

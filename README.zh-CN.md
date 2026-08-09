@@ -1,12 +1,12 @@
 # 小黑 AI 手机助手
 
-[English](README.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [DSP 候选设备](docs/dsp-device-candidates.zh-CN.md) · [厂商级交付计划](docs/product-delivery-plan.zh-CN.md) · [路线图](docs/roadmap.zh-CN.md) · [安全模型](SECURITY.md)
+[English](README.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [厂商级交付计划](docs/product-delivery-plan.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [安全策略](SECURITY.md)
 
 > 唤醒它，说出需求，让手机行动——尽量本地、过程可见，高风险动作必须确认。
 
 小黑是一款面向 Android 的开源、本地优先 AI 手机助手。它把用户主动入口或常驻唤醒、短语音命令、与模型无关的意图路由、明确的安全策略和可观察的手机操作组合成一个独立产品。
 
-**当前状态：**实验性产品，目前还没有可安装版本。首个可下载 Alpha 面向普通 Android，先提供按钮、快捷设置和系统助手入口；Qualcomm DSP 是可选设备后端。OnePlus 8T + Android 14 LineageOS 已完成该低功耗链路的实机闭环。
+**当前状态：**可安装的内部 Alpha `0.2.0-alpha.2`，尚无公开二进制 Release。源码构建已提供按钮、快捷设置、系统助手、离线中文 ASR、确定性动作、通知汇总、确认式草稿和有界可见 Phone Agent；可选 CPU KWS 识别“小黑小黑”，OnePlus profile 提供独立控制的低功耗 DSP 路径。
 
 **兼容性承诺：**基础版小黑不要求 OnePlus 手机或 Qualcomm DSP。不兼容的唤醒后端必须隐藏或明确显示“不支持”，不能乐观安装后再报错。详见[兼容性分层](docs/compatibility.zh-CN.md)。
 
@@ -55,13 +55,13 @@ flowchart LR
 |---|---|---|
 | Qualcomm ADSP/LPI 唤醒 | 已验证 | OnePlus 8T 息屏声学输入进入二阶段 RNN 并收到 Android callback |
 | 干净回滚 | 已验证 | 临时 APK、私有库和 Magisk 探针已移除，SoundTrigger 恢复基线 |
-| 通用 Android 唤起入口 | 下一步 | 按钮、快捷设置和能力探测后的系统助手入口；不需要 root |
-| 通用命令到动作核心 | 下一步 | 首条纵切通过公开 Android Intent 打开相册 |
-| 最小 Android 14 DSP Broker | 高级轨道 | 在支持的 system/root profile 上替换临时原厂探针 |
+| 通用 Android 唤起入口 | 主设备已验证 | 按钮、快捷设置、Assistant；源码基础包不依赖 root |
+| 离线命令到动作 | 已验证 | 12 个确定性动作、37 条路由、100 次动作压力回归 |
+| Android 14 DSP Broker | OnePlus 8T 已验证 | 三轮息屏声学闭环和事务式回滚 |
 | 物理拔线功耗资格 | 待执行 | DSP OFF/ARMED 三轮 A/B 和 8–24 小时静置回归 |
-| 短命令 ASR 与意图路由 | 规划中 | 先固定与模型无关的数据契约 |
-| 带确认的 Android 动作 | 规划中 | 首个低风险纵切是“打开相册” |
-| 自定义“小黑小黑”模型 | 调研中 | 必须重新通过 DSP、功耗、准确率和回滚门禁 |
+| 通知与确认式草稿 | 基础纵切已验证 | 只读当前通知，不自动发送 |
+| 可见 Phone Agent | 基础纵切已验证 | 策略保护的设置两步任务和脱敏轨迹导出 |
+| 自定义“小黑小黑” | CPU 兜底已验证 | DSP 原生模型、语料准确率和功耗门禁仍缺 |
 
 ## 目录结构
 

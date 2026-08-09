@@ -512,7 +512,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private void shareDiagnostics() {
         DspProfileClient.Status dsp = dspProfile.status();
         String report = "Xiaohei diagnostics\n"
-            + "app=0.2.0-alpha.1\n"
+            + "app=0.2.0-alpha.2\n"
             + "android=" + Build.VERSION.RELEASE + " api=" + Build.VERSION.SDK_INT + "\n"
             + "device=" + Build.MANUFACTURER + " " + Build.MODEL + "\n"
             + "assistant_state=" + broker.state() + "\n"

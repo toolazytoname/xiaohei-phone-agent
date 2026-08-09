@@ -1,12 +1,12 @@
 # Xiaohei Phone Agent
 
-[简体中文](README.zh-CN.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [DSP candidates](docs/dsp-device-candidates.md) · [Delivery plan](docs/product-delivery-plan.md) · [Roadmap](docs/roadmap.md) · [Security](SECURITY.md)
+[简体中文](README.zh-CN.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [Delivery plan](docs/product-delivery-plan.md) · [Threat model](docs/threat-model.md) · [Security](SECURITY.md)
 
 > Wake it. Say it. Let your phone act — locally when possible, visibly, and with confirmation when it matters.
 
 Xiaohei is an open, local-first AI phone assistant for Android. It connects a user-invoked or always-on entry point, a short voice command, model-independent intent routing, explicit safety policy, and observable Android actions into one product.
 
-**Status:** experimental product. There is no installable Xiaohei release yet. The first downloadable alpha will target ordinary Android with a button, Quick Settings tile, or assistant invocation; Qualcomm DSP is an optional device backend. Its low-power path has been validated end to end on a OnePlus 8T running Android 14 LineageOS.
+**Status:** installable internal Alpha `0.2.0-alpha.2`; no public binary Release yet. Source builds provide button, Quick Settings, Assistant, offline Chinese ASR, deterministic actions, notification summaries, confirmed drafts, and a bounded visible Phone Agent. Optional CPU KWS recognizes “Xiaohei Xiaohei”; the OnePlus profile provides the separately controlled low-power DSP path.
 
 **Compatibility promise:** users do not need a OnePlus phone or Qualcomm DSP for Xiaohei's base product. Unsupported wake backends are hidden or marked unavailable instead of being installed optimistically. See the [compatibility tiers](docs/compatibility.md).
 
@@ -55,13 +55,13 @@ Xiaohei owns the product shell and orchestration. It does not duplicate the devi
 |---|---|---|
 | Qualcomm ADSP/LPI wake-word path | Validated | Screen-off acoustic input reached the second-stage RNN and Android callback on OnePlus 8T |
 | Clean rollback | Validated | Temporary APK, libraries, and Magisk probe removed; SoundTrigger baseline restored |
-| Generic Android invocation | Next | Button, Quick Settings tile, and capability-detected assistant entry; no root required |
-| Generic command-to-action core | Next | First vertical slice opens the gallery through a public Android intent |
-| Minimal Android 14 DSP Broker | Advanced track | Replaces the temporary OEM probe on supported system/root profiles |
+| Generic Android invocation | Validated on primary device | Button, Quick Settings, Assistant; source build has no root dependency |
+| Offline command-to-action | Validated | 12 deterministic actions, 37 router cases, 100-action stress |
+| Android 14 DSP Broker | Validated on OnePlus 8T | Three screen-off acoustic chains and transactional rollback |
 | Physical-unplug power qualification | Planned | Three DSP OFF/ARMED A/B runs plus 8–24 hour idle regression |
-| Short-command ASR and intent routing | Planned | Provider-independent contract first |
-| Confirmed Android action | Planned | “Open gallery” is the first low-risk vertical slice |
-| Custom “Xiaohei” keyword model | Research | Must pass the same DSP, power, accuracy, and rollback gates |
+| Notifications and confirmed drafts | Foundation validated | Current notifications only; no automatic send |
+| Visible Phone Agent | Foundation validated | Policy-gated two-step Settings task and redacted trace export |
+| Custom “Xiaohei” keyword | CPU fallback validated | DSP-native custom model, corpus accuracy, and power gates remain |
 
 ## Repository layout
 

@@ -1,7 +1,7 @@
 # M6 public-Beta hardening acceptance — partial
 
 Date: 2026-08-09  
-Candidate version: `0.2.0-alpha.1` (`versionCode=2`)
+Stress baseline: `0.2.0-alpha.1` (`versionCode=2`); current incremental candidate: `0.2.0-alpha.2` (`versionCode=3`)
 
 ## Proven gates
 
@@ -11,7 +11,10 @@ Candidate version: `0.2.0-alpha.1` (`versionCode=2`)
 - Configuration schema migration v1 maps legacy endpoint/model names, removes legacy keys, copies no token plaintext, and is idempotent. The installed app created `config_schema=1`.
 - On the exact latest offline-ASR debug candidate, the real-device harness completed 100 deterministic actions: 100 success, zero dispatcher failure, zero fatal/ANR signature, and zero active recording client.
 - Repository verification passed with 21 required artifacts, three valid JSON schemas, valid local links, no forbidden binary, no detected credential, and no private path/device identifier.
+- Alpha.2 (`versionCode=3`) adds a bilingual threat model and an exact-APK static gate. The combined candidate passed signing, safe ZIP paths, credential signatures, permission allowlist, exported-component permission gates, and native-library inventory; SHA-256 was recorded. CycloneDX now covers the app plus pinned ASR and KWS bundles.
+- Real-device migration passed: normal code 2→3 upgrade preserved config schema v1; normal 3→2 downgrade was rejected by Android; explicit maintenance downgrade preserved config; re-upgrade restored code 3 and retained the Assistant role.
+- Transactional uninstall from code 3 stopped/verified DSP `DETACHED`, removed the app and Assistant role, and preserved the Companion. Fresh install restored code 3 and the Assistant role with Accessibility disabled.
 
 ## Open M6 gates
 
-The candidate is not a public Beta yet. Required evidence still missing: 8–24 hour unplugged idle/power run, 20+ app/page matrix, exact release-candidate malware/dependency scan, production signing-key governance, model redistribution approval, upgrade/downgrade/backup/restore matrix, full diagnostic bundle, and a genuinely signed reproducible public APK.
+The candidate is not a public Beta yet. Required evidence still missing: 8–24 hour unplugged idle/power, 20+ app/page matrix, external malware/dependency review beyond the local static gate, production signing-key governance, model redistribution approval, backup/restore coverage, full diagnostic bundle, and a genuinely production-signed reproducible APK.

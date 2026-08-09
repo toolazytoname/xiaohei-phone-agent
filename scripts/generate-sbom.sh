@@ -5,20 +5,21 @@ repo_root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 output="${1:-$repo_root/apps/android/xiaohei-android/build/xiaohei-sbom.cdx.json}"
 apk="${XIAOHEI_APK:-}"
 asr_apk="${XIAOHEI_LOCAL_ASR_APK:-}"
+kws_apk="${XIAOHEI_LOCAL_KWS_APK:-}"
 mkdir -p "$(dirname "$output")"
-python3 - "$output" "$apk" "$asr_apk" <<'PY'
+python3 - "$output" "$apk" "$asr_apk" "$kws_apk" <<'PY'
 import datetime
 import hashlib
 import json
 import pathlib
 import sys
 
-output, apk, asr = map(pathlib.Path, sys.argv[1:])
+output, apk, asr, kws = map(pathlib.Path, sys.argv[1:])
 components = [{
     "type": "application",
-    "bom-ref": "pkg:generic/xiaohei-android@0.2.0-alpha.1",
+    "bom-ref": "pkg:generic/xiaohei-android@0.2.0-alpha.2",
     "name": "xiaohei-android",
-    "version": "0.2.0-alpha.1",
+    "version": "0.2.0-alpha.2",
     "licenses": [{"license": {"id": "MIT"}}],
 }]
 if asr.is_file():
@@ -27,6 +28,17 @@ if asr.is_file():
         "type": "library",
         "bom-ref": "pkg:generic/sherpa-onnx-android@1.13.4",
         "name": "sherpa-onnx Android + local model bundle",
+        "version": "1.13.4",
+        "hashes": [{"alg": "SHA-256", "content": digest}],
+        "licenses": [{"license": {"name": "Upstream code Apache-2.0; model redistribution requires separate review"}}],
+        "scope": "required",
+    })
+if kws.is_file():
+    digest = hashlib.sha256(kws.read_bytes()).hexdigest()
+    components.append({
+        "type": "library",
+        "bom-ref": "pkg:generic/sherpa-onnx-android-kws@1.13.4",
+        "name": "sherpa-onnx Android Chinese KWS bundle",
         "version": "1.13.4",
         "hashes": [{"alg": "SHA-256", "content": digest}],
         "licenses": [{"license": {"name": "Upstream code Apache-2.0; model redistribution requires separate review"}}],

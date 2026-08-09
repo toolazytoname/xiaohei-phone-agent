@@ -10,8 +10,8 @@ keystore="${ANDROID_DEBUG_KEYSTORE:-$HOME/.android/debug.keystore}"
 local_asr_apk="${XIAOHEI_LOCAL_ASR_APK:-}"
 local_kws_apk="${XIAOHEI_LOCAL_KWS_APK:-}"
 variant="${XIAOHEI_BUILD_VARIANT:-debug}"
-version_code="${XIAOHEI_VERSION_CODE:-2}"
-version_name="${XIAOHEI_VERSION_NAME:-0.2.0-alpha.1}"
+version_code="${XIAOHEI_VERSION_CODE:-3}"
+version_name="${XIAOHEI_VERSION_NAME:-0.2.0-alpha.2}"
 
 if [[ "$variant" != debug && "$variant" != release ]]; then
   printf 'invalid XIAOHEI_BUILD_VARIANT: %s\n' "$variant" >&2
