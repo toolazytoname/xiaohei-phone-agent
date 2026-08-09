@@ -23,6 +23,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private static volatile XiaoheiAccessibilityService active;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private String pendingLabel;
+    private String pendingPackage;
     private List<String> pendingLabels;
     private int pendingIndex;
     private String taskId;
@@ -40,11 +41,15 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     }
     static boolean startTask(String label) {
         XiaoheiAccessibilityService service = active;
-        return service != null && service.begin(Arrays.asList(label));
+        return service != null && service.begin("com.android.settings", Arrays.asList(label));
     }
     static boolean startTask(List<String> labels) {
         XiaoheiAccessibilityService service = active;
-        return service != null && service.begin(labels);
+        return service != null && service.begin("com.android.settings", labels);
+    }
+    static boolean startTask(String packageName, String label) {
+        XiaoheiAccessibilityService service = active;
+        return service != null && service.begin(packageName, Arrays.asList(label));
     }
     static void stopTask(String reason) {
         XiaoheiAccessibilityService service = active;
@@ -63,7 +68,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
             return;
         }
         CharSequence pkg = event.getPackageName();
-        if (pkg == null || !pkg.toString().startsWith("com.android.settings")) return;
+        if (pkg == null || !pkg.toString().equals(pendingPackage)) return;
         executing = true;
         handler.postDelayed(this::executePendingStep, 350);
     }
@@ -75,13 +80,15 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         super.onDestroy();
     }
 
-    private boolean begin(List<String> labels) {
-        if (labels == null || labels.isEmpty() || labels.size() > 8 || pendingLabel != null) return false;
+    private boolean begin(String packageName, List<String> labels) {
+        if (packageName == null || !AgentPolicy.packageAllowed(packageName) || labels == null
+                || labels.isEmpty() || labels.size() > 8 || pendingLabel != null) return false;
         for (String label : labels) if (label == null || label.trim().isEmpty()) return false;
         pendingLabels = new java.util.ArrayList<>();
         for (String label : labels) pendingLabels.add(label.trim());
         pendingIndex = 0;
         pendingLabel = pendingLabels.get(0);
+        pendingPackage = packageName;
         taskId = UUID.randomUUID().toString();
         deadline = System.currentTimeMillis() + 60_000;
         steps = 0;
@@ -97,6 +104,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         if (pendingLabel == null) return;
         AccessibilityNodeInfo root = getRootInActiveWindow();
         AgentSnapshot before = AgentSnapshot.capture(root);
+        if (!before.packageName.equals(pendingPackage)) return;
         if (!AgentPolicy.packageAllowed(before.packageName)) {
             trace(before, 0, "deny", false, "denied");
             stopInternal("拒绝：App 不在允许列表 " + before.packageName);
@@ -173,6 +181,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private void complete(String detail) {
         Log.i(TAG, "task=complete steps=" + steps + " detail=" + detail);
         pendingLabel = null;
+        pendingPackage = null;
         pendingLabels = null;
         showNotification(detail);
     }
@@ -180,6 +189,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private void stopInternal(String reason) {
         if (pendingLabel != null) Log.i(TAG, "task=stopped steps=" + steps + " reason=" + reason);
         pendingLabel = null;
+        pendingPackage = null;
         pendingLabels = null;
         executing = false;
         handler.removeCallbacksAndMessages(null);

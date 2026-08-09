@@ -8,7 +8,9 @@ public final class AgentPolicyTest {
         expect(AgentPolicy.Decision.REQUIRE_CONFIRMATION, "com.android.settings", "应用信息", "卸载");
         if (AgentPolicy.packageAllowed("com.example.unknown"))
             throw new AssertionError("unknown package must not be allowlisted");
-        System.out.println("PASS agent-policy allow=1 deny=2 confirm=1 package-deny=1");
+        if (!AgentPolicy.packageAllowed("com.android.calculator2"))
+            throw new AssertionError("calculator must be explicitly allowlisted");
+        System.out.println("PASS agent-policy allow=1 deny=2 confirm=1 package-allow=1 package-deny=1");
     }
 
     private static void expect(AgentPolicy.Decision expected, String pkg, String text, String label) {

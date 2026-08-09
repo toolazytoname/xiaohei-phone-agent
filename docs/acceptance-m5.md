@@ -13,6 +13,7 @@ Device: OnePlus 8T / Android 14
 - Two mock requests were made and no external model or user relay token was used. The reverse tunnel, mock profile, Accessibility grant, and Notification-listener test grant were removed afterward. The OnePlus DSP remained `DETACHED`.
 - The latest candidate completed a real two-step Settings task: `Network & internet`, re-observe, then `Internet`. Two success records contain snapshot transitions `1→2` and `3→4`, ending in Settings `SubSettings`.
 - A bounded 256 KiB `agent-trace.v1.jsonl` export stores no tree, screenshot, prompt, or token. Two success rows and one deny row parsed as JSON; the sensitive target became `[REDACTED_POLICY_TARGET]`. The trace was cleared and Accessibility revoked afterward.
+- Agent execution is now package-bound: the expected package must match the active Accessibility event and root snapshot. A real cross-app Calculator task clicked `1` exactly once with package `com.android.calculator2` and a successful trace. A race redirected to Settings produced zero clicks and was then stopped by disabling the service.
 
 ## Enforced bounds
 

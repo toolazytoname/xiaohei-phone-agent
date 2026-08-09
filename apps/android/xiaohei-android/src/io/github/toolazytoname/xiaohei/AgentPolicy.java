@@ -30,6 +30,17 @@ final class AgentPolicy {
             || pkg.startsWith("com.google.android")
             || pkg.startsWith("com.android.chrome")
             || pkg.startsWith("org.mozilla")
+            || pkg.equals("com.android.calculator2")
+            || pkg.equals("com.android.contacts")
+            || pkg.equals("com.android.deskclock")
+            || pkg.equals("com.android.dialer")
+            || pkg.equals("com.android.documentsui")
+            || pkg.equals("org.lineageos.aperture")
+            || pkg.equals("org.lineageos.glimpse")
+            || pkg.equals("org.lineageos.jelly")
+            || pkg.equals("org.lineageos.etar")
+            || pkg.equals("org.lineageos.recorder")
+            || pkg.equals("org.lineageos.eleven")
             || pkg.equals("io.github.toolazytoname.xiaohei");
     }
 

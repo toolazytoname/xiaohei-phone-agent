@@ -13,6 +13,7 @@
 - 共两次 mock 请求，没有调用外部模型或用户中转站 Token。验收后已删除 reverse、mock 配置、Accessibility 授权和通知监听测试授权；OnePlus DSP 保持 `DETACHED`。
 - 最新候选完成设置“网络和互联网→互联网”真实两步任务，每步重新观察，得到 snapshot `1→2`、`3→4` 两条 success，最终进入 Settings `SubSettings`。
 - 新增 256 KiB 有界脱敏 `agent-trace.v1.jsonl`；不保存语义树、截图、Prompt 或 Token。两条 success 与一条 deny 均通过 JSON 解析，敏感目标变为 `[REDACTED_POLICY_TARGET]`。验收后清空轨迹并再次撤销 Accessibility。
+- Agent 执行现绑定预期包名：无障碍事件和根快照必须匹配该包。真机计算器跨 App 任务对 `com.android.calculator2` 中“1”精确点击一次并生成 success 轨迹；刻意抢切到设置页得到 0 点击，随后通过关闭服务停止。
 
 ## 本地强制边界
 

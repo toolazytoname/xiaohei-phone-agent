@@ -80,6 +80,10 @@ public final class AgentActivity extends Activity {
         multi.setText("真机验收：设置 → 网络和互联网 → 互联网（两步）");
         multi.setOnClickListener(v -> runSettingsSteps("网络和互联网", "互联网"));
         root.addView(multi);
+        Button calculator = new Button(this);
+        calculator.setText("真机验收：计算器 → 1（跨 App 单步）");
+        calculator.setOnClickListener(v -> runAppTask("com.android.calculator2", "1"));
+        root.addView(calculator);
         Button stopGate = new Button(this);
         stopGate.setText("安全验收：启动等待任务（随后测试全局停止）");
         stopGate.setOnClickListener(v -> runSettingsTask("不存在的验收目标"));
@@ -151,6 +155,21 @@ public final class AgentActivity extends Activity {
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
 
+    private void runAppTask(String packageName, String label) {
+        if (!XiaoheiAccessibilityService.startTask(packageName, label)) {
+            state.setText("无法启动跨 App 任务：请先授权服务，或已有任务正在执行");
+            return;
+        }
+        Intent launch = getPackageManager().getLaunchIntentForPackage(packageName);
+        if (launch == null) {
+            XiaoheiAccessibilityService.stopTask("验收目标未安装");
+            state.setText("验收目标未安装；没有执行");
+            return;
+        }
+        state.setText("RUNNING：预期 App=" + packageName + "；目标=" + label);
+        startActivity(launch);
+    }
+
     private void shareTrace() {
         String trace = AgentTraceStore.export(this);
         if (trace.isEmpty()) { state.setText("暂无可导出的 Agent 轨迹"); return; }
@@ -190,7 +209,7 @@ public final class AgentActivity extends Activity {
             state.setText("计划已过期或被本地策略拒绝");
             return;
         }
-        if (!XiaoheiAccessibilityService.startTask(proposal.label)) {
+        if (!XiaoheiAccessibilityService.startTask(proposal.packageName, proposal.label)) {
             state.setText("执行层未连接或已有任务；没有执行");
             return;
         }
