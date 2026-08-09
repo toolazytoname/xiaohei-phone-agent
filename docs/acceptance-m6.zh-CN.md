@@ -21,6 +21,7 @@
 - 模型渠道备份/恢复新增版本化、有长度上限的文本格式，并通过纯 Java 往返与畸形输入测试。它只包含 ASR 模式、Agent 启用偏好、Endpoint 和模型名，绝不序列化 Token。真机演练已粘贴固定备份，观察到“Token 已清除、Phone Agent 保持关闭且未启动服务”，随后恢复测试前的非敏感渠道配置并清除私有验收快照。演练前设备没有已配置 Token；含 Token 迁移有意不支持，必须重新输入。
 - v2/v3 签名前已规范构建输入：生成的 DEX 固定 ZIP 时间戳、移除 ZIP 额外元数据，并关闭 API 26 不需要的 v1 JAR 签名。同一 RSA key 和同一 ASR/KWS 输入的两次完整 debug 构建得到字节一致 SHA-256 `e4132ec99f7fc5846e2aa8977d69c27274c20e4f3474529df484ffdb87fff0dc`，并验证签名。`scripts/verify-reproducible-build.sh` 可对指定 variant 重复该门禁。
 - 已创建仓库外的 RSA-4096 小黑 release 身份，口令只保存在本机 Keychain。使用该身份的内部 non-debug Alpha release 候选连续构建两次字节一致，并通过精确扫描：`6ad593561125af22fb10161f286c2f15a906af8734db9c065d3b80b2ffd9a26a`。证书指纹以及保管/轮换策略已公开记录，但不暴露私有材料。
+- USB 物理拔除后，Android 14 TLS 无线调试成为唯一 ADB transport。通过该拔线连接，精确 alpha.2 debug 包再次完成 100 次压力 harness（100 成功、0 失败、0 Fatal/ANR、0 活跃录音客户端）及 25 页面启动 harness（25/25、0 小黑 Fatal/ANR）。这只是短时交互回归，不是待机/功耗证据。
 
 ## 尚未满足的 M6 门禁
 

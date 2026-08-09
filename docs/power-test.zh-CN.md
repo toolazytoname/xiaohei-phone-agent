@@ -3,7 +3,7 @@
 本流程在 USB 真正拔除后由手机自行采样。Android 电池模拟只允许验证 harness，绝不能作为验收证据。
 
 1. 把小黑置于目标模式并记录：`cpu-off-dsp-off`、`cpu-off-dsp-armed` 或 `cpu-kws-on-dsp-off`。
-2. USB 尚连接时启动监控：
+2. USB 尚连接时启动监控。已经验收的 Android TLS 无线调试 transport 可以作为 `SERIAL`；不要为了本测试开启传统 TCP/5555：
 
    ```sh
    bash scripts/start-idle-monitor.sh --serial SERIAL --mode cpu-off-dsp-off --hours 8

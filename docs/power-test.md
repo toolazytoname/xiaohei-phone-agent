@@ -3,7 +3,7 @@
 This procedure produces device-side evidence after USB is physically removed. Android battery simulation is allowed only for harness self-test and is never acceptance evidence.
 
 1. Put Xiaohei in the intended mode and record it: `cpu-off-dsp-off`, `cpu-off-dsp-armed`, or `cpu-kws-on-dsp-off`.
-2. While USB is still connected, start the monitor:
+2. While USB is still connected, start the monitor. A previously verified Android TLS Wireless-debugging transport may be used as `SERIAL`; do not enable legacy TCP/5555 just for this test:
 
    ```sh
    bash scripts/start-idle-monitor.sh --serial SERIAL --mode cpu-off-dsp-off --hours 8
