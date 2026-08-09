@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -226,6 +227,17 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             broker.dispatchManualHit();
         });
         root.addView(talkButton);
+
+        if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+            Button callInterruptionTestButton = new Button(this);
+            callInterruptionTestButton.setText("来电中断验收（最多 2 分钟）");
+            callInterruptionTestButton.setOnClickListener(v -> {
+                if (broker.state() == WakewordBroker.State.OFF
+                        || broker.state() == WakewordBroker.State.ERROR) broker.armManualMode();
+                if (broker.beginVoiceCommand()) voiceSession.startInterruptionTest();
+            });
+            root.addView(callInterruptionTestButton);
+        }
 
         Button stopAllButton = new Button(this);
         stopAllButton.setText("全部停止：语音 + DSP + CPU 唤醒");

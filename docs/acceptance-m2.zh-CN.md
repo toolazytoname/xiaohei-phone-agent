@@ -48,6 +48,7 @@
 
 `scripts/test-m2-device-actions.sh` 通过同一 Router/Dispatcher 连续执行三轮、每轮 10 个低风险动作。最终证据为 `actions=30 failures=0`；脚本逐条等待新增的 `ok=true`，缺失或重复都失败。
 
-## 尚未满足的 M2 门禁
+## 真实来电门禁（已完成）
 
-- 短命令会话现在在启动前请求 Android 临时独占语音焦点；焦点被系统收回（包括来电等独占音频）时会取消识别、释放麦克风并给出可解释状态。真机 debug 包额外输出脱敏生命周期标记：`session_started`、`audio_focus_lost` 和 `session_stopped microphone_released=true`，不含转写、号码或通话身份。在没有处于听取状态时收到的电话，只能证明结束后没有录音客户端，不能证明中断路径。仍需一次“小黑正在听取时”的真实来电中断；等价的 Activity 中断释放路径已通过，代码审查不能替代真实来电。
+- 短命令会话在启动前请求 Android 临时独占语音焦点；焦点被系统收回时会取消识别、释放麦克风并给出可解释状态。为避免正常 8 秒短命令窗口无法配合人工拨号，debug 包新增可见的两分钟来电中断验收按钮；release 包仍保持 8 秒上限且不显示该按钮。
+- OnePlus 8T 真机上，离线 ASR 于 15:03:17 记录 `session_started`、15:03:18 记录 `speech_ready`；真实来电在 15:03:38 触发 `audio_focus_lost change=-2 active=true`，下一毫秒记录 `session_stopped microphone_released=true`。界面回到 `ARMED` 并明确提示系统中断、已释放麦克风，事后活跃录音客户端为 0。日志不含转写、号码或通话身份。M2 已完成。

@@ -1,6 +1,7 @@
 package io.github.toolazytoname.xiaohei;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -24,7 +25,13 @@ public final class XiaoheiRecognitionService extends RecognitionService {
             return;
         }
         cancelled = false;
-        worker = new Thread(() -> recognize(callback), "xiaohei-local-asr");
+        long maximumMs = 8000;
+        if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+            maximumMs = Math.max(8000, Math.min(120000,
+                recognizerIntent.getLongExtra(VoiceCommandSession.EXTRA_MAX_DURATION_MS, 8000)));
+        }
+        final long boundedMaximumMs = maximumMs;
+        worker = new Thread(() -> recognize(callback, boundedMaximumMs), "xiaohei-local-asr");
         worker.start();
     }
 
@@ -32,7 +39,7 @@ public final class XiaoheiRecognitionService extends RecognitionService {
 
     @Override protected void onCancel(Callback callback) { cancelled = true; }
 
-    private void recognize(Callback callback) {
+    private void recognize(Callback callback, long maximumMs) {
         AudioRecord audio = null;
         try (LocalAsrEngine engine = new LocalAsrEngine(this)) {
             int minimum = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO,
@@ -48,7 +55,7 @@ public final class XiaoheiRecognitionService extends RecognitionService {
             audio.startRecording();
             callback.beginningOfSpeech();
             short[] buffer = new short[1600];
-            long deadline = System.currentTimeMillis() + 8000;
+            long deadline = System.currentTimeMillis() + maximumMs;
             String last = "";
             while (!cancelled && System.currentTimeMillis() < deadline) {
                 int count = audio.read(buffer, 0, buffer.length);

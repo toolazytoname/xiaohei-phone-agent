@@ -3,6 +3,7 @@ package io.github.toolazytoname.xiaohei;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 /** A bounded, visible command session. It never keeps audio after a result or error. */
 final class VoiceCommandSession implements RecognitionListener {
     private static final String TAG = "XiaoheiVoice";
+    static final String EXTRA_MAX_DURATION_MS =
+        "io.github.toolazytoname.xiaohei.extra.MAX_DURATION_MS";
     interface Listener {
         void onSpeechReady();
         void onPartialTranscript(String text);
@@ -59,6 +62,18 @@ final class VoiceCommandSession implements RecognitionListener {
     }
 
     void start() {
+        start(0);
+    }
+
+    void startInterruptionTest() {
+        if ((context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) {
+            listener.onSpeechError("来电中断验收只在调试包中可用");
+            return;
+        }
+        start(120000);
+    }
+
+    private void start(long maxDurationMs) {
         if (!isAvailable()) {
             Log.i(TAG, "session_start_rejected recognizer_unavailable");
             listener.onSpeechError("当前系统没有可用的语音识别服务；请配置独立 ASR 渠道");
@@ -85,6 +100,7 @@ final class VoiceCommandSession implements RecognitionListener {
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 1200);
         intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 900);
+        if (maxDurationMs > 0) intent.putExtra(EXTRA_MAX_DURATION_MS, maxDurationMs);
         active = true;
         recognizer.startListening(intent);
     }
