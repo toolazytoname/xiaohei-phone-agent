@@ -41,6 +41,10 @@ CPU wake word is a portable experimental fallback, not a low-power DSP mode. Use
 - Tap “stop all: voice + DSP + CPU wake” in the app, or “stop all” from the ongoing status notification.
 - For a running Phone Agent task, use its “global stop” button or “stop Agent” notification action.
 
+### When an Agent cannot find a safe target
+
+If a visible, low-risk Phone Agent task says that it cannot find its semantic target, first read the page yourself. With Phone Agent status notifications enabled, its notification offers **one local visual preview** during the single recovery window. Tapping it captures the current allowed page once, stops the task, and shows a temporary preview when you return to Phone Agent. The preview stays in memory only: it is not uploaded, saved, or used for automatic clicks. After checking it, enter a new exact low-risk target yourself. Do not request a preview on a page containing private information; sensitive pages are rejected before capture.
+
 After stopping there should be no pending command. If the microphone indicator remains, force-stop Xiaohei and revoke microphone permission in Android Settings; record the time and displayed state for diagnosis.
 
 ## Models and channels: configuration only
@@ -59,6 +63,7 @@ After an edit, confirm the page says configuration was saved and no service was 
 - Microphone is used only for an invoked short command or CPU wake word explicitly started by you.
 - Notification access is optional; it reads current system notifications only when queried and does not retain chat bodies.
 - Accessibility is optional and only serves visible user-started Phone Agent tasks. Payment, banking, password, OTP, and DRM screens are denied by default.
+- Phone Agent status notifications are optional but required for notification stop and the one-time local visual-preview recovery. Android 13+ asks for this permission explicitly; decline it if you do not want those controls.
 - To fully disable: first use global stop, then revoke permissions in Android Settings; uninstall Xiaohei for full removal. Confirm DSP is `DETACHED` before removing a OnePlus enhancement.
 
 ## One useful failure record
