@@ -22,7 +22,7 @@
 - v2/v3 签名前已规范构建输入：生成的 DEX 固定 ZIP 时间戳、移除 ZIP 额外元数据，并关闭 API 26 不需要的 v1 JAR 签名。同一 RSA key 和同一 ASR/KWS 输入的两次完整 debug 构建得到字节一致 SHA-256 `e4132ec99f7fc5846e2aa8977d69c27274c20e4f3474529df484ffdb87fff0dc`，并验证签名。`scripts/verify-reproducible-build.sh` 可对指定 variant 重复该门禁。
 - 已创建仓库外的 RSA-4096 小黑 release 身份，口令只保存在本机 Keychain。使用该身份的内部 non-debug Alpha release 候选连续构建两次字节一致，并通过精确扫描：`6ad593561125af22fb10161f286c2f15a906af8734db9c065d3b80b2ffd9a26a`。证书指纹以及保管/轮换策略已公开记录，但不暴露私有材料。
 - USB 物理拔除后，Android 14 TLS 无线调试成为唯一 ADB transport。通过该拔线连接，精确 alpha.2 debug 包再次完成 100 次压力 harness（100 成功、0 失败、0 Fatal/ANR、0 活跃录音客户端）及 25 页面启动 harness（25/25、0 小黑 Fatal/ANR）。这只是短时交互回归，不是待机/功耗证据。
-- Alpha.3 冻结了不内嵌模型资产的可公开通用范围。仓库外 RSA-4096 release 身份连续两次生成字节一致的非 debug 候选包，SHA-256 `f4ce5eb9dcf6695a3f0cf63d4f9ae427c197170580c0bb894514d551a84c98b3`。本地发布包把它绑定到源码 revision `cd31d01fae835351dd2a8e21dfe115cb9e8cff0f`、证书指纹、单组件 SBOM、checksum 和中英文说明；尚未上传。
+- Alpha.3 冻结了不内嵌模型资产的可公开通用范围。仓库外 RSA-4096 release 身份连续两次生成字节一致的非 debug 候选包，SHA-256 `f4ce5eb9dcf6695a3f0cf63d4f9ae427c197170580c0bb894514d551a84c98b3`。本地发布包记录干净源码 revision，并把它与证书指纹、单组件 SBOM、checksum 和中英文说明绑定；尚未上传。
 - 精确 release 签名的通用 APK 已在干净 Android 14 ARM64 AOSP profile 全新安装。onboarding 没有请求权限，基础页如实显示无 DSP profile、未内嵌 KWS；随后卸载确认包不存在。该轮补充 M3–M5 更广的 debug 验收，不取代后者。
 - ClamAV 1.5.4 使用 3,627,998 条签名独立扫描精确通用 release 候选与精确私有组合模型 debug 候选（`5b5077f9fe12413ee268457a981c863057e546995c675d851343177dc6bc6e17`）：扫描 2 个文件、感染 0 个。该结果是有边界的恶意软件引擎证据，不是“绝无漏洞”保证。
 - 仓库外已生成 `age`/X25519 签名恢复归档，identity 存于本机 Keychain；完整解密/哈希演练与 release keystore 及证书 `1c0cf5bf518c3b63037dae70388974551bb1f0f851084328a48af13ebcc12c07` 一致。它目前仍是签名 Mac 上权限收紧的**待移出暂存**；没有独立控制的离线介质，不能关闭离线恢复门禁。
