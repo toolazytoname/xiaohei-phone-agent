@@ -9,7 +9,7 @@ This procedure produces device-side evidence after USB is physically removed. An
    bash scripts/start-idle-monitor.sh --serial SERIAL --mode cpu-off-dsp-off --hours 8
    ```
 
-3. Physically unplug USB/power within ten minutes. Sampling begins only after Android reports AC, USB, and wireless power all false.
+3. Physically unplug USB/power within ten minutes. Sampling begins only after Android reports AC, USB, and wireless power all false, no active call, and non-interactive wakefulness. The raw TSV records both the requested and actual sampling-start epochs plus the preflight wait, so elapsed time is never inferred from the host launch time.
 4. Do not use the phone during the run. Reconnect after the requested duration and collect:
 
    ```sh

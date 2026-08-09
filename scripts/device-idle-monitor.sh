@@ -27,7 +27,9 @@ while :; do
 done
 
 start=$(date +%s)
-printf '# xiaohei-idle.v1\tmode=%s\tduration=%s\tinterval=%s\n' "$mode" "$duration" "$interval" > "$output"
+preflight_wait=$((start - start_wait))
+printf '# xiaohei-idle.v2\tmode=%s\tduration=%s\tinterval=%s\trequested_at=%s\tsampling_started_at=%s\tpreflight_wait_s=%s\n' \
+  "$mode" "$duration" "$interval" "$start_wait" "$start" "$preflight_wait" > "$output"
 printf 'epoch\telapsed_s\tlevel\tstatus\tcurrent_ua\ttemp_deci_c\tthermal_status\tactive_record\txiaohei_wakelock\twakefulness\tcall_active\tpowered\n' >> "$output"
 while :; do
   now=$(date +%s)
