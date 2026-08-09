@@ -8,6 +8,10 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +36,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private final GalleryActionAdapter gallery = new GalleryActionAdapter();
     private WakewordBroker broker;
     private VoiceCommandSession voiceSession;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,7 +162,12 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     @Override public void onWakewordHit(WakewordEvent event) {
         historyView.setText("最近唤醒：" + event.source + " · " + event.keywordId + "\n正在开启短命令会话…");
-        startVoiceCommand();
+        ToneGenerator tone = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 55);
+        tone.startTone(ToneGenerator.TONE_PROP_BEEP, 120);
+        mainHandler.postDelayed(() -> {
+            tone.release();
+            startVoiceCommand();
+        }, 180);
     }
 
     private void startVoiceCommand() {
@@ -209,6 +219,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     }
 
     @Override protected void onDestroy() {
+        mainHandler.removeCallbacksAndMessages(null);
         voiceSession.stop();
         super.onDestroy();
     }

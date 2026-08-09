@@ -13,6 +13,7 @@
 - 离线中文 ASR 将“打开相册”转写为完全匹配文本，启动系统 Photo Picker，完成后恢复 `ARMED`。
 - ASR 结束后 audio_flinger 报告 `No active record clients`；DSP disarm 后无 active/loaded model。
 - 普通 APK 卸载与同一离线 APK 重装通过；Companion 在整个过程中保持 `DETACHED`。
+- 三次连续全链路均通过：确认 `Dozing`/显示关闭后播放“小布小布”，DSP 二阶段置信度 99，Assistant 拉起，离线 ASR 识别“打开手机相册/请打开手机相册”，Photo Picker 动作成功并自动 re-arm；每轮结束均无 active record client。
 
 ## 本轮发现并修复
 
@@ -21,10 +22,9 @@
 3. Activity 调试生命周期不能作为日常服务：改为签名保护的 DSP 前台服务。
 4. 锁屏自动 startService 被 Android 14 拒绝：状态读取改为签名保护的只读 ContentProvider。
 5. 直接卸载可能留下陈旧 Role holder：回滚脚本先移除 Role 再卸载。
+6. Assistant 与维护入口可产生多个 Activity task：主界面改为 `singleTask`，统一复用状态实例。
 
 ## 尚未满足的 M1 门禁
 
-- 仍需三次“息屏声学唤醒 → 离线 ASR → 打开相册”完整连续循环；现有证据分别证明声学回调和 ASR 动作，但尚未形成三次同一连续链路记录。
 - 仍需物理拔掉 USB 后完成 DSP OFF/ARMED 功耗 A/B。
-- 提示音尚未实现。
-
+- 120 ms 提示音已实现，仍需一次真机听感确认。
