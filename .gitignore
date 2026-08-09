@@ -1,5 +1,7 @@
 .DS_Store
 apps/android/xiaohei-android/build/
+apps/android/oneplus8t-dsp-companion/build/
+device-profiles/oneplus8t-lineageos21/preflight-module/build/
 .idea/
 .vscode/
 .gradle/

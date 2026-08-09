@@ -6,7 +6,7 @@ package io.github.toolazytoname.xiaohei;
  * supported hardware profile.
  */
 final class WakewordBroker {
-    enum State { OFF, ARMING, ARMED, TRIGGERED, ERROR }
+    enum State { OFF, ARMING, ARMED, TRIGGERED, LISTENING, THINKING, ACTING, ERROR }
 
     interface Listener {
         void onStateChanged(State state, String detail);
@@ -59,10 +59,31 @@ final class WakewordBroker {
         dispatch(new WakewordEvent(WakewordEvent.Source.DSP, keywordId, confidence, captureAvailable));
     }
 
+    boolean beginVoiceCommand() {
+        if (state != State.TRIGGERED && state != State.ARMED) return false;
+        transition(State.LISTENING, "正在听取一条短命令；结束后立即释放麦克风");
+        return true;
+    }
+
+    void beginThinking() {
+        if (state == State.LISTENING) transition(State.THINKING, "正在解析命令");
+    }
+
+    void beginAction(String detail) {
+        transition(State.ACTING, detail);
+    }
+
+    void finishCommand(String detail) {
+        if (state != State.OFF) transition(State.ARMED, detail);
+    }
+
+    void failCommand(String safeDetail) {
+        transition(State.ERROR, safeDetail);
+    }
+
     private void dispatch(WakewordEvent event) {
         transition(State.TRIGGERED, "已收到 " + event.source + " 唤醒事件");
         listener.onWakewordHit(event);
-        transition(State.ARMED, "已重新就绪；未保留命令音频");
     }
 
     private void transition(State next, String detail) {

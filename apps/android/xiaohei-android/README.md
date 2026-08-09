@@ -1,8 +1,8 @@
 # Xiaohei Android vertical slice / 小黑 Android 纵切
 
-This is the first runnable product slice: an explicit manual wake event is routed to the low-risk public Android intent **Open Gallery**. It requests no network, microphone, accessibility, root, notification, or hidden Android permission.
+This is the first runnable product slice: an explicit manual wake event is routed to the low-risk public Android intent **Open Gallery**. The deterministic action requires no network, accessibility, root, notification, or hidden Android permission. The optional bounded command session requests microphone access only after a wake event; it releases the recognizer on a final result, error, or Activity destruction.
 
-It is deliberately not a DSP implementation. A verified device-specific DSP adapter must call `WakewordBroker.dispatchDspHit()` only after its own arm/start lifecycle succeeds.
+It is deliberately not a DSP implementation. A verified device-specific DSP adapter must call `WakewordBroker.dispatchDspHit()` only after its own arm/start lifecycle succeeds. On the current device, the Android framework exposes no usable general `RecognitionService`; the UI reports that absence rather than treating another app's service as a dependency.
 
 Build locally:
 

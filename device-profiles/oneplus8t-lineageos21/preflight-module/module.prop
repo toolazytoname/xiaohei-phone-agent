@@ -1,0 +1,6 @@
+id=xiaohei-dsp-preflight
+name=Xiaohei DSP preflight (OnePlus 8T local)
+version=0.1.0
+versionCode=1
+author=local-device-profile
+description=Local-only privileged SoundTrigger preflight. No OEM model, no audio capture, no recognition.

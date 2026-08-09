@@ -1,6 +1,6 @@
 # 小黑 AI 手机助手
 
-[English](README.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [DSP 候选设备](docs/dsp-device-candidates.zh-CN.md) · [原厂设计参考](docs/oem-wakeword-design-reference.zh-CN.md) · [路线图](docs/roadmap.zh-CN.md) · [安全模型](SECURITY.md)
+[English](README.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [DSP 候选设备](docs/dsp-device-candidates.zh-CN.md) · [厂商级交付计划](docs/product-delivery-plan.zh-CN.md) · [路线图](docs/roadmap.zh-CN.md) · [安全模型](SECURITY.md)
 
 > 唤醒它，说出需求，让手机行动——尽量本地、过程可见，高风险动作必须确认。
 

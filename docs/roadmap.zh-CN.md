@@ -1,6 +1,6 @@
 # 路线图
 
-[English](roadmap.md)
+[English](roadmap.md) · [厂商级详细交付清单](product-delivery-plan.zh-CN.md)
 
 小黑分成“通用产品”和“高级唤醒后端”两条轨道。可下载产品不等待厂商 DSP 适配完成。
 

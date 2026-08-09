@@ -1,6 +1,6 @@
 # Roadmap
 
-[简体中文](roadmap.zh-CN.md)
+[简体中文](roadmap.zh-CN.md) · [Detailed delivery checklist](product-delivery-plan.md)
 
 Xiaohei has a portable product track and an advanced wake-backend track. The downloadable product is not blocked on vendor DSP support.
 

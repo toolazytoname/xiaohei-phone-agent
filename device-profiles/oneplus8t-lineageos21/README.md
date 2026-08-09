@@ -11,7 +11,7 @@ Validated on 2026-08-08:
 
 Still required before this profile can ship as a supported backend:
 
-- Minimal Android 14 broker with a unique UID.
+- Minimal Android 14 broker with a unique UID. A local preflight Companion now reaches the module-list gate as a removable `system_ext` package; model attach/load/unload and callback delivery remain unfinished.
 - Local extraction/build flow for legally held OEM assets; no blob redistribution.
 - Three physical-unplug power A/B runs and an 8–24 hour idle regression.
 - Cold-boot, start/stop, permission failure, uninstall, and rollback automation.

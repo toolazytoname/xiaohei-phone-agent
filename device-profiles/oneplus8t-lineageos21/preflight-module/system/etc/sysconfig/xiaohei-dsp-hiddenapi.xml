@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Local device profile only; do not include a Play-updatable package here. -->
+<config>
+  <hidden-api-whitelisted-app package="io.github.toolazytoname.xiaohei.dsp" />
+</config>

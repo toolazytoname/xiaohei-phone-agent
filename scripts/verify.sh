@@ -20,6 +20,8 @@ required_files=(
   docs/dsp-device-candidates.zh-CN.md
   docs/roadmap.md
   docs/roadmap.zh-CN.md
+  docs/product-delivery-plan.md
+  docs/product-delivery-plan.zh-CN.md
   contracts/wakeword-event.v1.schema.json
   contracts/action-request.v1.schema.json
   manifests/product.yaml
@@ -70,7 +72,7 @@ for script in scripts/*.sh; do
 done
 
 forbidden_binary="$(find . \
-  -path './apps/android/xiaohei-android/build' -prune -o \
+  -path '*/build' -prune -o \
   -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.uim' -o -name '*.udm' -o -name '*.so' -o -name '*.gguf' -o -name '*.jks' -o -name '*.keystore' -o -name '*.pem' -o -name '*.key' \) \
   -print -quit)"
 if [[ -n "$forbidden_binary" ]]; then
@@ -78,7 +80,7 @@ if [[ -n "$forbidden_binary" ]]; then
   exit 1
 fi
 
-scan_paths=(README.md README.zh-CN.md docs contracts manifests components apps)
+scan_paths=(README.md README.zh-CN.md docs contracts manifests components apps device-profiles)
 if grep -RIE --exclude='*.schema.json' 'sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY' "${scan_paths[@]}"; then
   printf 'FAIL possible credential material detected\n' >&2
   exit 1
