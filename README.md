@@ -1,6 +1,6 @@
 # Xiaohei Phone Agent
 
-[简体中文](README.zh-CN.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [Delivery plan](docs/product-delivery-plan.md) · [Threat model](docs/threat-model.md) · [Security](SECURITY.md)
+[简体中文](README.zh-CN.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [On-phone operation card](docs/phone-operation-card.md) · [Delivery plan](docs/product-delivery-plan.md) · [Threat model](docs/threat-model.md) · [Security](SECURITY.md)
 
 > Wake it. Say it. Let your phone act — locally when possible, visibly, and with confirmation when it matters.
 

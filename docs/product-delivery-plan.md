@@ -154,7 +154,7 @@ Priority: `P0` is required for the first usable product, `P1` for public Alpha/B
 - [ ] Bilingual README, release notes, privacy notice, and compatibility matrix.
 - [ ] Real-device report with environment, steps, expected/actual result, evidence, and residue check.
 - [ ] Automated tests, CI, secret/proprietary-asset release gates, known limitations, and issue template.
-- [ ] An offline on-phone operation card for service state, model switching, and rollback.
+- [x] An offline on-phone operation card for service state, model switching, and rollback ([operation card](phone-operation-card.md)).
 
 ## 5. Engineering scale
 
