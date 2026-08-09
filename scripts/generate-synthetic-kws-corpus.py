@@ -14,7 +14,9 @@ import scipy.signal
 import soundfile as sf
 
 
-VOICES = ("Eddy", "Flo", "Grandma", "Grandpa", "Reed", "Rocko", "Sandy", "Shelley", "Tingting")
+# The first eight macOS novelty voices are retained as a diagnostic stress set.
+# Tingting and Meijia are the standard mainland/Taiwan Mandarin voices.
+VOICES = ("Eddy", "Flo", "Grandma", "Grandpa", "Reed", "Rocko", "Sandy", "Shelley", "Tingting", "Meijia")
 NEGATIVE_PHRASES = ("小布小布", "小爱小爱", "小黑", "打开相册")
 
 

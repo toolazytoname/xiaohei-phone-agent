@@ -10,7 +10,7 @@ This candidate turns the internal vertical slice into a clearly bounded generic 
 - Completed the M4 notification/confirmed-draft contract on independent AOSP Messaging. Confirmation only opens the target app; Xiaohei never fills or sends the message.
 - Completed the M5 visible Phone Agent contract with a 10/10 distinct-app semantic matrix and a user-invoked, memory-only screenshot recovery that never uploads or persists pixels.
 - Added an independently exercised Android 14 ARM64 generic profile with honest no-DSP state, CPU-KWS visible start/stop, clean uninstall, and zero recording residue.
-- Added reproducible release provenance bundling and KWS corpus tools. A 72-case synthetic probe exposed positive speaker-robustness misses; the risk remains visible instead of being promoted as accuracy evidence.
+- Added reproducible release provenance bundling and KWS corpus tools. An 80-case synthetic diagnostic rejects all 40 negatives and detects all variants from two intelligible standard Mandarin TTS controls; it remains explicitly insufficient for human accuracy qualification.
 - Bumped the default package to `versionCode=4`, `versionName=0.2.0-alpha.3`.
 
 ## Distribution boundary
