@@ -11,6 +11,9 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 /** User-enabled semantic executor. No screenshots and no hidden/background task starts. */
 public final class XiaoheiAccessibilityService extends AccessibilityService {
@@ -20,6 +23,9 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private static volatile XiaoheiAccessibilityService active;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private String pendingLabel;
+    private List<String> pendingLabels;
+    private int pendingIndex;
+    private String taskId;
     private long deadline;
     private int steps;
     private int recoveries;
@@ -34,7 +40,11 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     }
     static boolean startTask(String label) {
         XiaoheiAccessibilityService service = active;
-        return service != null && service.begin(label);
+        return service != null && service.begin(Arrays.asList(label));
+    }
+    static boolean startTask(List<String> labels) {
+        XiaoheiAccessibilityService service = active;
+        return service != null && service.begin(labels);
     }
     static void stopTask(String reason) {
         XiaoheiAccessibilityService service = active;
@@ -65,15 +75,20 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         super.onDestroy();
     }
 
-    private boolean begin(String label) {
-        if (label == null || label.trim().isEmpty() || pendingLabel != null) return false;
-        pendingLabel = label.trim();
+    private boolean begin(List<String> labels) {
+        if (labels == null || labels.isEmpty() || labels.size() > 8 || pendingLabel != null) return false;
+        for (String label : labels) if (label == null || label.trim().isEmpty()) return false;
+        pendingLabels = new java.util.ArrayList<>();
+        for (String label : labels) pendingLabels.add(label.trim());
+        pendingIndex = 0;
+        pendingLabel = pendingLabels.get(0);
+        taskId = UUID.randomUUID().toString();
         deadline = System.currentTimeMillis() + 60_000;
         steps = 0;
         recoveries = 0;
         lastActionKey = null;
         showNotification("等待目标页面：" + pendingLabel);
-        Log.i(TAG, "task=start max_steps=8 timeout_ms=60000 label=" + pendingLabel);
+        Log.i(TAG, "task=start id=" + taskId + " max_steps=8 timeout_ms=60000 labels=" + pendingLabels.size());
         return true;
     }
 
@@ -83,12 +98,15 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         AccessibilityNodeInfo root = getRootInActiveWindow();
         AgentSnapshot before = AgentSnapshot.capture(root);
         if (!AgentPolicy.packageAllowed(before.packageName)) {
+            trace(before, 0, "deny", false, "denied");
             stopInternal("拒绝：App 不在允许列表 " + before.packageName);
             return;
         }
         AgentPolicy.Decision decision = AgentPolicy.assess(
             before.packageName, before.visibleText(), pendingLabel);
         if (decision != AgentPolicy.Decision.ALLOW) {
+            trace(before, 0, decision == AgentPolicy.Decision.DENY ? "deny" : "require_confirmation",
+                false, "denied");
             stopInternal(decision == AgentPolicy.Decision.DENY
                 ? "敏感页面或动作已拒绝" : "动作需要单独确认，本任务未执行");
             return;
@@ -103,26 +121,40 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         if (target == null) {
             if (recoveries++ == 0) {
                 Log.i(TAG, "step=observe version=" + before.version + " result=not_found recovery=1");
+                trace(before, 0, "allow", false, "not_found");
                 handler.postDelayed(this::executePendingStep, 5000);
-            } else stopInternal("一次恢复后仍未找到目标");
+            } else { trace(before, 0, "allow", false, "not_found"); stopInternal("一次恢复后仍未找到目标"); }
             return;
         }
         AccessibilityNodeInfo clickable = target;
         while (clickable != null && !clickable.isClickable()) clickable = clickable.getParent();
-        if (clickable == null) { stopInternal("目标不可点击"); return; }
+        if (clickable == null) { trace(before, 0, "allow", false, "not_clickable"); stopInternal("目标不可点击"); return; }
         lastActionKey = key;
         lastActionAt = System.currentTimeMillis();
         executing = true;
         boolean clicked = clickable.performAction(AccessibilityNodeInfo.ACTION_CLICK);
         Log.i(TAG, "step=" + steps + " before=" + before.version + " action=click label="
             + pendingLabel + " ok=" + clicked);
-        if (!clicked) { executing = false; stopInternal("系统拒绝语义点击"); return; }
+        if (!clicked) { trace(before, 0, "allow", false, "error"); executing = false; stopInternal("系统拒绝语义点击"); return; }
         handler.postDelayed(() -> {
             AgentSnapshot after = AgentSnapshot.capture(getRootInActiveWindow());
             Log.i(TAG, "step=" + steps + " after=" + after.version + " package=" + after.packageName);
+            AgentTraceStore.append(this, taskId, steps, before.version, after.version,
+                before.packageName, pendingLabel, "allow", true, "success");
             executing = false;
-            complete("完成 1 个语义动作；已重新观察 snapshot " + after.version);
+            pendingIndex++;
+            if (pendingLabels != null && pendingIndex < pendingLabels.size()) {
+                pendingLabel = pendingLabels.get(pendingIndex);
+                recoveries = 0;
+                showNotification("步骤 " + (pendingIndex + 1) + "/" + pendingLabels.size() + "：" + pendingLabel);
+                handler.postDelayed(this::executePendingStep, 650);
+            } else complete("完成 " + steps + " 个语义动作；已重新观察 snapshot " + after.version);
         }, 650);
+    }
+
+    private void trace(AgentSnapshot before, long after, String decision, boolean executed, String result) {
+        AgentTraceStore.append(this, taskId == null ? "unknown-task" : taskId, Math.max(1, steps),
+            before.version, after, before.packageName, pendingLabel, decision, executed, result);
     }
 
     private static AccessibilityNodeInfo find(AccessibilityNodeInfo node, String label) {
@@ -141,12 +173,14 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private void complete(String detail) {
         Log.i(TAG, "task=complete steps=" + steps + " detail=" + detail);
         pendingLabel = null;
+        pendingLabels = null;
         showNotification(detail);
     }
 
     private void stopInternal(String reason) {
         if (pendingLabel != null) Log.i(TAG, "task=stopped steps=" + steps + " reason=" + reason);
         pendingLabel = null;
+        pendingLabels = null;
         executing = false;
         handler.removeCallbacksAndMessages(null);
         showNotification("已停止：" + reason);

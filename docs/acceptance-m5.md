@@ -11,6 +11,8 @@ Device: OnePlus 8T / Android 14
 - A target “Enter verification code” was denied before any action. A missing target performed one bounded recovery; the user then used global stop while it was pending, producing `task=stopped` with no click.
 - An OpenAI-compatible local mock was reached through `adb reverse`. It returned one JSON proposal. The UI displayed package, exact label, and explanation and did nothing until explicit confirmation. After confirmation, the local policy executed exactly one click and re-observed successfully.
 - Two mock requests were made and no external model or user relay token was used. The reverse tunnel, mock profile, Accessibility grant, and Notification-listener test grant were removed afterward. The OnePlus DSP remained `DETACHED`.
+- The latest candidate completed a real two-step Settings task: `Network & internet`, re-observe, then `Internet`. Two success records contain snapshot transitions `1→2` and `3→4`, ending in Settings `SubSettings`.
+- A bounded 256 KiB `agent-trace.v1.jsonl` export stores no tree, screenshot, prompt, or token. Two success rows and one deny row parsed as JSON; the sensitive target became `[REDACTED_POLICY_TARGET]`. The trace was cleared and Accessibility revoked afterward.
 
 ## Enforced bounds
 
@@ -18,4 +20,4 @@ Maximum 8 steps, 60 seconds total, one recovery, duplicate-action guard, package
 
 ## Open M5 exit gates
 
-This slice proves the planner/preview/policy/semantic-action/re-observe architecture, not the full milestone. Screenshot fallback, persistent versioned trace export, 10–15 app task coverage, and real multi-step recovery remain. The service is disabled after acceptance and must be explicitly enabled by the user.
+This slice proves planning, preview, policy, multi-step semantic execution, re-observation, and redacted trace export, not the full milestone. Screenshot fallback, 10–15 app task coverage, and real multi-step recovery remain. The service is disabled after acceptance and must be explicitly enabled by the user.

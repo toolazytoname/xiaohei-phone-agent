@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import java.util.Arrays;
 
 /** Visible control surface for bounded semantic Phone Agent tasks. */
 public final class AgentActivity extends Activity {
@@ -75,6 +76,10 @@ public final class AgentActivity extends Activity {
         demo.setText("真机验收：设置 → 网络和互联网（单步）");
         demo.setOnClickListener(v -> runSettingsTask("网络和互联网"));
         root.addView(demo);
+        Button multi = new Button(this);
+        multi.setText("真机验收：设置 → 网络和互联网 → 互联网（两步）");
+        multi.setOnClickListener(v -> runSettingsSteps("网络和互联网", "互联网"));
+        root.addView(multi);
         Button stopGate = new Button(this);
         stopGate.setText("安全验收：启动等待任务（随后测试全局停止）");
         stopGate.setOnClickListener(v -> runSettingsTask("不存在的验收目标"));
@@ -90,6 +95,14 @@ public final class AgentActivity extends Activity {
             state.setText("Agent 已停止；没有待处理动作");
         });
         root.addView(stop);
+        Button export = new Button(this);
+        export.setText("导出脱敏 Agent 轨迹（JSONL）");
+        export.setOnClickListener(v -> shareTrace());
+        root.addView(export);
+        Button clear = new Button(this);
+        clear.setText("清除本机 Agent 轨迹");
+        clear.setOnClickListener(v -> { AgentTraceStore.clear(this); state.setText("Agent 轨迹已清除"); });
+        root.addView(clear);
 
         TextView policy = new TextView(this);
         policy.setText("边界：最多 8 步 / 60 秒 / 一次恢复 / 重复动作保护。支付、银行、凭据、密码和验证码页面默认拒绝；发送、删除、安装、卸载、授权和拨号需单独确认。当前不使用截图回退。");
@@ -127,6 +140,23 @@ public final class AgentActivity extends Activity {
         }
         state.setText("RUNNING：即将打开系统设置；目标=" + label + "；可从通知停止");
         startActivity(new Intent(Settings.ACTION_SETTINGS));
+    }
+
+    private void runSettingsSteps(String... labels) {
+        if (!XiaoheiAccessibilityService.startTask(Arrays.asList(labels))) {
+            state.setText("无法启动多步任务：请先授权服务，或已有任务正在执行");
+            return;
+        }
+        state.setText("RUNNING：两步语义任务；每步后重新观察；可随时全局停止");
+        startActivity(new Intent(Settings.ACTION_SETTINGS));
+    }
+
+    private void shareTrace() {
+        String trace = AgentTraceStore.export(this);
+        if (trace.isEmpty()) { state.setText("暂无可导出的 Agent 轨迹"); return; }
+        startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("application/x-ndjson")
+            .putExtra(Intent.EXTRA_SUBJECT, "Xiaohei redacted agent trace")
+            .putExtra(Intent.EXTRA_TEXT, trace), "导出脱敏 Agent 轨迹"));
     }
 
     private void requestPlan() {
