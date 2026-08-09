@@ -12,6 +12,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
+import android.app.KeyguardManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.util.Log;
@@ -30,6 +32,10 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private static final int REQUEST_NOTIFICATIONS = 43;
     private TextView stateView;
     private TextView historyView;
+    private TextView draftView;
+    private Button confirmDraftButton;
+    private Button cancelDraftButton;
+    private String pendingReplyContent;
     private Button armButton;
     private TextView dspStateView;
     private DspProfileClient dspProfile;
@@ -45,9 +51,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private WakewordBroker broker;
     private VoiceCommandSession voiceSession;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private boolean privacyLockedAtLaunch;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        privacyLockedAtLaunch = privacyLockedNow();
         broker = new WakewordBroker(this);
         voiceSession = new VoiceCommandSession(this, this);
         dspProfile = new DspProfileClient(this);
@@ -63,6 +71,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        privacyLockedAtLaunch = privacyLockedNow();
         setIntent(intent);
         consumeControlIntent(intent);
         consumeWakeIntent(intent);
@@ -201,6 +210,30 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         diagnosticsButton.setOnClickListener(v -> shareDiagnostics());
         root.addView(diagnosticsButton);
 
+        Button notificationAccessButton = new Button(this);
+        notificationAccessButton.setText("通知助手：授权 / 检查未读");
+        notificationAccessButton.setOnClickListener(v -> {
+            if (!XiaoheiNotificationListener.accessGranted(this)) {
+                startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+            } else showNotificationSummary(false);
+        });
+        root.addView(notificationAccessButton);
+
+        draftView = new TextView(this);
+        draftView.setPadding(0, pad, 0, 0);
+        draftView.setVisibility(View.GONE);
+        root.addView(draftView);
+        confirmDraftButton = new Button(this);
+        confirmDraftButton.setText("确认目标与内容，打开微信（不自动发送）");
+        confirmDraftButton.setVisibility(View.GONE);
+        confirmDraftButton.setOnClickListener(v -> openWechatForManualSend());
+        root.addView(confirmDraftButton);
+        cancelDraftButton = new Button(this);
+        cancelDraftButton.setText("取消草稿");
+        cancelDraftButton.setVisibility(View.GONE);
+        cancelDraftButton.setOnClickListener(v -> clearReplyDraft("草稿已取消，没有打开微信"));
+        root.addView(cancelDraftButton);
+
         historyView = new TextView(this);
         historyView.setGravity(Gravity.START);
         historyView.setPadding(0, pad, 0, 0);
@@ -307,6 +340,15 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private void dispatchTranscript(String text) {
         broker.beginThinking();
         CommandRouter.Request request = CommandRouter.route(text);
+        if (request.action == CommandRouter.Action.QUERY_UNREAD_WECHAT
+                || request.action == CommandRouter.Action.QUERY_UNREAD_ALL) {
+            showNotificationSummary(request.action == CommandRouter.Action.QUERY_UNREAD_WECHAT);
+            return;
+        }
+        if (request.action == CommandRouter.Action.DRAFT_WECHAT_REPLY) {
+            prepareWechatDraft(request.argument);
+            return;
+        }
         if (request.action == CommandRouter.Action.AMBIGUOUS) {
             historyView.setText("命令：" + text + "\n检测到多个目标，未执行。请一次只说一个动作。");
             broker.finishCommand("需要确认：请一次只说一个动作；已重新就绪");
@@ -333,6 +375,59 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         Log.i(ACTION_TAG, "action=" + request.action + " ok=" + result.ok);
         historyView.setText("命令：" + text + "\n动作：" + result.detail);
         broker.finishCommand((result.ok ? "动作已完成" : "动作失败") + "；已重新就绪");
+    }
+
+    private void showNotificationSummary(boolean wechatOnly) {
+        XiaoheiNotificationListener.Summary summary =
+            XiaoheiNotificationListener.summarize(this, wechatOnly, privacyLockedAtLaunch);
+        historyView.setText("通知助手：" + summary.detail);
+        broker.finishCommand(summary.detail + "；已重新就绪");
+    }
+
+    private void prepareWechatDraft(String content) {
+        clearReplyDraft(null);
+        if (content == null || content.isEmpty()) {
+            historyView.setText("回复草稿：还缺少完整回复内容；请说“回复微信说……”");
+            broker.finishCommand("需要回复内容；没有打开微信；已重新就绪");
+            return;
+        }
+        String target = XiaoheiNotificationListener.latestWechatTarget(this, privacyLockedAtLaunch);
+        if (target == null) {
+            historyView.setText("回复草稿：微信通知已消失、服务未连接或仍在锁屏；未创建草稿");
+            broker.finishCommand("没有可绑定的微信通知；未执行；已重新就绪");
+            return;
+        }
+        pendingReplyContent = content;
+        draftView.setText("待确认草稿\nApp：微信\n目标：" + target + "\n完整内容：" + content
+            + "\n确认后只打开微信，仍由你亲自点击发送。");
+        draftView.setVisibility(View.VISIBLE);
+        confirmDraftButton.setVisibility(View.VISIBLE);
+        cancelDraftButton.setVisibility(View.VISIBLE);
+        historyView.setText("草稿已生成，等待你确认目标和完整内容");
+        broker.finishCommand("草稿待确认；没有自动发送；已重新就绪");
+    }
+
+    private void openWechatForManualSend() {
+        if (pendingReplyContent == null || XiaoheiNotificationListener.latestWechatTarget(
+                this, privacyLockedNow()) == null) {
+            clearReplyDraft("通知已消失或手机已锁屏；操作已取消");
+            return;
+        }
+        Intent launch = getPackageManager().getLaunchIntentForPackage("com.tencent.mm");
+        if (launch == null) {
+            clearReplyDraft("未安装微信；草稿未发送");
+            return;
+        }
+        startActivity(launch);
+        clearReplyDraft("已打开微信；小黑没有输入或点击发送");
+    }
+
+    private void clearReplyDraft(String message) {
+        pendingReplyContent = null;
+        if (draftView != null) draftView.setVisibility(View.GONE);
+        if (confirmDraftButton != null) confirmDraftButton.setVisibility(View.GONE);
+        if (cancelDraftButton != null) cancelDraftButton.setVisibility(View.GONE);
+        if (message != null && historyView != null) historyView.setText(message);
     }
 
     @Override public void onSpeechError(String safeDetail) {
@@ -365,6 +460,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             .putBoolean("status_notification", true).apply();
         StatusNotification.show(this, broker.state());
         historyView.setText("常驻状态通知已开启；通知内可全部停止");
+    }
+
+    private boolean privacyLockedNow() {
+        return !getSystemService(PowerManager.class).isInteractive()
+            || getSystemService(KeyguardManager.class).isKeyguardLocked();
     }
 
     @Override protected void onDestroy() {
