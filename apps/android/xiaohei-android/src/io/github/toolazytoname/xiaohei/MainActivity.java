@@ -55,6 +55,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ConfigMigrator.run(this);
         privacyLockedAtLaunch = privacyLockedNow();
         broker = new WakewordBroker(this);
         voiceSession = new VoiceCommandSession(this, this);

@@ -12,3 +12,7 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/AgentPolicy.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/AgentPolicyTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.AgentPolicyTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ConfigMigration.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/ConfigMigrationTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.ConfigMigrationTest
