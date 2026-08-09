@@ -12,12 +12,20 @@ final class AgentPolicy {
         String target = lower(requestedLabel);
         if (containsAny(pkg, "alipay", "bank", "wallet", "finance", "pay")
                 || containsAny(target, "付款", "支付", "转账", "银行卡", "验证码", "密码",
-                    "cvv", "otp", "verification code", "passcode")
+                    "cvv", "otp", "verification code", "passcode", "payment", "transfer")
                 || containsAny(surface, "[redacted]", "输入验证码", "输入密码", "确认支付",
-                    "付款金额", "转账金额", "enter password", "verification code"))
+                    "付款金额", "转账金额", "信用卡", "银行卡", "enter password",
+                    "verification code", "payment", "transfer"))
             return Decision.DENY;
         if (containsAny(target, "发送", "删除", "卸载", "安装", "授权", "允许",
-                "拨打", "call", "send", "delete", "install", "allow"))
+                "拨打", "确认", "确定", "下一步", "继续", "call", "send", "delete",
+                "install", "allow", "confirm", "continue", "next"))
+            return Decision.REQUIRE_CONFIRMATION;
+        // Generic approval controls are ambiguous across Android permission dialogs,
+        // account flows, and destructive flows. Never click them from an Agent task.
+        if (containsAny(target, "ok", "accept", "agree", "同意", "接受")
+                || containsAny(surface, "权限", "permission", "允许", "allow", "授权",
+                    "grant", "同意", "accept", "账户", "账号", "account", "登录", "sign in"))
             return Decision.REQUIRE_CONFIRMATION;
         return Decision.ALLOW;
     }

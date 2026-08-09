@@ -14,6 +14,7 @@
 - 最新候选完成设置“网络和互联网→互联网”真实两步任务，每步重新观察，得到 snapshot `1→2`、`3→4` 两条 success，最终进入 Settings `SubSettings`。
 - 新增 256 KiB 有界脱敏 `agent-trace.v1.jsonl`；不保存语义树、截图、Prompt 或 Token。两条 success 与一条 deny 均通过 JSON 解析，敏感目标变为 `[REDACTED_POLICY_TARGET]`。验收后清空轨迹并再次撤销 Accessibility。
 - Agent 执行现绑定预期包名：无障碍事件和根快照必须匹配该包。真机计算器跨 App 任务对 `com.android.calculator2` 中“1”精确点击一次并生成 success 轨迹；刻意抢切到设置页得到 0 点击，随后通过关闭服务停止。
+- 收紧本地策略：即便某 App 已在允许列表，通用“允许 / 确认 / 下一步 / 继续 / 同意”等审批控件也不会被 Agent 自动点击；权限、账户/登录等可见页面一律升级为“需要确认”，支付、转账、卡号、验证码和密码表面继续默认拒绝。新增单元用例覆盖通讯录通知权限、通用下一步和付款金额场景。
 
 ## 本地强制边界
 
