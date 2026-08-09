@@ -1,6 +1,6 @@
 # 小黑 AI 手机助手
 
-[English](README.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [手机离线操作卡](docs/phone-operation-card.zh-CN.md) · [厂商级交付计划](docs/product-delivery-plan.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [安全策略](SECURITY.md)
+[English](README.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [手机离线操作卡](docs/phone-operation-card.zh-CN.md) · [交付证据矩阵](docs/delivery-evidence-matrix.zh-CN.md) · [厂商级交付计划](docs/product-delivery-plan.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [安全策略](SECURITY.md)
 
 > 唤醒它，说出需求，让手机行动——尽量本地、过程可见，高风险动作必须确认。
 
