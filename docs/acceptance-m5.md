@@ -17,6 +17,7 @@ Device: OnePlus 8T / Android 14
 - Local policy is now tighter: even in an allowlisted app, generic Allow, Confirm, Next, Continue, and Accept controls are never clicked automatically. Visible permission and account/sign-in surfaces require user handoff; payment, transfer, card, OTP, and password surfaces remain denied. Unit cases cover a Contacts notification prompt, generic Next, and a payment-amount surface.
 - Safe-entry testing found that Aperture's “Album” handed off to the Termux file receiver on this OnePlus build. It is no longer advertised as a stable safe entry. The executor now checks the package again after every click: a handoff records `package_changed` and stops immediately rather than counting as success or continuing.
 - Calculator testing also found the same text in both formula output and the digit button. Exact-node lookup now prefers a match with a clickable ancestor, so passive output cannot shadow an actionable control; a device retest with `1` already in the formula passed. The temporary harness could not stably handle Android popup/accessibility state and is not shipped; future matrix cases use visible manual semantic selection or a formal UI automation framework.
+- The package allowlist is exact rather than prefix-based: unreviewed `com.google.android.*` or `org.lineageos.*` packages cannot inherit access merely from their vendor namespace. Each supported package is listed explicitly and remains subject to label, surface, package-after-action, timeout, and stop checks.
 
 ## Enforced bounds
 

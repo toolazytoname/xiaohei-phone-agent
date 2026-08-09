@@ -32,17 +32,15 @@ final class AgentPolicy {
 
     static boolean packageAllowed(String packageName) {
         String pkg = lower(packageName);
-        return pkg.startsWith("com.android.settings")
-            || pkg.startsWith("com.android.launcher")
-            || pkg.startsWith("org.lineageos")
-            || pkg.startsWith("com.google.android")
-            || pkg.startsWith("com.android.chrome")
-            || pkg.startsWith("org.mozilla")
+        return pkg.equals("com.android.settings")
             || pkg.equals("com.android.calculator2")
             || pkg.equals("com.android.contacts")
             || pkg.equals("com.android.deskclock")
             || pkg.equals("com.android.dialer")
             || pkg.equals("com.android.documentsui")
+            || pkg.equals("com.android.chrome")
+            || pkg.equals("org.mozilla.fennec_fdroid")
+            || pkg.equals("com.google.android.apps.googlecamera.fishfood")
             || pkg.equals("org.lineageos.aperture")
             || pkg.equals("org.lineageos.glimpse")
             || pkg.equals("org.lineageos.jelly")

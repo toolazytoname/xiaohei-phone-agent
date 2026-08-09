@@ -15,6 +15,10 @@ public final class AgentPolicyTest {
             throw new AssertionError("unknown package must not be allowlisted");
         if (!AgentPolicy.packageAllowed("com.android.calculator2"))
             throw new AssertionError("calculator must be explicitly allowlisted");
+        if (AgentPolicy.packageAllowed("com.google.android.unreviewed"))
+            throw new AssertionError("package prefixes must not grant access");
+        if (AgentPolicy.packageAllowed("org.lineageos.unreviewed"))
+            throw new AssertionError("package prefixes must not grant access");
         System.out.println("PASS agent-policy allow=1 deny=3 confirm=3 package-allow=1 package-deny=1");
     }
 
