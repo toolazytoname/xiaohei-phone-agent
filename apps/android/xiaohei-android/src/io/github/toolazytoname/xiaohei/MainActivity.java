@@ -205,6 +205,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         channelsButton.setOnClickListener(v -> startActivity(new Intent(this, ModelConfigActivity.class)));
         root.addView(channelsButton);
 
+        Button agentButton = new Button(this);
+        agentButton.setText("可见 Phone Agent：观察 / 执行 / 停止");
+        agentButton.setOnClickListener(v -> startActivity(new Intent(this, AgentActivity.class)));
+        root.addView(agentButton);
+
         Button diagnosticsButton = new Button(this);
         diagnosticsButton.setText("导出脱敏诊断");
         diagnosticsButton.setOnClickListener(v -> shareDiagnostics());

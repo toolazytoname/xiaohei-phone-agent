@@ -1,0 +1,81 @@
+package io.github.toolazytoname.xiaohei;
+
+import android.content.Context;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
+/** OpenAI-compatible planner. It returns a proposal and never performs an Android action. */
+final class PhoneAgentClient {
+    static final class Proposal {
+        final boolean ok;
+        final String packageName;
+        final String label;
+        final String explanation;
+        Proposal(boolean ok, String packageName, String label, String explanation) {
+            this.ok = ok; this.packageName = packageName; this.label = label; this.explanation = explanation;
+        }
+    }
+
+    static Proposal plan(Context context, String task) {
+        android.content.SharedPreferences prefs =
+            context.getSharedPreferences("model_channels", Context.MODE_PRIVATE);
+        if (!prefs.getBoolean("agent_enabled", false))
+            return fail("Phone Agent 渠道未启用");
+        String endpoint = prefs.getString("agent_endpoint", "");
+        String model = prefs.getString("agent_model", "");
+        try {
+            JSONObject request = new JSONObject();
+            request.put("model", model);
+            request.put("temperature", 0);
+            request.put("max_tokens", 160);
+            JSONArray messages = new JSONArray();
+            messages.put(new JSONObject().put("role", "system").put("content",
+                "Return JSON only: {\"package\":\"com.android.settings\",\"label\":\"exact visible text\",\"explanation\":\"short\"}. "
+                + "Only propose one low-risk semantic click. Never propose payment, credentials, OTP, send, delete, install, permission grant, or calls."));
+            messages.put(new JSONObject().put("role", "user").put("content", task));
+            request.put("messages", messages);
+            URL url = new URL(endpoint.replaceAll("/+$", "") + "/chat/completions");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(7000);
+            connection.setReadTimeout(15000);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            String token = SecureSecretStore.load(context);
+            if (!token.isEmpty()) connection.setRequestProperty("Authorization", "Bearer " + token);
+            connection.setDoOutput(true);
+            byte[] body = request.toString().getBytes(StandardCharsets.UTF_8);
+            connection.setFixedLengthStreamingMode(body.length);
+            try (OutputStream output = connection.getOutputStream()) { output.write(body); }
+            if (connection.getResponseCode() < 200 || connection.getResponseCode() >= 300)
+                return fail("规划服务 HTTP " + connection.getResponseCode());
+            StringBuilder response = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null && response.length() < 65536)
+                    response.append(line);
+            }
+            String content = new JSONObject(response.toString()).getJSONArray("choices")
+                .getJSONObject(0).getJSONObject("message").getString("content").trim();
+            if (content.startsWith("```")) content = content.replaceFirst("^```(?:json)?", "")
+                .replaceFirst("```$", "").trim();
+            JSONObject plan = new JSONObject(content);
+            String pkg = plan.getString("package");
+            String label = plan.getString("label");
+            if (!AgentPolicy.packageAllowed(pkg)
+                    || AgentPolicy.assess(pkg, "", label) != AgentPolicy.Decision.ALLOW)
+                return fail("模型提议被本地安全策略拒绝");
+            return new Proposal(true, pkg, label, plan.optString("explanation", "低风险单步动作"));
+        } catch (Exception error) {
+            return fail("规划失败：" + error.getClass().getSimpleName());
+        }
+    }
+
+    private static Proposal fail(String detail) { return new Proposal(false, "", "", detail); }
+}

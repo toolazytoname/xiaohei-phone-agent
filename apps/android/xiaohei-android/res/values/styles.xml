@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="accessibility_description">可见 Phone Agent：只在用户启动的任务中读取语义控件，并受全局停止和敏感页面拒绝策略约束。</string>
     <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:colorAccent">#006E5A</item>

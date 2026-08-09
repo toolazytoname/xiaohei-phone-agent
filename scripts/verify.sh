@@ -24,6 +24,7 @@ required_files=(
   docs/product-delivery-plan.zh-CN.md
   contracts/wakeword-event.v1.schema.json
   contracts/action-request.v1.schema.json
+  contracts/agent-step-result.v1.schema.json
   manifests/product.yaml
 )
 

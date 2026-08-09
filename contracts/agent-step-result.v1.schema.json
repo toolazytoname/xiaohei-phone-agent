@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/agent-step-result.v1.schema.json",
+  "title": "Xiaohei Agent Step Result v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "step_index",
+    "snapshot_before",
+    "tool",
+    "target_package",
+    "policy_decision",
+    "executed",
+    "result",
+    "captured_at",
+    "public_log_safe"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "task_id": { "type": "string", "minLength": 8, "maxLength": 128 },
+    "step_index": { "type": "integer", "minimum": 1, "maximum": 8 },
+    "snapshot_before": { "type": "integer", "minimum": 1 },
+    "snapshot_after": { "type": "integer", "minimum": 1 },
+    "tool": { "enum": ["observe", "click_text", "global_stop"] },
+    "target_package": { "type": "string", "minLength": 1, "maxLength": 255 },
+    "target_label": { "type": "string", "maxLength": 256 },
+    "policy_decision": { "enum": ["allow", "require_confirmation", "deny"] },
+    "executed": { "type": "boolean" },
+    "result": { "enum": ["success", "not_found", "not_clickable", "stopped", "timeout", "denied", "error"] },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "public_log_safe": { "type": "boolean" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "executed": { "const": true } }, "required": ["executed"] },
+      "then": { "required": ["snapshot_after"] }
+    },
+    {
+      "if": { "properties": { "tool": { "const": "click_text" } }, "required": ["tool"] },
+      "then": { "required": ["target_label"] }
+    }
+  ],
+  "additionalProperties": false
+}

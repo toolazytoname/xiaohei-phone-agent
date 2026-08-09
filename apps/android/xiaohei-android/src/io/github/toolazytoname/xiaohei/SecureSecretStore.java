@@ -7,6 +7,7 @@ import java.security.KeyStore;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 
@@ -29,6 +30,19 @@ final class SecureSecretStore {
     static boolean isConfigured(Context context) {
         return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             .contains("token_ciphertext");
+    }
+
+    static String load(Context context) throws Exception {
+        android.content.SharedPreferences prefs =
+            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        String iv = prefs.getString("token_iv", null);
+        String ciphertext = prefs.getString("token_ciphertext", null);
+        if (iv == null || ciphertext == null) return "";
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        cipher.init(Cipher.DECRYPT_MODE, key(), new GCMParameterSpec(128,
+            Base64.decode(iv, Base64.NO_WRAP)));
+        return new String(cipher.doFinal(Base64.decode(ciphertext, Base64.NO_WRAP)),
+            StandardCharsets.UTF_8);
     }
 
     static void clear(Context context) {
