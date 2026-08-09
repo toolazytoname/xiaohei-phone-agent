@@ -13,10 +13,18 @@ grep -q '^# COMPLETE$' "$output" || { printf 'FAIL monitor incomplete: %s\n' "$o
 awk -F '\t' '
   NR==1 {for (i=1;i<=NF;i++) if ($i ~ /^duration=/) {split($i,a,"="); expected=a[2]}}
   NR==3 {start=$2; start_level=$3}
-  $1 !~ /^#/ && NR>2 {end=$2; end_level=$3; samples++; if ($8 != 0) record++; if ($9 != 0) wake++}
+  $1 !~ /^#/ && NR>2 {
+    end=$2; end_level=$3; samples++;
+    if ($8 != 0) record++;
+    if ($9 != 0) wake++;
+    if ($10 == "Awake") interactive++;
+    if ($11 != 0) call++;
+    if ($12 != 0) powered++;
+  }
   END {
     if ((expected > 0 && (samples < 2 || end-start < expected)) || (expected == 0 && samples < 1)) bad=1;
-    else printf "PASS idle-monitor samples=%d elapsed_s=%d level_delta=%d active_record_samples=%d xiaohei_wakelock_samples=%d\n",
-      samples, end-start, start_level-end_level, record, wake;
+    if (record || wake || interactive || call || powered) bad=1;
+    printf "%s idle-monitor samples=%d elapsed_s=%d level_delta=%d active_record_samples=%d xiaohei_wakelock_samples=%d interactive_samples=%d call_samples=%d powered_samples=%d\n",
+      bad ? "FAIL" : "PASS", samples, end-start, start_level-end_level, record, wake, interactive, call, powered;
     exit bad
   }' "$output"
