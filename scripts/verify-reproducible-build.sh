@@ -22,6 +22,10 @@ if ! cmp -s "$first" "$second"; then
     "$(shasum -a 256 "$second" | awk '{print $1}')" >&2
   exit 1
 fi
-bash "$project_dir/../../../scripts/scan-release-apk.sh" "$second"
+if [[ "${XIAOHEI_BUILD_VARIANT:-debug}" == release ]]; then
+  XIAOHEI_EXPECT_RELEASE=1 bash "$project_dir/../../../scripts/scan-release-apk.sh" "$second"
+else
+  bash "$project_dir/../../../scripts/scan-release-apk.sh" "$second"
+fi
 printf 'PASS reproducible-build variant=%s sha256=%s\n' \
   "${XIAOHEI_BUILD_VARIANT:-debug}" "$(shasum -a 256 "$second" | awk '{print $1}')"
