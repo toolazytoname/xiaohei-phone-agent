@@ -69,6 +69,10 @@ public final class ModelConfigActivity extends Activity {
         save.setText("保存独立配置");
         save.setOnClickListener(v -> save());
         root.addView(save);
+        Button health = new Button(this);
+        health.setText("低成本健康检查（只请求 /models）");
+        health.setOnClickListener(v -> healthCheck());
+        root.addView(health);
         Button clearToken = new Button(this);
         clearToken.setText("清除 Phone Agent Token");
         clearToken.setOnClickListener(v -> { SecureSecretStore.clear(this); show("Token 已清除"); });
@@ -147,6 +151,14 @@ public final class ModelConfigActivity extends Activity {
                 .putExtra(Intent.EXTRA_TEXT, value), "导出小黑非敏感备份"));
             show("已生成不含 Token 的备份；请仅保存到可信位置");
         } catch (IllegalArgumentException invalid) { show("无法导出：渠道字段格式无效"); }
+    }
+
+    private void healthCheck() {
+        status.setText("正在检查渠道连通性；不会发送规划请求");
+        new Thread(() -> {
+            String result = PhoneAgentClient.healthCheck(this);
+            runOnUiThread(() -> show(result));
+        }, "xiaohei-agent-health").start();
     }
 
     private void restoreBackup() {

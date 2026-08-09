@@ -23,6 +23,8 @@ final class PhoneAgentClient {
     }
 
     static Proposal plan(Context context, String task) {
+        if (task == null || task.trim().isEmpty() || task.length() > 1024)
+            return fail("任务为空或超过 1024 个字符");
         android.content.SharedPreferences prefs =
             context.getSharedPreferences("model_channels", Context.MODE_PRIVATE);
         if (!prefs.getBoolean("agent_enabled", false))
@@ -42,6 +44,7 @@ final class PhoneAgentClient {
             request.put("messages", messages);
             URL url = new URL(endpoint.replaceAll("/+$", "") + "/chat/completions");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setInstanceFollowRedirects(false);
             connection.setConnectTimeout(7000);
             connection.setReadTimeout(15000);
             connection.setRequestMethod("POST");
@@ -75,6 +78,28 @@ final class PhoneAgentClient {
         } catch (Exception error) {
             return fail("规划失败：" + error.getClass().getSimpleName());
         }
+    }
+
+    /** A user-invoked low-cost connectivity check; it never sends a planning prompt. */
+    static String healthCheck(Context context) {
+        android.content.SharedPreferences prefs =
+            context.getSharedPreferences("model_channels", Context.MODE_PRIVATE);
+        if (!prefs.getBoolean("agent_enabled", false)) return "Phone Agent 渠道未启用";
+        String endpoint = prefs.getString("agent_endpoint", "");
+        try {
+            URL url = new URL(endpoint.replaceAll("/+$", "") + "/models");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setInstanceFollowRedirects(false);
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(7000);
+            connection.setRequestMethod("GET");
+            String token = SecureSecretStore.load(context);
+            if (!token.isEmpty()) connection.setRequestProperty("Authorization", "Bearer " + token);
+            int code = connection.getResponseCode();
+            connection.disconnect();
+            return code >= 200 && code < 300 ? "健康检查通过（未发送规划请求）"
+                : "健康检查 HTTP " + code + "（未发送规划请求）";
+        } catch (Exception error) { return "健康检查失败：" + error.getClass().getSimpleName(); }
     }
 
     private static Proposal fail(String detail) { return new Proposal(false, "", "", detail); }
