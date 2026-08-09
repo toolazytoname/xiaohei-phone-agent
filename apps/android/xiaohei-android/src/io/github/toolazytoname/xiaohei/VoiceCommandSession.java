@@ -3,6 +3,9 @@ package io.github.toolazytoname.xiaohei;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -20,12 +23,23 @@ final class VoiceCommandSession implements RecognitionListener {
 
     private final Context context;
     private final Listener listener;
+    private final AudioManager audioManager;
+    private final AudioFocusRequest focusRequest;
     private SpeechRecognizer recognizer;
     private boolean active;
+    private boolean focusHeld;
 
     VoiceCommandSession(Context context, Listener listener) {
         this.context = context.getApplicationContext();
         this.listener = listener;
+        this.audioManager = this.context.getSystemService(AudioManager.class);
+        this.focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
+            .setAudioAttributes(new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ASSISTANT)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build())
+            .setOnAudioFocusChangeListener(this::onAudioFocusChange)
+            .build();
     }
 
     boolean isAvailable() {
@@ -48,6 +62,12 @@ final class VoiceCommandSession implements RecognitionListener {
             return;
         }
         stop();
+        if (audioManager == null || audioManager.requestAudioFocus(focusRequest)
+                != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            listener.onSpeechError("音频焦点不可用；请结束通话或其他独占音频后重试");
+            return;
+        }
+        focusHeld = true;
         recognizer = usesLocalAsr()
             ? SpeechRecognizer.createSpeechRecognizer(context,
                 new ComponentName(context, XiaoheiRecognitionService.class))
@@ -71,6 +91,19 @@ final class VoiceCommandSession implements RecognitionListener {
             recognizer.destroy();
             recognizer = null;
         }
+        if (focusHeld && audioManager != null) {
+            audioManager.abandonAudioFocusRequest(focusRequest);
+            focusHeld = false;
+        }
+    }
+
+    private void onAudioFocusChange(int change) {
+        if (change != AudioManager.AUDIOFOCUS_LOSS
+                && change != AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+                && change != AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) return;
+        boolean wasActive = active;
+        stop();
+        if (wasActive) listener.onSpeechError("音频被系统中断；已停止听取并释放麦克风");
     }
 
     @Override public void onReadyForSpeech(Bundle params) { listener.onSpeechReady(); }
