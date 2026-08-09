@@ -3,6 +3,7 @@ package io.github.toolazytoname.xiaohei;
 import android.app.Activity;
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -24,8 +25,27 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         super.onCreate(savedInstanceState);
         broker = new WakewordBroker(this);
         voiceSession = new VoiceCommandSession(this, this);
+        setShowWhenLocked(true);
+        setTurnScreenOn(true);
         setContentView(buildView());
         onStateChanged(broker.state(), "尚未启用");
+        consumeWakeIntent(getIntent());
+    }
+
+    @Override protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        consumeWakeIntent(intent);
+    }
+
+    private void consumeWakeIntent(Intent intent) {
+        if (intent == null || !intent.hasExtra(WakewordReceiver.EXTRA_KEYWORD_ID)) return;
+        if (broker.state() == WakewordBroker.State.OFF) broker.armDspMode();
+        broker.dispatchDspHit(
+            intent.getStringExtra(WakewordReceiver.EXTRA_KEYWORD_ID),
+            intent.getIntExtra(WakewordReceiver.EXTRA_CONFIDENCE, -1),
+            intent.getBooleanExtra(WakewordReceiver.EXTRA_CAPTURE_AVAILABLE, false));
+        intent.removeExtra(WakewordReceiver.EXTRA_KEYWORD_ID);
     }
 
     private View buildView() {

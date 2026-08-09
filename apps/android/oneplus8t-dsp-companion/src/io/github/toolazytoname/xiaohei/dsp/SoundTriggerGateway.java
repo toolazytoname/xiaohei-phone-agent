@@ -2,6 +2,7 @@ package io.github.toolazytoname.xiaohei.dsp;
 
 import android.app.ActivityThread;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.soundtrigger.SoundTrigger;
 import android.hardware.soundtrigger.SoundTriggerModule;
 import android.media.permission.Identity;
@@ -23,6 +24,7 @@ final class SoundTriggerGateway {
     private static boolean autoRearmEnabled;
     private static int rearmFailures;
     private static SoundTrigger.RecognitionConfig recognitionConfig;
+    private static Context appContext;
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static String lastCallback = "无";
     private static final File MODEL_FILE =
@@ -145,6 +147,7 @@ final class SoundTriggerGateway {
     }
 
     static synchronized ProbeResult startRecognition(Context context) {
+        appContext = context.getApplicationContext();
         ProbeResult loaded = loadModel(context);
         if (!loaded.ok || modelHandle < 0) return loaded;
         if (recognizing) return new ProbeResult(true,
@@ -257,6 +260,15 @@ final class SoundTriggerGateway {
         @Override public void onRecognition(SoundTrigger.RecognitionEvent event) {
             recognizing = false;
             lastCallback = "recognition callback 已收到";
+            if (appContext != null) {
+                Intent wake = new Intent("io.github.toolazytoname.xiaohei.action.WAKEWORD")
+                    .setPackage("io.github.toolazytoname.xiaohei")
+                    .addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+                    .putExtra("keyword_id", "xiaobuxiaobu.0220.0828")
+                    .putExtra("confidence", 99)
+                    .putExtra("capture_available", false);
+                appContext.sendBroadcast(wake);
+            }
             MAIN.postDelayed(SoundTriggerGateway::rearmAfterCallback, 750);
         }
         @Override public void onResourcesAvailable() { lastCallback = "resources available"; }

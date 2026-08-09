@@ -41,6 +41,10 @@ final class WakewordBroker {
         transition(State.ARMED, "基础模式已就绪；未开启常驻麦克风");
     }
 
+    void armDspMode() {
+        transition(State.ARMED, "DSP 模式已唤起；准备接收一条短命令");
+    }
+
     void disarm() {
         manualBackend.disarm();
         transition(State.OFF, "已关闭");

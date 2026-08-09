@@ -4,7 +4,7 @@ This profile needs two separately installable Android packages.
 
 ```text
 Xiaohei App (ordinary app, no DSP permission)
-       │ explicit bound service, package signature permission
+       │ explicit signature-protected broadcast
        ▼
 OnePlus DSP Companion (local privileged profile only)
        │ SoundTrigger attach/load/start/stop
@@ -31,7 +31,7 @@ The public module builds without those inputs and remains a preflight-only packa
 - `ro.product.device=OnePlus8T` and a reviewed ROM fingerprint allowlist.
 - Qualcomm SoundTrigger module 0 reports the expected vendor implementation.
 - Every local input hash matches the reviewed profile.
-- The companion receives only `MANAGE_SOUND_TRIGGER` and `CAPTURE_AUDIO_HOTWORD` through a partition-matched privapp allowlist. Android 14 middleware also requires user-revocable runtime `RECORD_AUDIO` before attach; the Companion does not create a normal AudioRecord stream during standby.
+- The companion receives only `MANAGE_SOUND_TRIGGER` and `CAPTURE_AUDIO_HOTWORD` through a partition-matched privapp allowlist. Android 14 middleware also requires user-revocable runtime `RECORD_AUDIO` before attach; the Companion does not create a normal AudioRecord stream during standby. Android Assistant session display remains the ordinary app's responsibility.
 - Three cold boots and three arm/disarm cycles pass before any acoustic test.
 
 ## Current gate status (2026-08-09)
@@ -40,6 +40,7 @@ The public module builds without those inputs and remains a preflight-only packa
 - PASS: locally supplied stock model `load → unload`; HAL load succeeded, middleware returned handle 1, and HAL unload returned status 0.
 - PASS: `startRecognition` entered Qualcomm LPI with `captureRequested=false`; a screen-off acoustic trigger reached the Companion callback at second-stage confidence 99.
 - PASS: automatic re-arm produced a second independent callback, followed by explicit stop, unload, and detach.
-- NOT RUN: callback forwarding into the ordinary Xiaohei app, cold-boot repetition, and power measurements.
+- PASS: callback forwarding into the ordinary app through the selected Android `VoiceInteractionService`; Android 14 allowed the Assistant-owned visible launch while rejecting direct background Activity attempts.
+- NOT RUN: cold-boot repetition and power measurements.
 
 This contract deliberately extracts the useful part of the OEM design—model lifecycle and re-arm—from its obsolete system UID, daemon, cross-user, and Oplus service dependencies.
