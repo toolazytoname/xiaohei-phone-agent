@@ -31,8 +31,7 @@ final class DspProfileClient {
 
     boolean isInstalled() {
         try {
-            context.getPackageManager().getPackageInfo(PACKAGE, 0);
-            return true;
+            return context.getPackageManager().getApplicationInfo(PACKAGE, 0).enabled;
         } catch (Exception unavailable) { return false; }
     }
 

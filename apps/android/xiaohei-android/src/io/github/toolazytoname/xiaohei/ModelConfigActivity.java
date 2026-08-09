@@ -85,7 +85,7 @@ public final class ModelConfigActivity extends Activity {
 
     private void load() {
         android.content.SharedPreferences prefs = getSharedPreferences("model_channels", Context.MODE_PRIVATE);
-        asr.setSelection(prefs.getInt("asr_mode", 0));
+        asr.setSelection(prefs.getInt("asr_mode", LocalAsrEngine.isBundled() ? 0 : 1));
         agentEnabled.setChecked(prefs.getBoolean("agent_enabled", false));
         endpoint.setText(prefs.getString("agent_endpoint", ""));
         model.setText(prefs.getString("agent_model", ""));

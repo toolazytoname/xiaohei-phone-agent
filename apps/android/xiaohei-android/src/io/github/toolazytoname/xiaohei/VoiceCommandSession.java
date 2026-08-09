@@ -29,10 +29,18 @@ final class VoiceCommandSession implements RecognitionListener {
     }
 
     boolean isAvailable() {
-        return SpeechRecognizer.isRecognitionAvailable(context);
+        return usesLocalAsr() ? LocalAsrEngine.isBundled()
+            : SpeechRecognizer.isRecognitionAvailable(context);
     }
 
     boolean isActive() { return active; }
+
+    String channelDescription() {
+        if (usesLocalAsr()) return LocalAsrEngine.isBundled()
+            ? "小黑离线中文 ASR（已内置）" : "小黑离线中文 ASR（模型未内置）";
+        return SpeechRecognizer.isRecognitionAvailable(context)
+            ? "Android 系统识别服务" : "Android 系统识别服务（不可用）";
+    }
 
     void start() {
         if (!isAvailable()) {
@@ -40,8 +48,10 @@ final class VoiceCommandSession implements RecognitionListener {
             return;
         }
         stop();
-        recognizer = SpeechRecognizer.createSpeechRecognizer(context,
-            new ComponentName(context, XiaoheiRecognitionService.class));
+        recognizer = usesLocalAsr()
+            ? SpeechRecognizer.createSpeechRecognizer(context,
+                new ComponentName(context, XiaoheiRecognitionService.class))
+            : SpeechRecognizer.createSpeechRecognizer(context);
         recognizer.setRecognitionListener(this);
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN");
@@ -93,6 +103,12 @@ final class VoiceCommandSession implements RecognitionListener {
         ArrayList<String> texts = results == null
             ? null : results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         return texts == null || texts.isEmpty() ? null : texts.get(0);
+    }
+
+    private boolean usesLocalAsr() {
+        int defaultMode = LocalAsrEngine.isBundled() ? 0 : 1;
+        return context.getSharedPreferences("model_channels", Context.MODE_PRIVATE)
+            .getInt("asr_mode", defaultMode) == 0;
     }
 
     private static String errorMessage(int error) {

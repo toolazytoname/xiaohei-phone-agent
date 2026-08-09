@@ -207,7 +207,8 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         root.addView(historyView);
         TextView supported = new TextView(this);
         supported.setPadding(0, pad, 0, pad);
-        supported.setText("支持：相册、设置、Wi‑Fi、蓝牙、相机、浏览器、拨号盘、闹钟、导航到…、手电筒开关、音量大小");
+        supported.setText("ASR：" + voiceSession.channelDescription()
+            + "\n支持：相册、设置、Wi‑Fi、蓝牙、相机、浏览器、拨号盘、闹钟、导航到…、手电筒开关、音量大小");
         root.addView(supported);
         ScrollView scroll = new ScrollView(this);
         scroll.addView(root);
