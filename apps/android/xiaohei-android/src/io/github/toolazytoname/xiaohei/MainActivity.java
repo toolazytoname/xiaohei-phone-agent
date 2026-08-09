@@ -389,12 +389,9 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     @Override public void onWakewordHit(WakewordEvent event) {
         historyView.setText("最近唤醒：" + event.source + " · " + event.keywordId + "\n正在开启短命令会话…");
-        ToneGenerator tone = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 55);
-        tone.startTone(ToneGenerator.TONE_PROP_BEEP, 120);
-        mainHandler.postDelayed(() -> {
-            tone.release();
-            startVoiceCommand();
-        }, 180);
+        // The VoiceInteraction handoff may replace the current Activity instance.
+        // Let that lifecycle settle before binding the recognizer to this instance.
+        mainHandler.postDelayed(this::startVoiceCommand, 300);
     }
 
     private void startVoiceCommand() {
@@ -434,7 +431,10 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     @Override public void onSpeechReady() {
         Log.i("XiaoheiVoice", "speech_ready");
-        historyView.setText("正在听，请说：打开相册");
+        historyView.setText("提示音后开始说，请说：打开相册");
+        ToneGenerator tone = new ToneGenerator(AudioManager.STREAM_NOTIFICATION, 55);
+        tone.startTone(ToneGenerator.TONE_PROP_BEEP, 120);
+        mainHandler.postDelayed(tone::release, 180);
     }
 
     @Override public void onPartialTranscript(String text) {
