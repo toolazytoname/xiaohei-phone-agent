@@ -1,0 +1,19 @@
+package io.github.toolazytoname.xiaohei;
+
+public final class ModelChannelBackupTest {
+    public static void main(String[] args) {
+        String exported = ModelChannelBackup.export(0, true, "https://relay.example/v1", "small-model");
+        if (exported.contains("secret-token")) throw new AssertionError("token must never be exportable");
+        ModelChannelBackup.Data restored = ModelChannelBackup.parse(exported);
+        if (restored.asrMode != 0 || !restored.agentEnabled
+                || !"https://relay.example/v1".equals(restored.endpoint)
+                || !"small-model".equals(restored.model)) throw new AssertionError("round trip failed");
+        expectInvalid("xiaohei-model-channels.v1\nasr_mode=9\nagent_enabled=false\nagent_endpoint_b64=\nagent_model_b64=\n");
+        expectInvalid("wrong-header");
+        System.out.println("PASS model-channel-backup roundtrip=1 token_exported=0 invalid=2");
+    }
+    private static void expectInvalid(String value) {
+        try { ModelChannelBackup.parse(value); throw new AssertionError("expected invalid backup"); }
+        catch (IllegalArgumentException expected) { }
+    }
+}

@@ -2,6 +2,7 @@ package io.github.toolazytoname.xiaohei;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ScrollView;
 import java.net.URI;
 
 /** Independent ASR and Phone Agent channels; changing one never starts or stops the other. */
@@ -21,6 +23,7 @@ public final class ModelConfigActivity extends Activity {
     private EditText endpoint;
     private EditText model;
     private EditText token;
+    private EditText backup;
     private TextView status;
 
     @Override public void onCreate(Bundle state) {
@@ -70,10 +73,29 @@ public final class ModelConfigActivity extends Activity {
         clearToken.setText("清除 Phone Agent Token");
         clearToken.setOnClickListener(v -> { SecureSecretStore.clear(this); show("Token 已清除"); });
         root.addView(clearToken);
+        TextView backupLabel = new TextView(this);
+        backupLabel.setText("备份与恢复（不含 Token；恢复会停用 Agent）");
+        backupLabel.setPadding(0, pad, 0, 0);
+        root.addView(backupLabel);
+        Button exportBackup = new Button(this);
+        exportBackup.setText("导出非敏感渠道备份");
+        exportBackup.setOnClickListener(v -> exportBackup());
+        root.addView(exportBackup);
+        backup = new EditText(this);
+        backup.setHint("粘贴 xiaohei-model-channels.v1 备份以恢复");
+        backup.setMinLines(4);
+        backup.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        root.addView(backup);
+        Button restoreBackup = new Button(this);
+        restoreBackup.setText("恢复备份（清除 Token，保持 Agent 关闭）");
+        restoreBackup.setOnClickListener(v -> restoreBackup());
+        root.addView(restoreBackup);
         status = new TextView(this);
         status.setPadding(0, pad, 0, 0);
         root.addView(status);
-        return root;
+        ScrollView scroll = new ScrollView(this);
+        scroll.addView(root);
+        return scroll;
     }
 
     private EditText field(String hint) {
@@ -114,6 +136,35 @@ public final class ModelConfigActivity extends Activity {
         } catch (Exception error) {
             show("保存失败：Android Keystore 不可用");
         }
+    }
+
+    private void exportBackup() {
+        try {
+            String value = ModelChannelBackup.export(asr.getSelectedItemPosition(), agentEnabled.isChecked(),
+                endpoint.getText().toString(), model.getText().toString());
+            startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
+                .putExtra(Intent.EXTRA_SUBJECT, "Xiaohei non-secret model-channel backup")
+                .putExtra(Intent.EXTRA_TEXT, value), "导出小黑非敏感备份"));
+            show("已生成不含 Token 的备份；请仅保存到可信位置");
+        } catch (IllegalArgumentException invalid) { show("无法导出：渠道字段格式无效"); }
+    }
+
+    private void restoreBackup() {
+        try {
+            ModelChannelBackup.Data value = ModelChannelBackup.parse(backup.getText().toString());
+            getSharedPreferences("model_channels", Context.MODE_PRIVATE).edit()
+                .putInt("asr_mode", value.asrMode)
+                .putBoolean("agent_enabled", false)
+                .putString("agent_endpoint", value.endpoint)
+                .putString("agent_model", value.model)
+                .apply();
+            SecureSecretStore.clear(this);
+            agentEnabled.setChecked(false);
+            endpoint.setText(value.endpoint);
+            model.setText(value.model);
+            token.setText("");
+            show("已恢复非敏感配置；Token 已清除，Phone Agent 保持关闭且未启动服务");
+        } catch (IllegalArgumentException invalid) { show("无法恢复：备份格式无效或不受支持"); }
     }
 
     private static boolean validEndpoint(String value) {
