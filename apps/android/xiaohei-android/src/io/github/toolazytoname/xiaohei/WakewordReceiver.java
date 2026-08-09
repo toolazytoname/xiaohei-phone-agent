@@ -15,6 +15,7 @@ public final class WakewordReceiver extends BroadcastReceiver {
     static final String EXTRA_KEYWORD_ID = "keyword_id";
     static final String EXTRA_CONFIDENCE = "confidence";
     static final String EXTRA_CAPTURE_AVAILABLE = "capture_available";
+    static final String EXTRA_SOURCE = "wake_source";
 
     @Override public void onReceive(Context context, Intent event) {
         if (!ACTION.equals(event.getAction())) return;
@@ -29,6 +30,7 @@ public final class WakewordReceiver extends BroadcastReceiver {
         args.putInt(EXTRA_CONFIDENCE, event.getIntExtra(EXTRA_CONFIDENCE, -1));
         args.putBoolean(EXTRA_CAPTURE_AVAILABLE,
             event.getBooleanExtra(EXTRA_CAPTURE_AVAILABLE, false));
+        args.putString(EXTRA_SOURCE, event.getStringExtra(EXTRA_SOURCE));
         if (!XiaoheiVoiceInteractionService.showWakeSession(args)) {
             showFallbackNotification(context, args);
         }

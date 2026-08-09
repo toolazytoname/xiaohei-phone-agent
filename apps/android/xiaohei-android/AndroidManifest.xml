@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="io.github.toolazytoname.xiaohei.permission.WAKEWORD_EVENT" />
 
     <application
@@ -41,6 +43,10 @@
                 <action android:name="io.github.toolazytoname.xiaohei.action.WAKEWORD" />
             </intent-filter>
         </receiver>
+        <service
+            android:name=".CpuWakewordService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
         <service
             android:name=".XiaoheiVoiceInteractionService"
             android:exported="true"

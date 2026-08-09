@@ -5,7 +5,7 @@ import java.util.UUID;
 
 /** A redacted, in-memory form of contracts/wakeword-event.v1.schema.json. */
 final class WakewordEvent {
-    enum Source { APP_BUTTON, DSP }
+    enum Source { APP_BUTTON, DSP, CPU_KWS }
 
     final String eventId;
     final Source source;

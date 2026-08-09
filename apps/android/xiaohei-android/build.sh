@@ -8,6 +8,7 @@ build_tools="$sdk_root/build-tools/36.0.0"
 build_dir="$project_dir/build"
 keystore="${ANDROID_DEBUG_KEYSTORE:-$HOME/.android/debug.keystore}"
 local_asr_apk="${XIAOHEI_LOCAL_ASR_APK:-}"
+local_kws_apk="${XIAOHEI_LOCAL_KWS_APK:-}"
 variant="${XIAOHEI_BUILD_VARIANT:-debug}"
 version_code="${XIAOHEI_VERSION_CODE:-2}"
 version_name="${XIAOHEI_VERSION_NAME:-0.2.0-alpha.1}"
@@ -40,7 +41,7 @@ for required in "$platform" "$build_tools/aapt2" "$build_tools/zipalign" "$build
 done
 
 mkdir -p "$build_dir/compiled" "$build_dir/generated" "$build_dir/classes" "$build_dir/dex"
-rm -rf "$build_dir/asr"
+rm -rf "$build_dir/asr" "$build_dir/kws" "$build_dir/assets"
 rm -f "$build_dir"/*.apk "$build_dir/dex"/classes*.dex
 
 if [[ ! -s "$keystore" ]]; then
@@ -55,24 +56,45 @@ if [[ -n "$local_asr_apk" ]]; then
   mkdir -p "$build_dir/asr"
   (cd "$build_dir/asr" && unzip -q "$local_asr_apk" 'assets/*' 'lib/arm64-v8a/*' 'classes*.dex')
 fi
+if [[ -n "$local_kws_apk" ]]; then
+  [[ -s "$local_kws_apk" ]] || { printf 'missing local KWS APK: %s\n' "$local_kws_apk" >&2; exit 1; }
+  mkdir -p "$build_dir/kws"
+  (cd "$build_dir/kws" && unzip -q "$local_kws_apk" 'assets/*' 'lib/arm64-v8a/*' 'classes*.dex')
+fi
+
+# KWS distributions also contain the complete sherpa runtime. Prefer that one
+# when present, while merging the independently sourced ASR and KWS assets.
+runtime_dir="$build_dir/asr"
+if [[ -n "$local_kws_apk" ]]; then runtime_dir="$build_dir/kws"; fi
+if [[ -n "$local_asr_apk" || -n "$local_kws_apk" ]]; then
+  mkdir -p "$build_dir/assets"
+  if [[ -d "$build_dir/asr/assets" ]]; then cp -R "$build_dir/asr/assets/." "$build_dir/assets/"; fi
+  if [[ -d "$build_dir/kws/assets" ]]; then cp -R "$build_dir/kws/assets/." "$build_dir/assets/"; fi
+  if [[ -n "$local_kws_apk" ]]; then
+    kws_model="$build_dir/assets/sherpa-onnx-kws-zipformer-wenetspeech-3.3M-2024-01-01"
+    cp "$project_dir/kws/keywords.txt" "$kws_model/keywords.txt"
+    # The upstream APK duplicates two model checkpoints. The app uses epoch 12.
+    find "$kws_model" -name '*epoch-99*' -delete
+  fi
+fi
 
 link_args=(-I "$platform" --manifest "$project_dir/AndroidManifest.xml" --java "$build_dir/generated"
   --min-sdk-version 26 --target-sdk-version 35 --version-code "$version_code" --version-name "$version_name")
 if [[ "$variant" == debug ]]; then link_args+=(--debug-mode); fi
-if [[ -n "$local_asr_apk" ]]; then link_args+=(-A "$build_dir/asr/assets"); fi
+if [[ -n "$local_asr_apk" || -n "$local_kws_apk" ]]; then link_args+=(-A "$build_dir/assets"); fi
 "$build_tools/aapt2" link "${link_args[@]}" -o "$build_dir/unsigned.apk" "$build_dir/compiled/resources.zip"
 find "$project_dir/src" "$build_dir/generated" -name '*.java' -print0 | \
   xargs -0 javac -encoding UTF-8 -source 8 -target 8 -classpath "$platform" -d "$build_dir/classes"
 "$build_tools/d8" --min-api 26 --output "$build_dir/dex" $(find "$build_dir/classes" -name '*.class' -print)
 (cd "$build_dir/dex" && zip -q -u "$build_dir/unsigned.apk" classes.dex)
-if [[ -n "$local_asr_apk" ]]; then
+if [[ -n "$local_asr_apk" || -n "$local_kws_apk" ]]; then
   next_dex=2
-  for source_dex in "$build_dir/asr"/classes*.dex; do
+  for source_dex in "$runtime_dir"/classes*.dex; do
     cp "$source_dex" "$build_dir/dex/classes${next_dex}.dex"
     (cd "$build_dir/dex" && zip -q -u "$build_dir/unsigned.apk" "classes${next_dex}.dex")
     next_dex=$((next_dex + 1))
   done
-  (cd "$build_dir/asr" && zip -q -0 -u "$build_dir/unsigned.apk" lib/arm64-v8a/*.so)
+  (cd "$runtime_dir" && zip -q -0 -u "$build_dir/unsigned.apk" lib/arm64-v8a/*.so)
 fi
 "$build_tools/zipalign" -f 4 "$build_dir/unsigned.apk" "$build_dir/aligned.apk"
 output="$build_dir/xiaohei-$variant.apk"

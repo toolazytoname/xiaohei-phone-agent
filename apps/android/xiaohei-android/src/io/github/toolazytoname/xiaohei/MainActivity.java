@@ -38,6 +38,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private String pendingReplyContent;
     private Button armButton;
     private TextView dspStateView;
+    private TextView cpuKwsStateView;
     private DspProfileClient dspProfile;
     private final BroadcastReceiver dspStatusReceiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
@@ -46,12 +47,18 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             dspStateView.setText("DSP：" + state + "\n" + detail);
         }
     };
+    private final BroadcastReceiver cpuKwsStatusReceiver = new BroadcastReceiver() {
+        @Override public void onReceive(Context context, Intent intent) {
+            showCpuKwsStatus(intent.getStringExtra("state"), intent.getStringExtra("detail"));
+        }
+    };
     private final ActionDispatcher actions = new ActionDispatcher();
     private CommandRouter.Request pendingCameraRequest;
     private WakewordBroker broker;
     private VoiceCommandSession voiceSession;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private boolean privacyLockedAtLaunch;
+    private boolean pendingCpuKwsStart;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +110,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         if (intent != null && intent.getBooleanExtra("global_stop", false)) {
             voiceSession.stop();
             dspProfile.disarm();
+            stopService(new Intent(this, CpuWakewordService.class));
             broker.disarm();
             intent.removeExtra("global_stop");
             refreshDspStatus();
@@ -115,11 +123,16 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     private void consumeWakeIntent(Intent intent) {
         if (intent == null || !intent.hasExtra(WakewordReceiver.EXTRA_KEYWORD_ID)) return;
-        if (broker.state() == WakewordBroker.State.OFF) broker.armDspMode();
-        broker.dispatchDspHit(
-            intent.getStringExtra(WakewordReceiver.EXTRA_KEYWORD_ID),
-            intent.getIntExtra(WakewordReceiver.EXTRA_CONFIDENCE, -1),
-            intent.getBooleanExtra(WakewordReceiver.EXTRA_CAPTURE_AVAILABLE, false));
+        if ("CPU_KWS".equals(intent.getStringExtra(WakewordReceiver.EXTRA_SOURCE))) {
+            if (broker.state() == WakewordBroker.State.OFF) broker.armManualMode();
+            broker.dispatchCpuHit(intent.getStringExtra(WakewordReceiver.EXTRA_KEYWORD_ID));
+        } else {
+            if (broker.state() == WakewordBroker.State.OFF) broker.armDspMode();
+            broker.dispatchDspHit(
+                intent.getStringExtra(WakewordReceiver.EXTRA_KEYWORD_ID),
+                intent.getIntExtra(WakewordReceiver.EXTRA_CONFIDENCE, -1),
+                intent.getBooleanExtra(WakewordReceiver.EXTRA_CAPTURE_AVAILABLE, false));
+        }
         intent.removeExtra(WakewordReceiver.EXTRA_KEYWORD_ID);
     }
 
@@ -170,6 +183,23 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         });
         root.addView(dspDisarmButton);
 
+        cpuKwsStateView = new TextView(this);
+        cpuKwsStateView.setPadding(0, pad, 0, 0);
+        root.addView(cpuKwsStateView);
+        refreshCpuKwsStatus();
+
+        Button cpuKwsStart = new Button(this);
+        cpuKwsStart.setText("启动“小黑小黑”CPU 实验唤醒");
+        cpuKwsStart.setEnabled(LocalKwsEngine.isBundled());
+        cpuKwsStart.setOnClickListener(v -> startCpuKws());
+        root.addView(cpuKwsStart);
+
+        Button cpuKwsStop = new Button(this);
+        cpuKwsStop.setText("停止 CPU 唤醒并释放麦克风");
+        cpuKwsStop.setEnabled(LocalKwsEngine.isBundled());
+        cpuKwsStop.setOnClickListener(v -> stopService(new Intent(this, CpuWakewordService.class)));
+        root.addView(cpuKwsStop);
+
         Button talkButton = new Button(this);
         talkButton.setText("按一下开始说话（通用模式）");
         talkButton.setOnClickListener(v -> {
@@ -180,10 +210,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         root.addView(talkButton);
 
         Button stopAllButton = new Button(this);
-        stopAllButton.setText("全部停止：语音 + DSP");
+        stopAllButton.setText("全部停止：语音 + DSP + CPU 唤醒");
         stopAllButton.setOnClickListener(v -> {
             voiceSession.stop();
             dspProfile.disarm();
+            stopService(new Intent(this, CpuWakewordService.class));
             broker.disarm();
             dspStateView.setText("DSP：正在停止并释放");
             historyView.setText("已请求全局停止；不会继续执行待处理命令");
@@ -259,11 +290,15 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         registerReceiver(dspStatusReceiver, new IntentFilter(DspProfileClient.STATUS_EVENT),
             "io.github.toolazytoname.xiaohei.permission.WAKEWORD_EVENT", null,
             Context.RECEIVER_EXPORTED);
+        registerReceiver(cpuKwsStatusReceiver, new IntentFilter(CpuWakewordService.STATUS_EVENT),
+            Context.RECEIVER_NOT_EXPORTED);
         refreshDspStatus();
+        refreshCpuKwsStatus();
     }
 
     @Override protected void onStop() {
         unregisterReceiver(dspStatusReceiver);
+        unregisterReceiver(cpuKwsStatusReceiver);
         super.onStop();
     }
 
@@ -280,6 +315,28 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         DspProfileClient.Status status = dspProfile.status();
         if (status == null) dspStateView.setText("DSP：状态查询失败；请检查 Companion 版本");
         else dspStateView.setText("DSP：" + status.state + "\n" + status.detail);
+    }
+
+    private void refreshCpuKwsStatus() {
+        android.content.SharedPreferences prefs = getSharedPreferences("cpu_wakeword", MODE_PRIVATE);
+        showCpuKwsStatus(prefs.getString("state", LocalKwsEngine.isBundled() ? "OFF" : "UNAVAILABLE"),
+            prefs.getString("detail", LocalKwsEngine.isBundled()
+                ? "默认关闭；启用后会持续占用 CPU 和麦克风" : "当前安装包未包含 KWS 模型"));
+    }
+
+    private void showCpuKwsStatus(String state, String detail) {
+        if (cpuKwsStateView != null) cpuKwsStateView.setText("CPU 唤醒：" + state + "\n" + detail
+            + "\n这是高功耗通用模式，不是 DSP 低功耗模式。");
+    }
+
+    private void startCpuKws() {
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            pendingCpuKwsStart = true;
+            requestPermissions(new String[] { Manifest.permission.RECORD_AUDIO }, REQUEST_RECORD_AUDIO);
+            return;
+        }
+        startForegroundService(new Intent(this, CpuWakewordService.class)
+            .setAction(CpuWakewordService.ACTION_START));
     }
 
     @Override public void onStateChanged(WakewordBroker.State state, String detail) {
@@ -313,8 +370,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
         super.onRequestPermissionsResult(requestCode, permissions, results);
         if (requestCode == REQUEST_RECORD_AUDIO) {
-            if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED) voiceSession.start();
+            if (results.length == 1 && results[0] == PackageManager.PERMISSION_GRANTED) {
+                if (pendingCpuKwsStart) startCpuKws(); else voiceSession.start();
+            }
             else broker.failCommand("未授予麦克风权限；已停止命令会话");
+            pendingCpuKwsStart = false;
         } else if (requestCode == REQUEST_CAMERA && pendingCameraRequest != null) {
             CommandRouter.Request pending = pendingCameraRequest;
             pendingCameraRequest = null;
@@ -341,6 +401,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     @Override public void onFinalTranscript(String text) {
         dispatchTranscript(text);
+        resumeCpuKwsIfEnabled();
     }
 
     private void dispatchTranscript(String text) {
@@ -439,12 +500,19 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     @Override public void onSpeechError(String safeDetail) {
         historyView.setText("短命令会话结束：" + safeDetail);
         broker.finishCommand(safeDetail + "；已重新就绪");
+        resumeCpuKwsIfEnabled();
+    }
+
+    private void resumeCpuKwsIfEnabled() {
+        String state = getSharedPreferences("cpu_wakeword", MODE_PRIVATE).getString("state", "OFF");
+        if ("DETECTED".equals(state)) startForegroundService(new Intent(this, CpuWakewordService.class)
+            .setAction(CpuWakewordService.ACTION_RESUME));
     }
 
     private void shareDiagnostics() {
         DspProfileClient.Status dsp = dspProfile.status();
         String report = "Xiaohei diagnostics\n"
-            + "app=0.1.0-m2\n"
+            + "app=0.2.0-alpha.1\n"
             + "android=" + Build.VERSION.RELEASE + " api=" + Build.VERSION.SDK_INT + "\n"
             + "device=" + Build.MANUFACTURER + " " + Build.MODEL + "\n"
             + "assistant_state=" + broker.state() + "\n"

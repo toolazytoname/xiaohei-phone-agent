@@ -63,6 +63,10 @@ final class WakewordBroker {
         dispatch(new WakewordEvent(WakewordEvent.Source.DSP, keywordId, confidence, captureAvailable));
     }
 
+    void dispatchCpuHit(String keywordId) {
+        dispatch(new WakewordEvent(WakewordEvent.Source.CPU_KWS, keywordId, -1, false));
+    }
+
     boolean beginVoiceCommand() {
         if (state != State.TRIGGERED && state != State.ARMED) return false;
         transition(State.LISTENING, "正在听取一条短命令；结束后立即释放麦克风");
