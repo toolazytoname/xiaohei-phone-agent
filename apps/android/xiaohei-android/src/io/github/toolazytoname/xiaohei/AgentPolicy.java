@@ -7,6 +7,8 @@ final class AgentPolicy {
     enum Decision { ALLOW, REQUIRE_CONFIRMATION, DENY }
 
     static Decision assess(String packageName, String visibleText, String requestedLabel) {
+        if (SensitiveActionDenialPolicy.assess(packageName, visibleText, requestedLabel)
+                == SensitiveActionDenialPolicy.Decision.DENY_SENSITIVE) return Decision.DENY;
         String pkg = lower(packageName);
         String surface = lower(visibleText);
         String target = lower(requestedLabel);

@@ -82,6 +82,8 @@ required_files=(
   docs/root-capability-boundary.zh-CN.md
   docs/authorization-tiers.md
   docs/authorization-tiers.zh-CN.md
+  docs/sensitive-action-denial.md
+  docs/sensitive-action-denial.zh-CN.md
   docs/root-broker-core.md
   docs/root-broker-core.zh-CN.md
   docs/root-read-only-diagnostics.md
@@ -175,6 +177,7 @@ python3 scripts/verify-opencode-tool-policy.py
 python3 scripts/verify-opencode-acceptance-matrix.py
 python3 scripts/verify-root-capability-catalog.py
 python3 scripts/verify-authorization-tier-policy.py
+python3 scripts/verify-sensitive-action-denial.py
 python3 scripts/verify-root-broker.py
 python3 scripts/verify-root-read-only-diagnostics.py
 python3 scripts/verify-root-service-lifecycle.py

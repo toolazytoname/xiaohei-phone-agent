@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `POLICY-004`：支付/转账、验证码/密码以及验证、风控或安全保护规避，在包名、可见文本和请求标签三个面都由本地永久拒绝语料库拦截；未匹配不授予权限，模型与执行调用为零。
 - `ROOT-004`：服务生命周期目前只有 fail-closed 的停止 dry-run 预检；包名、进程名、PID、端口与新鲜确认均必须精确匹配。它不发 PID 信号、不启停服务、不打开端口，也没有 root 或设备执行路径。
 - `ROOT-003`：六类只读诊断只投影固定类别、三态可用性和固定标签；服务 action 最多四项，电池/音频各一项。不存在命令、路径、PID、端口号、包名、profile/音频内容、用户文本、日志、Token 或原始设备输出；当前没有 root adapter 或设备执行。
 - `ROOT-002`：内存 root broker 仅接受精确 signer、3 个固定只读 action ID、空参数与一次性 request ID；缺字段、签名错误、畸形参数和重放均拒绝。它不含 `su`、shell、Android、传输、root 进程或设备改动。
