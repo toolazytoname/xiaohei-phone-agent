@@ -630,18 +630,17 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     /** Covers only the runtime owners held by this activity; other surfaces remain independently owned. */
     private void requestHomeGlobalStop() {
-        GlobalStopRegistry stops = new GlobalStopRegistry();
-        stops.register(GlobalStopRegistry.Resource.VOICE, () -> { voiceSession.stop(); return true; });
-        stops.register(GlobalStopRegistry.Resource.DSP, () -> { dspProfile.disarm(); return true; });
-        stops.register(GlobalStopRegistry.Resource.CPU_WAKE, () -> {
+        ApplicationStopHub.register(GlobalStopRegistry.Resource.VOICE, () -> { voiceSession.stop(); return true; });
+        ApplicationStopHub.register(GlobalStopRegistry.Resource.DSP, () -> { dspProfile.disarm(); return true; });
+        ApplicationStopHub.register(GlobalStopRegistry.Resource.CPU_WAKE, () -> {
             stopService(new Intent(this, CpuWakewordService.class));
             broker.disarm();
             return true;
         });
-        GlobalStopRegistry.Result result = stops.stopAll();
-        dspStateView.setText(result.allResourcesReleased ? "DSP：已请求停止并释放"
+        ApplicationStopHub.Result result = ApplicationStopHub.stopAll();
+        dspStateView.setText(result.allReleased() ? "DSP：已请求停止并释放"
             : "DSP：停止未完全确认；请在状态页人工检查");
-        historyView.setText(result.allResourcesReleased
+        historyView.setText(result.allReleased()
             ? "已请求主页全局停止；不会继续执行待处理命令"
             : "主页停止未完全确认；没有自动重试，请人工检查");
         refreshDspStatus();
