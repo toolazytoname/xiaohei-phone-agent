@@ -177,6 +177,14 @@ public final class AgentActivity extends Activity {
         export.setText("导出脱敏 Agent 轨迹（JSONL）");
         export.setOnClickListener(v -> shareTrace());
         root.addView(export);
+        Button storage = new Button(this);
+        storage.setText(AgentTraceStore.enabled(this) ? "关闭并清除本机 Agent 轨迹存储" : "启用脱敏 Agent 轨迹存储");
+        storage.setOnClickListener(v -> { boolean next = !AgentTraceStore.enabled(this); AgentTraceStore.setEnabled(this, next); storage.setText(next ? "关闭并清除本机 Agent 轨迹存储" : "启用脱敏 Agent 轨迹存储"); state.setText(next ? "已启用仅脱敏的本机轨迹存储" : "已关闭并清除本机 Agent 轨迹存储"); });
+        root.addView(storage);
+        Button deleteLatest = new Button(this);
+        deleteLatest.setText("删除最新一条 Agent 轨迹");
+        deleteLatest.setOnClickListener(v -> state.setText(AgentTraceStore.deleteLatest(this) ? "已删除最新一条脱敏轨迹" : "没有可删除的 Agent 轨迹"));
+        root.addView(deleteLatest);
         Button clear = new Button(this);
         clear.setText("清除本机 Agent 轨迹");
         clear.setOnClickListener(v -> { AgentTraceStore.clear(this); state.setText("Agent 轨迹已清除"); });
