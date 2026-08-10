@@ -69,7 +69,7 @@ NEXT: 唯一下一任务 ID
 | VOICE-007 | BACKLOG | VOICE-006 | 当前命令 ASR 与至少一个开放对话 ASR A/B | WER/语义成功率/延迟/内存，不能只报单句 |
 | VOICE-008 | BACKLOG | VOICE-007 | 命令 ASR 和对话 ASR 独立 profile | 命令热词不会改写聊天文本 |
 | VOICE-009 | BACKLOG | VOICE-008 | 流式 partial/final 转写与 UI | 乱序、重复 final、取消和超时测试 |
-| VOICE-010 | BACKLOG | VOICE-004 | TTS 按句流式队列与首句低延迟 | 队列取消不继续播报过期文本 |
+| VOICE-010 | VERIFY | VOICE-004 | 代际化句子队列立即提供首句，仅在当前完成后推进；替换或取消会使全部已排队/迟到完成事件失效；仍需真实 TTS 接线和设备上的延迟/取消证据 | 队列取消不继续播报过期文本 |
 | VOICE-011 | BACKLOG | VOICE-010 | 播报中按钮打断；语音 barge-in 只作后续实验 | 打断 300ms 内停止；无自识别回声循环 |
 | VOICE-012 | BACKLOG | VOICE-011 | 蓝牙/耳机/扬声器路由和音频焦点矩阵 | 连接切换、拔出、来电后恢复正确 |
 

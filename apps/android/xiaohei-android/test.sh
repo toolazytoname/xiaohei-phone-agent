@@ -36,6 +36,8 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/TtsLifecycle.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/TtsLifecycleTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.TtsLifecycleTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/SentenceTtsQueue.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/SentenceTtsQueueTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.SentenceTtsQueueTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/AudioDuplexArbiter.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/AudioDuplexArbiterTest.java"

@@ -62,7 +62,7 @@ ROLLBACK / REMAINS / NEXT
 | VOICE-007 | BACKLOG | VOICE-006 | A/B command ASR against an open-conversation ASR on accuracy/latency/memory |
 | VOICE-008 | BACKLOG | VOICE-007 | Independent command/conversation ASR profiles; command correction cannot rewrite chat |
 | VOICE-009 | BACKLOG | VOICE-008 | Ordered partial/final streaming transcript UI with cancel/timeout tests |
-| VOICE-010 | BACKLOG | VOICE-004 | Sentence-buffered streaming TTS whose queue cancels immediately |
+| VOICE-010 | VERIFY | VOICE-004 | Generation-bound sentence queue exposes a first sentence immediately, advances only after current completion, and invalidates all queued/late completions on replacement or cancellation; real TTS wiring and device latency/cancellation evidence remain required |
 | VOICE-011 | BACKLOG | VOICE-010 | Button interruption first; voice barge-in only after echo-loop qualification |
 | VOICE-012 | BACKLOG | VOICE-011 | Bluetooth/headset/speaker focus and route matrix |
 

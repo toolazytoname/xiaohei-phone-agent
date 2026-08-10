@@ -21,6 +21,8 @@ required_files=(
   docs/tool-outcome-evidence.zh-CN.md
   docs/opencode-web-takeover.md
   docs/opencode-web-takeover.zh-CN.md
+  docs/sentence-tts-queue.md
+  docs/sentence-tts-queue.zh-CN.md
   STATUS.md
   LICENSE
   SECURITY.md
@@ -247,6 +249,7 @@ python3 scripts/verify-global-stop-registry.py
 python3 scripts/verify-audio-interruption-policy.py
 python3 scripts/verify-tool-outcome-evidence.py
 python3 scripts/verify-opencode-web-takeover.py
+python3 scripts/verify-sentence-tts-queue.py
 python3 scripts/verify-task-card.py
 bash scripts/test-pr-delivery-metadata.sh
 
