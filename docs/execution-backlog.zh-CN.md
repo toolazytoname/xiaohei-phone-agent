@@ -147,7 +147,7 @@ NEXT: 唯一下一任务 ID
 | ROOT-002 | DONE | ROOT-001,POLICY-003 | 内存固定动作 root broker 核心绑定精确 signer、3 个只读 action ID、空参数 schema 和一次性 request ID；没有 root 适配器或设备执行 | 普通 App、shell、重放、畸形参数拒绝 |
 | ROOT-003 | DONE | ROOT-002 | 只读诊断：服务、端口、电池、音频、包与 profile 状态；仅固定类别/状态/标签投影，无 adapter 或设备执行 | 输出脱敏、有长度上限、不含用户内容 |
 | ROOT-004 | DONE | ROOT-002 | 服务停止 dry-run 预检：包/进程/PID/端口精确匹配、新鲜确认；无进程信号或设备执行 | 拒绝误杀，停止后无残留 |
-| ROOT-005 | BACKLOG | ROOT-002 | 备份/恢复固定目录与加密工件 | 明文临时文件删除、完整恢复演练 |
+| ROOT-005 | DONE | ROOT-002 | 固定范围的内存 AES-256-GCM 备份/恢复信封，含新 IV、错误密钥/篡改拒绝且无磁盘路径；真实持久化/清理/离线恢复仍受门禁约束 | 明文临时文件删除、完整恢复演练 |
 | ROOT-006 | BACKLOG | ROOT-002 | 设备 profile 安装/卸载事务 | 预检、快照、失败回滚、重启后状态 |
 | ROOT-007 | BACKLOG | ROOT-002 | 系统修改 dry-run、差异预览和新鲜确认 | 未确认、目标变化、过期全部拒绝 |
 | ROOT-008 | DONE | ROOT-003 | 内存脱敏 root 决定审计与永久 broker 实例撤销；无 Token 持久化且撤销后请求持续拒绝；全局停止接线仍待完成 | 全局停止后无法继续调用 |

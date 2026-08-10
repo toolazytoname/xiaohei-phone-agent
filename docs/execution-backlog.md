@@ -140,7 +140,7 @@ ROLLBACK / REMAINS / NEXT
 | ROOT-002 | DONE | ROOT-001,POLICY-003 | In-memory fixed-action root broker core binds exact signer, three read-only action IDs, empty parameter schema and one-use request IDs; no root adapter or device execution exists |
 | ROOT-003 | DONE | ROOT-002 | Bounded redacted read-only service/port/battery/audio/package/profile diagnostics; fixed category/state/label projection only, with no adapter or device execution |
 | ROOT-004 | DONE | ROOT-002 | Service-stop dry-run preflight with exact package/process/PID/port verification, fresh confirmation, and no process signal or device execution |
-| ROOT-005 | BACKLOG | ROOT-002 | Fixed encrypted backup/restore; no plaintext residue |
+| ROOT-005 | DONE | ROOT-002 | Fixed-scope in-memory AES-256-GCM backup/restore envelope with fresh IV, wrong-key/tamper rejection, and no disk paths; real persistence/cleanup/offline recovery remains gated |
 | ROOT-006 | BACKLOG | ROOT-002 | Transactional device-profile install/uninstall with reboot checks |
 | ROOT-007 | BACKLOG | ROOT-002 | Dry-run, diff preview, and fresh confirmation for system changes |
 | ROOT-008 | DONE | ROOT-003 | In-memory redacted root decision audit and permanent broker-instance revocation; no tokens persist and post-revocation requests remain denied; global-stop wiring remains pending |

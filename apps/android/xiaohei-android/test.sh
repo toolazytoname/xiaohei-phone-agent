@@ -220,6 +220,10 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/RootAuditRevocationTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.RootAuditRevocationTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/RootEncryptedBackup.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/RootEncryptedBackupTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.RootEncryptedBackupTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/RootCapabilityBroker.java" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/RootReadOnlyDiagnostics.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/RootReadOnlyDiagnosticsTest.java"
