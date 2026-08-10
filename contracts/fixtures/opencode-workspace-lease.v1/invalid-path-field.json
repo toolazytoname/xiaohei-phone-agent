@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "task_id": "job-workspace-public-0002",
+  "allowed_areas": ["input", "output"],
+  "persistence": "private_app_storage",
+  "path_exposure": "none",
+  "public_log_safe": false,
+  "path": "forbidden"
+}
