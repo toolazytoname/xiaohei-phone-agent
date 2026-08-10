@@ -2,6 +2,8 @@
 
 [English](README.md) · [长期总纲](docs/sovereign-mobile-agent-master-plan.zh-CN.md) · [执行任务账本](docs/execution-backlog.zh-CN.md) · [当前状态](STATUS.md) · [GitHub 交付看板](docs/github-progress-board.zh-CN.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [手机离线操作卡](docs/phone-operation-card.zh-CN.md) · [交付证据矩阵](docs/delivery-evidence-matrix.zh-CN.md) · [Root Broker 威胁模型](docs/root-capability-broker-threat-model.zh-CN.md) · [发布范围](docs/release-scope-0.2.0-alpha.3.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [安全策略](SECURITY.md)
 
+![小黑 AI 手机助手产品图：唤醒、短语音、意图与策略、用户确认、Android 动作和兼容性分层](docs/assets/xiaohei-phone-agent-overview.png)
+
 > 唤醒它，说出需求，让手机行动——尽量本地、过程可见，高风险动作必须确认。
 
 小黑是一款面向 Android 的开源、本地优先 AI 手机助手。它把用户主动入口或常驻唤醒、短语音命令、与模型无关的意图路由、明确的安全策略和可观察的手机操作组合成一个独立产品。
@@ -9,6 +11,13 @@
 **当前状态：**可安装的 `0.2.0-alpha.3` 发布候选，尚未上传公开二进制 Release。计划公开的通用包不内嵌模型权重；私有本地构建增加离线中文 ASR 与实验性 CPU KWS，OnePlus profile 则提供独立控制、使用原厂词的低功耗 DSP 路径。
 
 **兼容性承诺：**基础版小黑不要求 OnePlus 手机或 Qualcomm DSP。不兼容的唤醒后端必须隐藏或明确显示“不支持”，不能乐观安装后再报错。详见[兼容性分层](docs/compatibility.zh-CN.md)。
+
+## 真实基础模式界面
+
+<img src="docs/assets/xiaohei-base-mode-emulator.png" width="420" alt="小黑在干净 AOSP ARM64 模拟器上的基础模式，不支持的 DSP 与 CPU KWS 开关明确禁用">
+
+这张图来自干净 AOSP ARM64 模拟器，并特意保留“不支持”的设备增强状态。它只
+证明通用页面与基础模式入口，不代表 OnePlus DSP 或真人声学门禁已经通过。
 
 ## 小黑应该是什么体验
 

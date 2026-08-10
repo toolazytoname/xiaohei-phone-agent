@@ -2,6 +2,8 @@
 
 [简体中文](README.zh-CN.md) · [Long-term master plan](docs/sovereign-mobile-agent-master-plan.md) · [Execution backlog](docs/execution-backlog.md) · [Current status](STATUS.md) · [GitHub delivery board](docs/github-progress-board.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [On-phone operation card](docs/phone-operation-card.md) · [Evidence matrix](docs/delivery-evidence-matrix.md) · [Root broker threat model](docs/root-capability-broker-threat-model.md) · [Release scope](docs/release-scope-0.2.0-alpha.3.md) · [Threat model](docs/threat-model.md) · [Security](SECURITY.md)
 
+![Xiaohei Phone Agent product map: wake, short voice, intent and policy, confirmation, Android action, and compatibility tiers](docs/assets/xiaohei-phone-agent-overview.png)
+
 > Wake it. Say it. Let your phone act — locally when possible, visibly, and with confirmation when it matters.
 
 Xiaohei is an open, local-first AI phone assistant for Android. It connects a user-invoked or always-on entry point, a short voice command, model-independent intent routing, explicit safety policy, and observable Android actions into one product.
@@ -9,6 +11,14 @@ Xiaohei is an open, local-first AI phone assistant for Android. It connects a us
 **Status:** installable `0.2.0-alpha.3` release candidate; no public binary Release has been uploaded. The intended public generic package embeds no model weights. A private local build adds offline Chinese ASR and experimental CPU KWS; the OnePlus profile provides a separately controlled low-power OEM-phrase DSP path.
 
 **Compatibility promise:** users do not need a OnePlus phone or Qualcomm DSP for Xiaohei's base product. Unsupported wake backends are hidden or marked unavailable instead of being installed optimistically. See the [compatibility tiers](docs/compatibility.md).
+
+## Real base-mode UI
+
+<img src="docs/assets/xiaohei-base-mode-emulator.png" width="420" alt="Xiaohei base mode on a clean AOSP ARM64 emulator, with unsupported DSP and CPU KWS controls disabled">
+
+The screenshot is from a clean AOSP ARM64 emulator and deliberately shows
+device-specific backends as unavailable. It is generic UI evidence, not a
+OnePlus DSP or real-acoustic acceptance result.
 
 ## What Xiaohei should feel like
 
