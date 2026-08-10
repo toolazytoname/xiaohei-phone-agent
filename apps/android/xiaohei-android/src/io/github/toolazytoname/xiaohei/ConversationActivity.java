@@ -28,13 +28,19 @@ public final class ConversationActivity extends Activity {
     private TextView state;
     private Button send;
     private Button cancel;
+    private Button stop;
+    private Button repeat;
+    private Button clear;
+    private Button continueChat;
     private Button end;
     private PendingConversationCall pending;
     private long generation;
     private boolean destroyed;
     private boolean receiverRegistered;
     private final StringBuilder visibleTranscript = new StringBuilder();
+    private String lastAssistantReply;
     private final ConversationSessionCoordinator coordinator = new ConversationSessionCoordinator();
+    private final ConversationControlPolicy.State controls = new ConversationControlPolicy.State();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final Runnable timeout = () -> {
         if (coordinator.expire(SystemClock.elapsedRealtime())
@@ -100,10 +106,36 @@ public final class ConversationActivity extends Activity {
         cancel.setOnClickListener(view -> cancelCurrent());
         root.addView(cancel);
 
+        stop = new Button(this);
+        stop.setText("停止（暂停并取消在途请求）");
+        stop.setContentDescription("conversation-stop");
+        stop.setOnClickListener(view -> applyControl(ConversationControlPolicy.Action.STOP));
+        root.addView(stop);
+
+        repeat = new Button(this);
+        repeat.setText("重说上一条回复（本地）");
+        repeat.setContentDescription("conversation-repeat");
+        repeat.setEnabled(false);
+        repeat.setOnClickListener(view -> applyControl(ConversationControlPolicy.Action.REPEAT));
+        root.addView(repeat);
+
+        clear = new Button(this);
+        clear.setText("清空内存上下文");
+        clear.setContentDescription("conversation-clear");
+        clear.setOnClickListener(view -> applyControl(ConversationControlPolicy.Action.CLEAR));
+        root.addView(clear);
+
+        continueChat = new Button(this);
+        continueChat.setText("继续聊（恢复输入，不调用模型）");
+        continueChat.setContentDescription("conversation-continue");
+        continueChat.setEnabled(false);
+        continueChat.setOnClickListener(view -> applyControl(ConversationControlPolicy.Action.CONTINUE));
+        root.addView(continueChat);
+
         end = new Button(this);
         end.setText("结束聊天并清空内存上下文");
         end.setContentDescription("conversation-end");
-        end.setOnClickListener(view -> endByUser());
+        end.setOnClickListener(view -> applyControl(ConversationControlPolicy.Action.END));
         root.addView(end);
 
         output = new TextView(this);
@@ -120,6 +152,16 @@ public final class ConversationActivity extends Activity {
 
     private void send() {
         String userText = input.getText().toString().trim();
+        ConversationControlPolicy.Action localControl = ConversationControlPolicy.parse(userText);
+        if (localControl != ConversationControlPolicy.Action.NONE) {
+            applyControl(localControl);
+            input.setText("");
+            return;
+        }
+        if (!controls.canSend()) {
+            state.setText("状态：已暂停；点“继续聊”后再发送 / Status: paused; press Continue");
+            return;
+        }
         ConversationSessionCoordinator.BeginResult begin = coordinator.begin(
                 userText, currentProfileFingerprint(), SystemClock.elapsedRealtime()
         );
@@ -150,6 +192,11 @@ public final class ConversationActivity extends Activity {
             default:
                 state.setText("状态：会话不可用，请重新开始 / Status: start a new session");
                 return;
+        }
+        if (!controls.markRequestStarted()) {
+            coordinator.abort(SystemClock.elapsedRealtime());
+            state.setText("状态：控制状态拒绝并发请求 / Status: local control rejected request");
+            return;
         }
 
         PendingConversationCall previous = pending;
@@ -185,37 +232,50 @@ public final class ConversationActivity extends Activity {
             long now = SystemClock.elapsedRealtime();
             if (result.cancelled) {
                 coordinator.abort(now);
+                controls.markRequestFinished(false);
                 state.setText("状态：请求已取消，可继续当前会话 / Status: request cancelled");
                 output.setText(visibleOr("当前请求已取消；未执行任何动作"));
+                setRunning(false);
                 return;
             }
             if (!result.ok) {
                 coordinator.abort(now);
+                controls.markRequestFinished(false);
                 state.setText("状态：请求失败，本轮未加入上下文 / Status: failed; turn rolled back");
                 output.setText(result.text);
+                setRunning(false);
                 return;
             }
 
             ConversationSessionCoordinator.Code completion = coordinator.complete(result.text, now);
             if (completion == ConversationSessionCoordinator.Code.REPLY_ACCEPTED) {
+                controls.markRequestFinished(true);
                 appendVisible(userText, result.text);
                 input.setText("");
                 showReadyStatus(now);
+                setRunning(false);
             } else if (completion == ConversationSessionCoordinator.Code.TURN_LIMIT_CLEARED) {
+                controls.markRequestFinished(true);
+                controls.apply(ConversationControlPolicy.Action.CLEAR);
                 visibleTranscript.setLength(0);
+                lastAssistantReply = null;
                 input.setText("");
                 cancelTimeout();
                 state.setText("状态：已达到 6 轮，会话结束并清空 / Status: turn limit; session cleared");
                 output.setText("最后回复（不再保留上下文）\n" + result.text);
+                setRunning(false);
             } else if (completion == ConversationSessionCoordinator.Code.TIMEOUT_CLEARED) {
+                controls.markRequestFinished(false);
                 clearVisible("回复到达时会话已超时，内容未加入上下文 / Reply arrived after timeout; cleared");
             } else {
+                controls.markRequestFinished(false);
                 clearVisible("回复超过预算或无效，内存上下文已清空 / Reply exceeded budget or was invalid; cleared");
             }
         });
     }
 
     private void appendVisible(String userText, String assistantText) {
+        lastAssistantReply = assistantText;
         if (visibleTranscript.length() > 0) visibleTranscript.append("\n\n");
         visibleTranscript.append("你：").append(userText).append("\n小黑：").append(assistantText);
         output.setText(visibleTranscript.toString());
@@ -228,11 +288,48 @@ public final class ConversationActivity extends Activity {
                 + " 估算 token / Status: follow-up ready");
     }
 
-    private void endByUser() {
-        coordinator.clearByUser();
-        closePending();
-        clearVisible("聊天已结束，内存上下文已清空 / Chat ended and cleared");
-        input.setText("");
+    private void applyControl(ConversationControlPolicy.Action action) {
+        ConversationControlPolicy.Outcome outcome = controls.apply(action);
+        long now = SystemClock.elapsedRealtime();
+        if (outcome.cancelRequest) {
+            coordinator.abort(now);
+            closePending();
+        }
+        switch (action) {
+            case STOP:
+                state.setText(outcome.changed
+                        ? "状态：已停止并暂停；零模型调用 / Status: stopped and paused; zero model calls"
+                        : "状态：已经是暂停状态 / Status: already paused");
+                output.setText(visibleOr("没有在途请求；上下文保持不变"));
+                break;
+            case REPEAT:
+                if (outcome.repeatLastReply) {
+                    state.setText("状态：本地重说上一条；零模型调用 / Status: local repeat; zero model calls");
+                    output.setText("重说上一条回复（本地）\n" + lastAssistantReply);
+                } else {
+                    state.setText("状态：没有可重说的回复 / Status: nothing to repeat");
+                }
+                break;
+            case CLEAR:
+                coordinator.clearByUser();
+                closePending();
+                clearVisible("上下文已清空；零模型调用 / Context cleared; zero model calls");
+                break;
+            case CONTINUE:
+                state.setText(outcome.changed
+                        ? "状态：可继续输入；零模型调用 / Status: ready to continue; zero model calls"
+                        : "状态：已经可以继续输入 / Status: already active");
+                output.setText(visibleOr("当前上下文为空，可开始新会话"));
+                break;
+            case END:
+                coordinator.clearByUser();
+                closePending();
+                clearVisible("聊天已结束，内存上下文已清空 / Chat ended and cleared");
+                break;
+            default:
+                break;
+        }
+        setRunning(controls.requestInFlight());
     }
 
     private void scheduleTimeout() {
@@ -250,14 +347,19 @@ public final class ConversationActivity extends Activity {
         pending = null;
         generation++;
         if (current != null) current.requestCancel();
+        controls.markRequestFinished(false);
         setRunning(false);
     }
 
     private void clearVisible(String message) {
+        controls.apply(ConversationControlPolicy.Action.CLEAR);
         visibleTranscript.setLength(0);
+        lastAssistantReply = null;
+        if (input != null) input.setText("");
         cancelTimeout();
         state.setText(message);
         output.setText("上下文为空；模型没有执行任何手机动作 / Context empty; no phone action executed");
+        setRunning(false);
     }
 
     private String visibleOr(String fallback) {
@@ -265,9 +367,13 @@ public final class ConversationActivity extends Activity {
     }
 
     private void setRunning(boolean running) {
-        if (send != null) send.setEnabled(!running);
+        if (send != null) send.setEnabled(!running && controls.canSend());
         if (cancel != null) cancel.setEnabled(running);
-        if (input != null) input.setEnabled(!running);
+        if (input != null) input.setEnabled(!running && controls.canSend());
+        if (stop != null) stop.setEnabled(true);
+        if (repeat != null) repeat.setEnabled(controls.canRepeat());
+        if (clear != null) clear.setEnabled(true);
+        if (continueChat != null) continueChat.setEnabled(!running && !controls.canSend());
         if (end != null) end.setEnabled(true);
     }
 
@@ -327,7 +433,9 @@ public final class ConversationActivity extends Activity {
         }
         coordinator.onBackgrounded();
         closePending();
+        controls.apply(ConversationControlPolicy.Action.CLEAR);
         visibleTranscript.setLength(0);
+        lastAssistantReply = null;
         cancelTimeout();
         super.onDestroy();
     }

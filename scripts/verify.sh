@@ -40,6 +40,8 @@ required_files=(
   docs/conversation-half-duplex.zh-CN.md
   docs/conversation-prompt-boundary.md
   docs/conversation-prompt-boundary.zh-CN.md
+  docs/conversation-local-controls.md
+  docs/conversation-local-controls.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
