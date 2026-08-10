@@ -79,7 +79,7 @@ NEXT: 唯一下一任务 ID
 |---|---|---|---|---|
 | CHAT-001 | DONE | BASE-005 | 独立 Conversation provider 配置，不联动 Phone Agent/OpenCode/Claude/Happy | 纯配置隔离回归 + AOSP 用户入口可见验证通过；Token/调用留待 CHAT-002/003 |
 | CHAT-002 | VERIFY | CHAT-001 | Android Keystore 凭据与备份规则；备份永不含 Token | 构建、配置隔离和备份回归通过；待独立设备 Keystore 保存/清除/恢复闭环 |
-| CHAT-003 | BACKLOG | CHAT-002 | 有界 HTTP/SSE 模型客户端、取消和重定向拒绝 | mock 流式/断流/限流/超时/取消测试 |
+| CHAT-003 | READY | CHAT-002 | 有界 HTTP/SSE 模型客户端、取消和重定向拒绝 | CHAT-002 实现已完成且独立真机 Keystore 门禁不阻塞 mock 客户端测试 |
 | CHAT-004 | BACKLOG | CHAT-003 | 单轮文字聊天 UI，不带动作权限 | 真机回复显示；模型不可调用工具 |
 | CHAT-005 | BACKLOG | CHAT-004,VOICE-002 | 单轮“说一句、答一句”闭环 | 真人提问 → 文本 → TTS；全局停止有效 |
 | CHAT-006 | BACKLOG | CHAT-004 | 内存会话：turn、时间和 token 三重预算 | 超限摘要或清空；进程重启不恢复正文 |
@@ -194,7 +194,7 @@ NEXT: 唯一下一任务 ID
 | PROGRESS-001 | DONE | BASE-004 | 每个 PR 更新 `STATUS.md` 的 Now/Next/Blocked/Evidence | 双语模板 + CI 正反例拒绝缺失状态、账本镜像、多任务或未知 ID |
 | PROGRESS-002 | DONE | PROGRESS-001 | GitHub Issue 模板包含任务 ID、依赖、验收、回滚和人类门禁 | 10 个必填字段、禁用公开空白 Issue、双入口链接及结构/YAML 校验通过 |
 | PROGRESS-003 | BLOCKED | PROGRESS-002 | GitHub Project 五列和标签映射 | 10 标签已创建回读、manifest/漂移检查通过；Project 授权面不可用，恢复条件见看板文档 |
-| PROGRESS-004 | READY | PROGRESS-001 | 生成只读状态摘要的脚本，不自动修改证据 | 输出任务状态、最近 PR、阻断和下一项 |
+| PROGRESS-004 | DONE | PROGRESS-001 | 生成只读状态摘要的脚本，不自动修改证据 | 文本/JSON 显示 102 项闭合计数、当前/下一项、PR、阻断、人工门禁和公开证据 |
 
 ## 13. 当前推荐顺序
 

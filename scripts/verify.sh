@@ -69,6 +69,7 @@ python3 scripts/verify-conversation-session-contract.py
 python3 scripts/verify-tool-gateway-contract.py
 python3 scripts/verify-github-templates.py
 python3 scripts/verify-github-progress-manifest.py
+python3 scripts/test-status-summary.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
