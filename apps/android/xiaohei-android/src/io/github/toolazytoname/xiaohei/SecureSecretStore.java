@@ -15,7 +15,8 @@ import android.security.keystore.KeyProperties;
 final class SecureSecretStore {
     enum Slot {
         PHONE_AGENT("phone_agent", "xiaohei.phone_agent.token.v1"),
-        CONVERSATION("conversation", "xiaohei.conversation.token.v1");
+        CONVERSATION("conversation", "xiaohei.conversation.token.v1"),
+        TTS_RELAY("tts_relay", "xiaohei.tts_relay.token.v1");
         final String id;
         final String alias;
         Slot(String id, String alias) { this.id = id; this.alias = alias; }

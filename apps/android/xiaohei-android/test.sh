@@ -14,6 +14,7 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.AgentPolicyTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/ChannelProfileConfig.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/TtsChannelConfig.java" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/ConfigMigration.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/ConfigMigrationTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.ConfigMigrationTest
@@ -21,6 +22,11 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/ChannelProfileConfig.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/ChannelProfileConfigTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.ChannelProfileConfigTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ChannelProfileConfig.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/TtsChannelConfig.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/TtsChannelConfigTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.TtsChannelConfigTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/TtsLifecycle.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/TtsLifecycleTest.java"
@@ -34,6 +40,7 @@ java -cp "$test_dir" io.github.toolazytoname.xiaohei.ToolGatewayTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/ToolCatalog.java" "$project_dir/src/io/github/toolazytoname/xiaohei/TaskPlanValidator.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/TaskPlanValidatorTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.TaskPlanValidatorTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/TtsChannelConfig.java" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/ModelChannelBackup.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/ModelChannelBackupTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.ModelChannelBackupTest

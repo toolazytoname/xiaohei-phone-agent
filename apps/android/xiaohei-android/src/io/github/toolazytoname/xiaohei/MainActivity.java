@@ -276,7 +276,8 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         root.addView(fixedCommandButton);
 
         Button channelsButton = new Button(this);
-        channelsButton.setText("模型渠道：ASR / Conversation / Phone Agent 独立配置");
+        channelsButton.setText("模型与语音渠道：ASR / Conversation / TTS / Phone Agent 独立配置");
+        channelsButton.setContentDescription("open-independent-model-speech-channels");
         channelsButton.setOnClickListener(v -> startActivity(new Intent(this, ModelConfigActivity.class)));
         root.addView(channelsButton);
 
