@@ -14,15 +14,19 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ScrollView;
-import java.net.URI;
+import java.util.HashMap;
 
-/** Independent ASR and Phone Agent channels; changing one never starts or stops the other. */
+/** Independent ASR, Conversation, TTS, and Phone Agent channels with separate secret slots. */
 public final class ModelConfigActivity extends Activity {
     private Spinner asr;
     private Switch conversationEnabled;
     private EditText conversationEndpoint;
     private EditText conversationModel;
     private EditText conversationToken;
+    private Spinner ttsProvider;
+    private EditText ttsRelayEndpoint;
+    private EditText ttsVoice;
+    private EditText ttsToken;
     private Switch agentEnabled;
     private EditText endpoint;
     private EditText model;
@@ -32,7 +36,7 @@ public final class ModelConfigActivity extends Activity {
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
-        setTitle("模型渠道 / Model channels");
+        setTitle("模型与语音渠道 / Model and speech channels");
         setContentView(buildView());
         load();
     }
@@ -43,7 +47,7 @@ public final class ModelConfigActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(pad, pad, pad, pad);
         TextView title = new TextView(this);
-        title.setText("独立模型渠道\nIndependent model channels");
+        title.setText("独立模型与语音渠道\nIndependent model and speech channels");
         title.setTextSize(24);
         root.addView(title);
 
@@ -62,10 +66,14 @@ public final class ModelConfigActivity extends Activity {
         root.addView(conversationLabel);
         conversationEnabled = new Switch(this);
         conversationEnabled.setText("启用 Conversation 渠道");
+        conversationEnabled.setContentDescription("conversation-enabled");
         root.addView(conversationEnabled);
         conversationEndpoint = field("Conversation OpenAI-compatible HTTPS base URL");
+        conversationEndpoint.setContentDescription("conversation-endpoint");
         conversationModel = field("Conversation 模型名 / model id");
+        conversationModel.setContentDescription("conversation-model");
         conversationToken = field("Conversation 新 Token（留空则保持原值）");
+        conversationToken.setContentDescription("conversation-token");
         conversationToken.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         root.addView(conversationEndpoint); root.addView(conversationModel); root.addView(conversationToken);
         Button clearConversationToken = new Button(this);
@@ -76,21 +84,52 @@ public final class ModelConfigActivity extends Activity {
         });
         root.addView(clearConversationToken);
 
+        TextView ttsLabel = new TextView(this);
+        ttsLabel.setText("Conversation TTS（独立输出；切换不改变 Conversation 或 Phone Agent）");
+        ttsLabel.setPadding(0, pad, 0, 0);
+        root.addView(ttsLabel);
+        ttsProvider = new Spinner(this);
+        ttsProvider.setContentDescription("tts-provider-selector");
+        ttsProvider.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
+            new String[] {"关闭 / Off", "系统 TTS / System TTS", "中转 TTS / Relay TTS"}));
+        root.addView(ttsProvider);
+        ttsRelayEndpoint = field("TTS relay HTTPS URL（或本机 loopback HTTP）");
+        ttsRelayEndpoint.setContentDescription("tts-relay-endpoint");
+        ttsVoice = field("TTS voice id（可留空）");
+        ttsVoice.setContentDescription("tts-voice-id");
+        ttsToken = field("TTS relay 新 Token（留空则保持原值）");
+        ttsToken.setContentDescription("tts-relay-token");
+        ttsToken.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        root.addView(ttsRelayEndpoint); root.addView(ttsVoice); root.addView(ttsToken);
+        Button clearTtsToken = new Button(this);
+        clearTtsToken.setText("清除 TTS Relay Token");
+        clearTtsToken.setContentDescription("clear-tts-relay-token");
+        clearTtsToken.setOnClickListener(v -> {
+            SecureSecretStore.clear(this, SecureSecretStore.Slot.TTS_RELAY);
+            show("TTS Relay Token 已清除；未启动或停止任何服务");
+        });
+        root.addView(clearTtsToken);
+
         TextView agentLabel = new TextView(this);
         agentLabel.setText("Phone Agent（只负责复杂任务规划；短命令不调用）");
         agentLabel.setPadding(0, pad, 0, 0);
         root.addView(agentLabel);
         agentEnabled = new Switch(this);
         agentEnabled.setText("启用 Phone Agent 渠道");
+        agentEnabled.setContentDescription("phone-agent-enabled");
         root.addView(agentEnabled);
         endpoint = field("OpenAI-compatible HTTPS base URL");
+        endpoint.setContentDescription("phone-agent-endpoint");
         model = field("模型名 / model id");
+        model.setContentDescription("phone-agent-model");
         token = field("新 Token（留空则保持原值）");
+        token.setContentDescription("phone-agent-token");
         token.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         root.addView(endpoint); root.addView(model); root.addView(token);
 
         Button save = new Button(this);
         save.setText("保存独立配置");
+        save.setContentDescription("save-independent-channels");
         save.setOnClickListener(v -> save());
         root.addView(save);
         Button health = new Button(this);
@@ -102,7 +141,7 @@ public final class ModelConfigActivity extends Activity {
         clearToken.setOnClickListener(v -> { SecureSecretStore.clear(this); show("Token 已清除"); });
         root.addView(clearToken);
         TextView backupLabel = new TextView(this);
-        backupLabel.setText("备份与恢复（不含 Token；恢复会停用 Agent）");
+        backupLabel.setText("备份与恢复（不含 Token；恢复会停用 Conversation、TTS 与 Agent）");
         backupLabel.setPadding(0, pad, 0, 0);
         root.addView(backupLabel);
         Button exportBackup = new Button(this);
@@ -110,12 +149,12 @@ public final class ModelConfigActivity extends Activity {
         exportBackup.setOnClickListener(v -> exportBackup());
         root.addView(exportBackup);
         backup = new EditText(this);
-        backup.setHint("粘贴 xiaohei-model-channels.v1 备份以恢复");
+        backup.setHint("粘贴 xiaohei-model-channels.v2/v3 备份以恢复");
         backup.setMinLines(4);
         backup.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         root.addView(backup);
         Button restoreBackup = new Button(this);
-        restoreBackup.setText("恢复备份（清除 Token，保持 Agent 关闭）");
+        restoreBackup.setText("恢复备份（清除 Token，保持 Conversation/TTS/Agent 关闭）");
         restoreBackup.setOnClickListener(v -> restoreBackup());
         root.addView(restoreBackup);
         status = new TextView(this);
@@ -139,11 +178,19 @@ public final class ModelConfigActivity extends Activity {
         conversationEnabled.setChecked(prefs.getBoolean(ChannelProfileConfig.CONVERSATION_ENABLED, false));
         conversationEndpoint.setText(prefs.getString(ChannelProfileConfig.CONVERSATION_ENDPOINT, ""));
         conversationModel.setText(prefs.getString(ChannelProfileConfig.CONVERSATION_MODEL, ""));
+        TtsChannelConfig.Provider provider = TtsChannelConfig.Provider.fromId(
+            prefs.getString(TtsChannelConfig.PROVIDER, TtsChannelConfig.Provider.OFF.id));
+        ttsProvider.setSelection(provider.ordinal());
+        ttsRelayEndpoint.setText(prefs.getString(TtsChannelConfig.RELAY_ENDPOINT, ""));
+        ttsVoice.setText(prefs.getString(TtsChannelConfig.VOICE, ""));
         agentEnabled.setChecked(prefs.getBoolean("agent_enabled", false));
         endpoint.setText(prefs.getString("agent_endpoint", ""));
         model.setText(prefs.getString("agent_model", ""));
-        show("ASR、Conversation 与 Phone Agent 相互独立；Conversation Token "
+        show("ASR、Conversation、TTS 与 Phone Agent 相互独立；TTS=" + provider.id
+            + "；Conversation Token "
             + (SecureSecretStore.isConfigured(this, SecureSecretStore.Slot.CONVERSATION) ? "已安全配置" : "未配置")
+            + "；TTS Relay Token "
+            + (SecureSecretStore.isConfigured(this, SecureSecretStore.Slot.TTS_RELAY) ? "已安全配置" : "未配置")
             + "；Phone Agent Token "
             + (SecureSecretStore.isConfigured(this) ? "已安全配置" : "未配置"));
     }
@@ -151,36 +198,51 @@ public final class ModelConfigActivity extends Activity {
     private void save() {
         String url = endpoint.getText().toString().trim();
         String conversationUrl = conversationEndpoint.getText().toString().trim();
-        if (conversationEnabled.isChecked() && !validEndpoint(conversationUrl)) {
+        TtsChannelConfig.Provider selectedTts = selectedTtsProvider();
+        String ttsUrl = ttsRelayEndpoint.getText().toString().trim();
+        String voice = ttsVoice.getText().toString().trim();
+        if (conversationEnabled.isChecked() && !TtsChannelConfig.validEndpoint(conversationUrl)) {
             show("未保存：启用 Conversation 时 URL 必须是 HTTPS，或本机 localhost/127.0.0.1");
             return;
         }
-        if (agentEnabled.isChecked() && !validEndpoint(url)) {
+        if (agentEnabled.isChecked() && !TtsChannelConfig.validEndpoint(url)) {
             show("未保存：启用 Agent 时 URL 必须是 HTTPS，或本机 localhost/127.0.0.1");
             return;
         }
         try {
+            TtsChannelConfig.withTts(new HashMap<String, Object>(), selectedTts, ttsUrl, voice);
             String newToken = token.getText().toString();
             String newConversationToken = conversationToken.getText().toString();
+            String newTtsToken = ttsToken.getText().toString();
             if (!newToken.isEmpty()) SecureSecretStore.save(this, newToken);
             if (!newConversationToken.isEmpty())
                 SecureSecretStore.save(this, SecureSecretStore.Slot.CONVERSATION, newConversationToken);
+            if (!newTtsToken.isEmpty())
+                SecureSecretStore.save(this, SecureSecretStore.Slot.TTS_RELAY, newTtsToken);
             getSharedPreferences("model_channels", Context.MODE_PRIVATE).edit()
                 .putInt("asr_mode", asr.getSelectedItemPosition())
                 .putBoolean(ChannelProfileConfig.CONVERSATION_ENABLED, conversationEnabled.isChecked())
                 .putString(ChannelProfileConfig.CONVERSATION_ENDPOINT, conversationUrl)
                 .putString(ChannelProfileConfig.CONVERSATION_MODEL,
                     conversationModel.getText().toString().trim())
+                .putString(TtsChannelConfig.PROVIDER, selectedTts.id)
+                .putString(TtsChannelConfig.RELAY_ENDPOINT, ttsUrl)
+                .putString(TtsChannelConfig.VOICE, voice)
                 .putBoolean("agent_enabled", agentEnabled.isChecked())
                 .putString("agent_endpoint", url)
                 .putString("agent_model", model.getText().toString().trim())
                 .apply();
             token.setText("");
             conversationToken.setText("");
-            show("已保存；未启动任何服务。Conversation 无工具权限；Conversation Token "
+            ttsToken.setText("");
+            show("已保存；TTS=" + selectedTts.id + "，未启动或停止任何服务。Conversation 无工具权限；Conversation Token "
                 + (SecureSecretStore.isConfigured(this, SecureSecretStore.Slot.CONVERSATION) ? "已安全配置" : "未配置")
+                + "；TTS Relay Token "
+                + (SecureSecretStore.isConfigured(this, SecureSecretStore.Slot.TTS_RELAY) ? "已安全配置" : "未配置")
                 + "；Phone Agent Token "
                 + (SecureSecretStore.isConfigured(this) ? "已安全配置" : "未配置"));
+        } catch (IllegalArgumentException invalid) {
+            show("未保存：Relay TTS 必须使用 HTTPS，或本机 localhost/127.0.0.1 HTTP；字段不能含换行或超长");
         } catch (Exception error) {
             show("保存失败：Android Keystore 不可用");
         }
@@ -190,7 +252,8 @@ public final class ModelConfigActivity extends Activity {
         try {
             String value = ModelChannelBackup.export(asr.getSelectedItemPosition(), conversationEnabled.isChecked(),
                 conversationEndpoint.getText().toString(), conversationModel.getText().toString(), agentEnabled.isChecked(),
-                endpoint.getText().toString(), model.getText().toString());
+                endpoint.getText().toString(), model.getText().toString(), selectedTtsProvider(),
+                ttsRelayEndpoint.getText().toString(), ttsVoice.getText().toString());
             startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
                 .putExtra(Intent.EXTRA_SUBJECT, "Xiaohei non-secret model-channel backup")
                 .putExtra(Intent.EXTRA_TEXT, value), "导出小黑非敏感备份"));
@@ -214,32 +277,36 @@ public final class ModelConfigActivity extends Activity {
                 .putBoolean(ChannelProfileConfig.CONVERSATION_ENABLED, false)
                 .putString(ChannelProfileConfig.CONVERSATION_ENDPOINT, value.conversationEndpoint)
                 .putString(ChannelProfileConfig.CONVERSATION_MODEL, value.conversationModel)
+                .putString(TtsChannelConfig.PROVIDER, TtsChannelConfig.Provider.OFF.id)
+                .putString(TtsChannelConfig.RELAY_ENDPOINT, value.ttsRelayEndpoint)
+                .putString(TtsChannelConfig.VOICE, value.ttsVoice)
                 .putBoolean("agent_enabled", false)
                 .putString("agent_endpoint", value.endpoint)
                 .putString("agent_model", value.model)
                 .apply();
             SecureSecretStore.clear(this);
             SecureSecretStore.clear(this, SecureSecretStore.Slot.CONVERSATION);
+            SecureSecretStore.clear(this, SecureSecretStore.Slot.TTS_RELAY);
             conversationEnabled.setChecked(false);
             conversationEndpoint.setText(value.conversationEndpoint);
             conversationModel.setText(value.conversationModel);
             conversationToken.setText("");
+            ttsProvider.setSelection(TtsChannelConfig.Provider.OFF.ordinal());
+            ttsRelayEndpoint.setText(value.ttsRelayEndpoint);
+            ttsVoice.setText(value.ttsVoice);
+            ttsToken.setText("");
             agentEnabled.setChecked(false);
             endpoint.setText(value.endpoint);
             model.setText(value.model);
             token.setText("");
-            show("已恢复非敏感配置；两个 Token 均已清除，Conversation 与 Phone Agent 保持关闭且未启动服务");
+            show("已恢复非敏感配置；三个 Token 均已清除，Conversation、TTS 与 Phone Agent 保持关闭且未启动服务");
         } catch (IllegalArgumentException invalid) { show("无法恢复：备份格式无效或不受支持"); }
     }
 
-    private static boolean validEndpoint(String value) {
-        try {
-            URI uri = URI.create(value);
-            String host = uri.getHost();
-            return "https".equalsIgnoreCase(uri.getScheme()) ||
-                ("http".equalsIgnoreCase(uri.getScheme()) &&
-                    ("127.0.0.1".equals(host) || "localhost".equalsIgnoreCase(host)));
-        } catch (RuntimeException ignored) { return false; }
+    private TtsChannelConfig.Provider selectedTtsProvider() {
+        int selected = ttsProvider.getSelectedItemPosition();
+        TtsChannelConfig.Provider[] providers = TtsChannelConfig.Provider.values();
+        return selected >= 0 && selected < providers.length ? providers[selected] : TtsChannelConfig.Provider.OFF;
     }
 
     private void show(String text) { status.setText(text); }

@@ -79,8 +79,8 @@ ROLLBACK / REMAINS / NEXT
 | CHAT-007 | DONE | CHAT-006 | Six-turn half-duplex UI carries bounded context; reference/end/timeout/profile/lock/background paths and fresh AOSP streaming mock pass |
 | CHAT-008 | DONE | CHAT-006 | Versioned static prompt envelope; 20 injections, 10 tool forgeries, five sensitive shapes, malformed bounds, and static zero-action/privacy gates pass |
 | CHAT-009 | DONE | CHAT-007 | Stop/repeat/clear/continue/end share an exact local parser and idempotent state; unit/static gates and fresh AOSP button path keep mock count at one baseline call |
-| CHAT-010 | READY | CHAT-007 | Independent system/relay TTS selector |
-| CHAT-011 | BACKLOG | CHAT-007 | Explicitly limited fixed-FAQ/0.6B offline fallback |
+| CHAT-010 | DONE | CHAT-007 | Independent system/relay TTS selector |
+| CHAT-011 | READY | CHAT-007 | Explicitly limited fixed-FAQ/0.6B offline fallback |
 | CHAT-012 | BACKLOG | CHAT-009 | 20 questions, 5 interruptions, 5 timeouts, 5 privacy denials; no crash/recorder residue |
 
 ## Routing, planning, and authorization

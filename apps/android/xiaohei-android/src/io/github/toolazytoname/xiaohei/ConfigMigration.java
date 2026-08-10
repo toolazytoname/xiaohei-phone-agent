@@ -5,7 +5,7 @@ import java.util.Map;
 
 /** Pure migration core. Migrations are additive and never copy secret plaintext. */
 final class ConfigMigration {
-    static final int CURRENT_SCHEMA = 2;
+    static final int CURRENT_SCHEMA = 3;
 
     static Map<String, Object> migrate(Map<String, Object> source) {
         Map<String, Object> result = new HashMap<>(source);
@@ -26,6 +26,16 @@ final class ConfigMigration {
             if (!result.containsKey(ChannelProfileConfig.CONVERSATION_MODEL))
                 result.put(ChannelProfileConfig.CONVERSATION_MODEL, "");
             result.put("config_schema", 2);
+            schema = 2;
+        }
+        if (schema < 3) {
+            if (!result.containsKey(TtsChannelConfig.PROVIDER))
+                result.put(TtsChannelConfig.PROVIDER, TtsChannelConfig.Provider.OFF.id);
+            if (!result.containsKey(TtsChannelConfig.RELAY_ENDPOINT))
+                result.put(TtsChannelConfig.RELAY_ENDPOINT, "");
+            if (!result.containsKey(TtsChannelConfig.VOICE))
+                result.put(TtsChannelConfig.VOICE, "");
+            result.put("config_schema", 3);
         }
         return result;
     }
