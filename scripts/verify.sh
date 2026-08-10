@@ -11,6 +11,9 @@ required_files=(
   LICENSE
   SECURITY.md
   CONTRIBUTING.md
+  .github/ISSUE_TEMPLATE/delivery-task.yml
+  .github/ISSUE_TEMPLATE/config.yml
+  .github/pull_request_template.md
   docs/product-brief.md
   docs/product-brief.zh-CN.md
   docs/architecture.md
@@ -61,6 +64,7 @@ done
 
 python3 scripts/verify-conversation-session-contract.py
 python3 scripts/verify-tool-gateway-contract.py
+python3 scripts/verify-github-templates.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
@@ -116,7 +120,7 @@ if [[ -n "$forbidden_binary" ]]; then
   exit 1
 fi
 
-scan_paths=(README.md README.zh-CN.md docs contracts manifests components apps device-profiles)
+scan_paths=(README.md README.zh-CN.md .github docs contracts manifests components apps device-profiles)
 if grep -RIE --exclude='*.schema.json' 'sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY' "${scan_paths[@]}"; then
   printf 'FAIL possible credential material detected\n' >&2
   exit 1

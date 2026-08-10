@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Delivery status / 交付状态
+    url: https://github.com/toolazytoname/xiaohei-phone-agent/blob/main/STATUS.md
+    about: Read current evidence, next tasks, and human gates before opening work / 开工前阅读当前证据、下一任务和人工门禁
+  - name: Private security report / 私密安全报告
+    url: https://github.com/toolazytoname/xiaohei-phone-agent/security/policy
+    about: Do not disclose credentials, private data, or exploitable details in a public issue / 不要在公开 Issue 披露凭据、隐私数据或可利用细节
