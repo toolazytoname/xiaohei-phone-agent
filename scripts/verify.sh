@@ -102,6 +102,8 @@ required_files=(
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
   docs/threat-model.zh-CN.md
+  docs/privacy-data-flow.md
+  docs/privacy-data-flow.zh-CN.md
   docs/release-checklist.md
   docs/release-checklist.zh-CN.md
   docs/release-scope-0.2.0-alpha.3.md
@@ -196,6 +198,7 @@ python3 scripts/verify-root-read-only-diagnostics.py
 python3 scripts/verify-root-service-lifecycle.py
 python3 scripts/verify-root-destructive-denial.py
 python3 scripts/verify-threat-model.py
+python3 scripts/verify-privacy-data-flow.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
