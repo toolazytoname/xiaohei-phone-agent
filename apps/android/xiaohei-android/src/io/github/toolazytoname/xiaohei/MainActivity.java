@@ -133,12 +133,8 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     private void consumeControlIntent(Intent intent) {
         if (intent != null && intent.getBooleanExtra("global_stop", false)) {
-            voiceSession.stop();
-            dspProfile.disarm();
-            stopService(new Intent(this, CpuWakewordService.class));
-            broker.disarm();
+            requestHomeGlobalStop();
             intent.removeExtra("global_stop");
-            refreshDspStatus();
             return;
         }
         if (intent == null || !intent.getBooleanExtra("rollback_disarm", false)) return;
@@ -273,15 +269,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
         Button stopAllButton = new Button(this);
         stopAllButton.setText("全部停止：语音 + DSP + CPU 唤醒");
-        stopAllButton.setOnClickListener(v -> {
-            voiceSession.stop();
-            dspProfile.disarm();
-            stopService(new Intent(this, CpuWakewordService.class));
-            broker.disarm();
-            dspStateView.setText("DSP：正在停止并释放");
-            historyView.setText("已请求全局停止；不会继续执行待处理命令");
-            refreshDspStatus();
-        });
+        stopAllButton.setOnClickListener(v -> requestHomeGlobalStop());
         root.addView(stopAllButton);
 
         Button notificationButton = new Button(this);
@@ -636,6 +624,25 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         String state = getSharedPreferences("cpu_wakeword", MODE_PRIVATE).getString("state", "OFF");
         if ("DETECTED".equals(state)) startForegroundService(new Intent(this, CpuWakewordService.class)
             .setAction(CpuWakewordService.ACTION_RESUME));
+    }
+
+    /** Covers only the runtime owners held by this activity; other surfaces remain independently owned. */
+    private void requestHomeGlobalStop() {
+        GlobalStopRegistry stops = new GlobalStopRegistry();
+        stops.register(GlobalStopRegistry.Resource.VOICE, () -> { voiceSession.stop(); return true; });
+        stops.register(GlobalStopRegistry.Resource.DSP, () -> { dspProfile.disarm(); return true; });
+        stops.register(GlobalStopRegistry.Resource.CPU_WAKE, () -> {
+            stopService(new Intent(this, CpuWakewordService.class));
+            broker.disarm();
+            return true;
+        });
+        GlobalStopRegistry.Result result = stops.stopAll();
+        dspStateView.setText(result.allResourcesReleased ? "DSP：已请求停止并释放"
+            : "DSP：停止未完全确认；请在状态页人工检查");
+        historyView.setText(result.allResourcesReleased
+            ? "已请求主页全局停止；不会继续执行待处理命令"
+            : "主页停止未完全确认；没有自动重试，请人工检查");
+        refreshDspStatus();
     }
 
     private void shareDiagnostics() {
