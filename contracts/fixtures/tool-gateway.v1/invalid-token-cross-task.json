@@ -2,7 +2,7 @@
   "schema_version": 1,
   "token_id": "cap-00000000000000000000000000000003",
   "confirmation_id": "confirmation-gateway-public-0001",
-  "task_id": "task-gateway-public-other",
+  "task_id": "job-gateway-public-other",
   "request_id": "request-gateway-public-0001",
   "plan_id": "plan-gateway-public-0001",
   "call_id": "call-gateway-public-0001",
