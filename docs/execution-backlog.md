@@ -112,7 +112,7 @@ ROLLBACK / REMAINS / NEXT
 | TOOL-006 | DONE | — | Package-bound semantic Accessibility and one memory-only visual recovery |
 | TOOL-007 | VERIFY | TOOL-001 | Closed `Pictures/XiaoheiTest/` MediaStore adapter implements query, one-item copy, rename-style move, and exact in-memory rollback IDs; catalog/schema/policy tests reject arbitrary URI/path, batch and unknown operations. Real permission, gateway wiring, system confirmation, and device rollback evidence remain required |
 | TOOL-008 | VERIFY | TOOL-001 | Closed `xiaohei-test` calendar adapter previews bounded metadata, creates a no-alarm event only after reviewed input, and rolls back only event IDs created by its current in-memory instance. Arbitrary account/calendar content and batch operations are rejected; user runtime permission, gateway wiring and device rollback remain required |
-| TOOL-009 | BACKLOG | TOOL-001 | Media play/pause/volume/routing matrix |
+| TOOL-009 | VERIFY | TOOL-001 | Android media boundary provides only relative media-volume ±1 and output-route observation (Bluetooth/wired/speaker-or-system); it cannot play/pause a session or force a route. Active-session, focus, Bluetooth/headset/speaker matrix and device evidence remain required |
 | TOOL-010 | BACKLOG | TOOL-003 | Semantic input/scroll/back/select; never click generic approval controls |
 | TOOL-011 | BACKLOG | TOOL-010 | Versioned adapters and failure explanations for 15+ common apps |
 | TOOL-012 | VERIFY | TOOL-003 | Metadata-only outcome gate requires a fresh expected foreground-package observation after adapter success; stale/mismatched evidence, failed adapter and repeat verification fail closed; real adapter/observer wiring and reversible catalog evidence remain required |
