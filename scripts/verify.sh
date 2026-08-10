@@ -48,6 +48,8 @@ required_files=(
   docs/conversation-offline-faq.zh-CN.md
   docs/conversation-acceptance-chat-012.md
   docs/conversation-acceptance-chat-012.zh-CN.md
+  docs/intent-routing-three-way.md
+  docs/intent-routing-three-way.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -94,6 +96,7 @@ python3 scripts/verify-conversation-prompt-boundary.py
 python3 scripts/verify-tts-channel-boundary.py
 python3 scripts/verify-offline-faq-boundary.py
 python3 scripts/verify-conversation-acceptance-boundary.py
+python3 scripts/verify-intent-route-classifier.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
