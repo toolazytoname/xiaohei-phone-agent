@@ -42,6 +42,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private TextView dspStateView;
     private TextView cpuKwsStateView;
     private TextView ttsStateView;
+    private TextView independentStatusView;
     private DspProfileClient dspProfile;
     private SystemTtsProbe ttsProbe;
     private final BroadcastReceiver dspStatusReceiver = new BroadcastReceiver() {
@@ -227,6 +228,12 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         ttsStateView.setPadding(0, pad, 0, 0);
         ttsStateView.setText("TTS：尚未探测（不会自动下载或播报）");
         root.addView(ttsStateView);
+
+        independentStatusView = new TextView(this);
+        independentStatusView.setContentDescription("independent-capability-status");
+        independentStatusView.setPadding(0, pad, 0, 0);
+        root.addView(independentStatusView);
+        refreshIndependentStatus();
         Button ttsProbeButton = new Button(this);
         ttsProbeButton.setText("检查系统中文 TTS（只读）");
         ttsProbeButton.setOnClickListener(v -> refreshTtsStatus());
@@ -346,6 +353,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             Context.RECEIVER_NOT_EXPORTED);
         refreshDspStatus();
         refreshCpuKwsStatus();
+        refreshIndependentStatus();
         notificationAccessWatchActive = true;
         mainHandler.post(notificationAccessWatch);
     }
@@ -379,6 +387,23 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         showCpuKwsStatus(prefs.getString("state", LocalKwsEngine.isBundled() ? "OFF" : "UNAVAILABLE"),
             prefs.getString("detail", LocalKwsEngine.isBundled()
                 ? "默认关闭；启用后会持续占用 CPU 和麦克风" : "当前安装包未包含 KWS 模型"));
+    }
+
+    /** Product-visible, metadata-only status; it never probes or starts another runtime. */
+    private void refreshIndependentStatus() {
+        if (independentStatusView == null) return;
+        android.content.SharedPreferences channels = getSharedPreferences("model_channels", MODE_PRIVATE);
+        String asr = LocalAsrEngine.isBundled() ? "本地可选 / local available" : "系统识别 / system recognition";
+        String conversation = channels.getBoolean(ChannelProfileConfig.CONVERSATION_ENABLED, false)
+            ? "已配置 / configured" : "关闭 / off";
+        String agent = channels.getBoolean("agent_enabled", false) ? "已配置 / configured" : "关闭 / off";
+        independentStatusView.setText("独立能力状态 / Independent capability status\n"
+            + "唤醒基础模式 / Wake base: " + broker.state()
+            + "\nASR: " + asr
+            + "\nConversation: " + conversation + "（无工具权限 / no tool authority）"
+            + "\nPhone Agent: " + agent + "（仅按用户请求 / user-invoked only）"
+            + "\nOpenCode: 未连接 / disconnected（未运行任务）"
+            + "\nRoot broker: 未接线 / not wired（不授予 root）");
     }
 
     private void refreshTtsStatus() {

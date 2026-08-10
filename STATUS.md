@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `UX-001`：主页的独立能力状态卡只显示唤醒、ASR、Conversation、Phone Agent、OpenCode 和 root 的非敏感元数据；它不启动运行时、不读取 Token，并明确 OpenCode/root 未接线。
 - `OC-010`：模型渠道页现明确展示本地小模型建议边界；公开 APK 不内置生成式权重，未来小模型不得自动启用/切换、规划或调用工具，真实运行时和设备资源验收仍独立保留。
 - `SEC-004`：注入、工作区穿越、越权和隐私外传的既有 fail-closed 语料现由双语聚合测试集持续校验；它证明本地边界而非真实 adapter、远端模型或设备行为。
 - `SEC-003`：传输/能力边界现明确记录系统 TLS、拒绝重定向、loopback `NO_PROXY`、same-UID 与一次性重放拒绝；独立设备 MITM 与真实 listener 演练仍保持 `VERIFY`。

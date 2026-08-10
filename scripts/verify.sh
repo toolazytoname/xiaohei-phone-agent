@@ -208,6 +208,7 @@ python3 scripts/verify-privacy-data-flow.py
 python3 scripts/verify-transport-security-boundary.py
 python3 scripts/verify-adversarial-security-suite.py
 python3 scripts/verify-local-small-model-guidance.py
+python3 scripts/verify-independent-status.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

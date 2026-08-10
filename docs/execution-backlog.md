@@ -151,7 +151,7 @@ ROLLBACK / REMAINS / NEXT
 
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
-| UX-001 | BACKLOG | CHAT-004 | Independent wake/ASR/Conversation/Phone Agent/OpenCode/root status |
+| UX-001 | DONE | CHAT-004 | Main page shows independent metadata-only wake/ASR/Conversation/Phone Agent/OpenCode/root states; it starts no runtime, reveals no credentials and keeps unavailable paths explicit |
 | UX-002 | BACKLOG | CHAT-005 | Bilingual accessible dialog screen with transcript, stop, clear, privacy state |
 | UX-003 | BACKLOG | PLAN-001 | Task card: target, plan, current step, budget, result, takeover; no chain-of-thought |
 | UX-004 | BACKLOG | POLICY-002 | Confirmation shows app, target, content, permission, and rollback |
