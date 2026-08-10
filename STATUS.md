@@ -22,7 +22,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 | 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约 | `VOICE-001` + `CHAT-006` |
 | DSP 与短命令 / DSP and short commands | `VERIFY` | OnePlus 8T DSP 声学 callback、离线命令路由和 12 个确定性动作已验证 | 完成 `REL-001`、`REL-002` 后再宣传低功耗 |
 | 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复 | `ROUTE-002`, then expand tools through `TOOL-*` |
-| 开放对话 / Open conversation | `FOUNDATION`; `CHAT-004` done | 独立配置/Keystore、有界传输、单轮零动作权限 UI、取消生命周期和 AOSP 模拟器用户路径流式回复已验证 | `CHAT-006`; device credential/TTS gates remain separate |
+| 开放对话 / Open conversation | `FOUNDATION`; `CHAT-006` done | 独立配置/Keystore、有界传输、零动作 UI，以及契约一致、无恢复路径的纯内存 turn/时间/token 会话内核已验证 | `CHAT-007`; device credential/TTS gates remain separate |
 | OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION` | 手机上的 OpenCode TUI/Web 和独立模型 profile 已有集成证据 | `OC-002`; do not grant Android/root directly |
 | 受控 root / Controlled root | `READY` | 设备已经 root；产品级 capability broker 尚未实现 | `ROOT-001`; generic `su -c` remains forbidden |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
@@ -38,7 +38,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 唯一执行队列 / Ordered queue
 
-1. `CHAT-006` — 实现有 turn、时间和 token 三重预算、进程重启不恢复正文的内存会话。
+1. `CHAT-007` — 把受限内存上下文接入 3–8 turn 半双工追问窗口，并验证结束/超时/切模型/锁屏清空。
 2. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
 3. `VOICE-001` — 候选包上验证只读 TTS 探针；当前两台测试设备均无注册引擎，绝不自动下载。
 4. `CHAT-005` — 在前述独立设备门禁后做“说一句、答一句”。
@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `CHAT-006`：新增与 `conversation-session.v1` 六项上下限一致的纯 Java 内存会话；12 条用例覆盖 turn/token/总时长、并发、取消、失败回滚、新实例空状态与中文保守计数，静态门禁确认没有持久化、正文日志或进程全局正文集合。
 - `CHAT-004`：新增双语零动作权限单轮聊天页面、显式状态/取消、竞态安全生命周期及静态动作边界门禁；全新 AOSP 模拟器用户路径收到一次流式 mock 回复 `XIAOHEI_UI_MOCK_OK`，无崩溃/ANR，验收后测试环境已清理，未访问实体 OnePlus。
 - `CHAT-003`：Conversation 已切换为有界 SSE 优先客户端；11 条确定性用例覆盖成功/断流/429/重定向/超时/取消/上限/不安全配置和 IPv6 loopback，未调用真实模型。
 - `PROGRESS-004`：只读状态摘要支持文本和 JSON；102 项计数闭合并显示当前/下一项、最近 PR、阻断、人工门禁和公开证据，未暴露未跟踪文章目录。

@@ -34,6 +34,8 @@ required_files=(
   docs/conversation-transport.zh-CN.md
   docs/conversation-ui.md
   docs/conversation-ui.zh-CN.md
+  docs/conversation-memory-session.md
+  docs/conversation-memory-session.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -75,6 +77,7 @@ python3 scripts/verify-github-templates.py
 python3 scripts/verify-github-progress-manifest.py
 python3 scripts/test-status-summary.py
 python3 scripts/verify-conversation-ui-boundary.py
+python3 scripts/verify-conversation-memory-boundary.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
