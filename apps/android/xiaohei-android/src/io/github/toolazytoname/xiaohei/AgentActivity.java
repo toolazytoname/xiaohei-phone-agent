@@ -279,10 +279,15 @@ public final class AgentActivity extends Activity {
                     state.setText(proposal.explanation);
                     return;
                 }
+                ConfirmationPreview.Card preview = ConfirmationPreview.phoneAgent(
+                    proposal.packageName, proposal.label);
+                if (preview == null) {
+                    state.setText("计划未形成可安全确认的单步预览；没有执行");
+                    return;
+                }
                 pendingProposal = proposal;
-                state.setText("待确认计划\nApp：" + proposal.packageName + "\n语义目标："
-                    + proposal.label + "\n说明：" + proposal.explanation
-                    + "\n模型没有执行权限；只有下面的确认按钮能进入本地策略层。");
+                state.setText(preview.visibleText() + "\n说明：" + proposal.explanation
+                    + "\n模型没有执行权限；只有下面的本机确认按钮能进入既有本地策略层。");
                 confirmProposal.setVisibility(View.VISIBLE);
             });
         }, "xiaohei-agent-plan").start();

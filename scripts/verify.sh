@@ -112,6 +112,8 @@ required_files=(
   docs/local-small-model-guidance.zh-CN.md
   docs/task-card.md
   docs/task-card.zh-CN.md
+  docs/confirmation-preview.md
+  docs/confirmation-preview.zh-CN.md
   docs/release-checklist.md
   docs/release-checklist.zh-CN.md
   docs/release-scope-0.2.0-alpha.3.md
@@ -211,6 +213,7 @@ python3 scripts/verify-transport-security-boundary.py
 python3 scripts/verify-adversarial-security-suite.py
 python3 scripts/verify-local-small-model-guidance.py
 python3 scripts/verify-independent-status.py
+python3 scripts/verify-confirmation-preview.py
 python3 scripts/verify-task-card.py
 bash scripts/test-pr-delivery-metadata.sh
 
