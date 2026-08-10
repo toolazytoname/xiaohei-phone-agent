@@ -9,6 +9,8 @@ required_files=(
   README.zh-CN.md
   docs/minimal-planner-request.md
   docs/minimal-planner-request.zh-CN.md
+  docs/plan-step-observation.md
+  docs/plan-step-observation.zh-CN.md
   STATUS.md
   LICENSE
   SECURITY.md
@@ -229,6 +231,7 @@ python3 scripts/verify-tts-interaction-lifecycle.py
 python3 scripts/verify-audio-duplex-arbiter.py
 python3 scripts/verify-failure-recovery-card.py
 python3 scripts/verify-minimal-planner-request.py
+python3 scripts/verify-plan-step-observation.py
 python3 scripts/verify-task-card.py
 bash scripts/test-pr-delivery-metadata.sh
 
