@@ -23,7 +23,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 | DSP 与短命令 / DSP and short commands | `VERIFY` | OnePlus 8T DSP 声学 callback、离线命令路由和 12 个确定性动作已验证 | 完成 `REL-001`、`REL-002` 后再宣传低功耗 |
 | 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope; `TOOL-003` coordinator at `VERIFY` | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复；路由、计划、确认、目录、loopback/same-UID 授权及仅测试有界执行协调器通过 | Real adapter kill/network/device gate remains; proceed with `OC-004` independently |
 | 开放对话 / Open conversation | `VERIFY`; automated `CHAT-012` passed | 前述对话基础、确定性离线 FAQ、20/5/5/5 自动矩阵、五类请求前隐私拒绝及 AOSP 零录音残留已验证 | Human Mandarin playback/intelligibility/interruption remains; agent path proceeds with `OC-004` |
-| OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION`; `OC-002/003/004` done | 手机上的 OpenCode TUI/Web、独立模型 profile、三类型私有任务协议、任务私有路径隔离与注入适配器有界 runner | `OC-005`; redacted visible progress before any real execution |
+| OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION`; `OC-002/003/004/005` done | 手机上的 OpenCode TUI/Web、独立模型 profile、三类型私有任务协议、任务私有路径隔离、有界 runner 与脱敏可见进度卡 | `OC-006`; stop and cleanup boundary before any real execution |
 | 受控 root / Controlled root | `READY` | 设备已经 root；产品级 capability broker 尚未实现 | `ROOT-001`; generic `su -c` remains forbidden |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
 | 交付治理 / Delivery governance | `DONE` through `PROGRESS-004`; Project UI blocked | PR 门禁、Issue 表单、10 标签及文本/JSON 只读摘要已完成；五列 Project 缺授权面 | Resume `PROGRESS-003` after Project authorization |
@@ -39,7 +39,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 唯一执行队列 / Ordered queue
 
-1. `OC-005` → `OC-008` — 接入受控 OpenCode 能力，不把原始 shell 暴露给模型。
+1. `OC-006` → `OC-008` — 接入受控 OpenCode 能力，不把原始 shell 暴露给模型。
 2. `ROOT-001` → `ROOT-010` — 建立独立 root capability broker；普通 Android/OpenCode 令牌不能升级权限。
 3. `TOOL-003` real-adapter gate — 在具体适配器存在后验证真实进程 kill、断网与句柄归零；合成故障不能关闭该门禁。
 4. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `OC-005`：OpenCode 进度卡只接受 6 个类型化生命周期事件，展示任务类别、状态和有界步骤计数；已接入 Agent 页面默认只读“未连接；未执行任务”卡。投影不含任务正文、ID、路径、计费量、凭据、模型/终端输出或任意错误文本；当前没有 live OpenCode runner，不能把卡片当作实际执行证据。
 - `OC-004`：注入适配器的 runner 只接受合法 pending 任务与匹配私有租约，预算固定为 profile/agent、100–60,000 ms、1–4,096 token、1–32 步、1–4,096 代码点脱敏输出。矩阵通过 4 成功、3 预算越界、5 拒绝、1 超时与 2 取消，真实进程、网络和内容读写均为 0；它不是实际 `oc run`。
 - `OC-003`：为合法 pending OpenCode 任务在可信 App 私有根目录下创建空的 `input`/`output` 租约，公开 lease 从不包含真实路径。真实临时文件系统验证 2 份租约、4 条安全路径、7 条绝对/穿越拒绝、3 条符号链接拒绝、2 条跨任务拒绝及重复任务拒绝，内容读取/写入和进程调用均为 0；它只是路径边界，不是 runner。
 - `OC-002`：新增封闭的私有 `opencode-task.v1` 提案，只能由既有当前用户复杂任务生成，固定 pending、dry-run、需确认、`opencode_gateway` 与 `not_started`；仅允许项目总结、测试诊断、受控文件整理三类。3 个合法类型、10 条指令形攻击、6 条来源/类型/身份拒绝、2 合法/3 拒绝 fixture 及静态门禁均零模型/动作/执行；没有 shell、工作区、网络、root、凭据或 UI 路径。它不是 runner，`OC-003` 先做工作区边界。

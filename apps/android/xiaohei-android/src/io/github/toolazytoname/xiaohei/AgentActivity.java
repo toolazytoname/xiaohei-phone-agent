@@ -23,6 +23,7 @@ import java.util.Arrays;
 /** Visible control surface for bounded semantic Phone Agent tasks. */
 public final class AgentActivity extends Activity {
     private TextView state;
+    private TextView openCodeProgressCard;
     private TextView snapshot;
     private EditText taskInput;
     private Button confirmProposal;
@@ -80,6 +81,11 @@ public final class AgentActivity extends Activity {
         state = new TextView(this);
         state.setPadding(0, pad, 0, pad);
         root.addView(state);
+        openCodeProgressCard = new TextView(this);
+        openCodeProgressCard.setPadding(0, 0, 0, pad);
+        openCodeProgressCard.setContentDescription("OpenCode 脱敏任务进度卡");
+        openCodeProgressCard.setText(OpenCodeProgressProjection.disconnected().visibleText());
+        root.addView(openCodeProgressCard);
 
         taskInput = new EditText(this);
         taskInput.setHint("描述一个低风险任务，例如：打开设置里的网络和互联网");
