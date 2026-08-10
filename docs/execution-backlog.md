@@ -76,8 +76,8 @@ ROLLBACK / REMAINS / NEXT
 | CHAT-004 | DONE | CHAT-003 | Single-turn text chat with zero action authority; lifecycle/static gates and a fresh AOSP-emulator user-path SSE reply pass |
 | CHAT-005 | BACKLOG | CHAT-004,VOICE-002 | Human single-turn speech → text → model → TTS; global stop works |
 | CHAT-006 | DONE | CHAT-004 | Pure-Java in-memory session enforces contract-aligned turn/time/token budgets, terminal clearing, failed-turn rollback, and zero restore path |
-| CHAT-007 | READY | CHAT-006 | Bounded 3–8-turn half-duplex follow-up window |
-| CHAT-008 | BACKLOG | CHAT-006 | Minimal system prompt/context; prompt-injection and tool-forgery tests |
+| CHAT-007 | DONE | CHAT-006 | Six-turn half-duplex UI carries bounded context; reference/end/timeout/profile/lock/background paths and fresh AOSP streaming mock pass |
+| CHAT-008 | READY | CHAT-006 | Minimal system prompt/context; prompt-injection and tool-forgery tests |
 | CHAT-009 | BACKLOG | CHAT-007 | Stop/repeat/clear/continue controls are idempotent and zero-call |
 | CHAT-010 | BACKLOG | CHAT-007 | Independent system/relay TTS selector |
 | CHAT-011 | BACKLOG | CHAT-007 | Explicitly limited fixed-FAQ/0.6B offline fallback |

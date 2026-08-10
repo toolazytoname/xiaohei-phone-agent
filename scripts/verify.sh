@@ -36,6 +36,8 @@ required_files=(
   docs/conversation-ui.zh-CN.md
   docs/conversation-memory-session.md
   docs/conversation-memory-session.zh-CN.md
+  docs/conversation-half-duplex.md
+  docs/conversation-half-duplex.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md

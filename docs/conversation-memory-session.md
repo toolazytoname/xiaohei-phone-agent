@@ -48,6 +48,6 @@ bash scripts/verify.sh
 
 The static gate also reads the JSON contract, compares all six runtime min/max constants, and rejects persistence or transcript-logging paths.
 
-## Next integration
+## Current integration
 
-`CHAT-007` may add a 3–8-turn half-duplex follow-up window by converting the immutable request view into model messages. It must not persist transcript text, bypass terminal outcomes, or reuse a session after model/profile switch, lock, global stop, or timeout.
+`CHAT-007` now converts the immutable request view into a 6-turn half-duplex model path. It does not persist transcript text, bypass terminal outcomes, or reuse a session after model/profile switch, lock, backgrounding, explicit end, or timeout. See [Bounded half-duplex Conversation](conversation-half-duplex.md).
