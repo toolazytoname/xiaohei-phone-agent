@@ -11,6 +11,8 @@ required_files=(
   docs/minimal-planner-request.zh-CN.md
   docs/plan-step-observation.md
   docs/plan-step-observation.zh-CN.md
+  docs/evidence-changing-recovery.md
+  docs/evidence-changing-recovery.zh-CN.md
   STATUS.md
   LICENSE
   SECURITY.md
@@ -232,6 +234,7 @@ python3 scripts/verify-audio-duplex-arbiter.py
 python3 scripts/verify-failure-recovery-card.py
 python3 scripts/verify-minimal-planner-request.py
 python3 scripts/verify-plan-step-observation.py
+python3 scripts/verify-evidence-changing-recovery.py
 python3 scripts/verify-task-card.py
 bash scripts/test-pr-delivery-metadata.sh
 
