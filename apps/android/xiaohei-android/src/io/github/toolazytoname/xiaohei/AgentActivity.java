@@ -24,6 +24,7 @@ import java.util.Arrays;
 public final class AgentActivity extends Activity {
     private TextView state;
     private TextView openCodeProgressCard;
+    private TextView taskCard;
     private TextView snapshot;
     private EditText taskInput;
     private Button confirmProposal;
@@ -86,6 +87,11 @@ public final class AgentActivity extends Activity {
         openCodeProgressCard.setContentDescription("OpenCode 脱敏任务进度卡");
         openCodeProgressCard.setText(OpenCodeProgressProjection.disconnected().visibleText());
         root.addView(openCodeProgressCard);
+        taskCard = new TextView(this);
+        taskCard.setContentDescription("只读任务卡");
+        taskCard.setPadding(0, 0, 0, pad);
+        taskCard.setText(TaskCardProjection.unavailable().visibleText());
+        root.addView(taskCard);
 
         taskInput = new EditText(this);
         taskInput.setHint("描述一个低风险任务，例如：打开设置里的网络和互联网");
