@@ -80,9 +80,9 @@ NEXT: 唯一下一任务 ID
 | CHAT-001 | DONE | BASE-005 | 独立 Conversation provider 配置，不联动 Phone Agent/OpenCode/Claude/Happy | 纯配置隔离回归 + AOSP 用户入口可见验证通过；Token/调用留待 CHAT-002/003 |
 | CHAT-002 | VERIFY | CHAT-001 | Android Keystore 凭据与备份规则；备份永不含 Token | 构建、配置隔离和备份回归通过；待独立设备 Keystore 保存/清除/恢复闭环 |
 | CHAT-003 | DONE | CHAT-002 | 有界 HTTP/SSE 模型客户端、取消和重定向拒绝 | 11 条确定性传输用例 + 单元、APK 构建和仓库门禁通过；零模型调用 |
-| CHAT-004 | READY | CHAT-003 | 单轮文字聊天 UI，不带动作权限 | 真机回复显示；模型不可调用工具 |
+| CHAT-004 | DONE | CHAT-003 | 单轮文字聊天 UI，不带动作权限 | 生命周期/静态门禁及全新 AOSP 模拟器用户路径 SSE 回复通过；模型不可调用工具 |
 | CHAT-005 | BACKLOG | CHAT-004,VOICE-002 | 单轮“说一句、答一句”闭环 | 真人提问 → 文本 → TTS；全局停止有效 |
-| CHAT-006 | BACKLOG | CHAT-004 | 内存会话：turn、时间和 token 三重预算 | 超限摘要或清空；进程重启不恢复正文 |
+| CHAT-006 | READY | CHAT-004 | 内存会话：turn、时间和 token 三重预算 | 超限摘要或清空；进程重启不恢复正文 |
 | CHAT-007 | BACKLOG | CHAT-006 | 3–8 轮半双工追问窗口 | 指代、结束聊天、超时、切模型、锁屏测试 |
 | CHAT-008 | BACKLOG | CHAT-006 | 系统 Prompt 与隐私上下文最小化 | Prompt 注入、工具伪造和敏感字段测试 |
 | CHAT-009 | BACKLOG | CHAT-007 | “停止、重说、清空、继续聊”语音/按钮控制 | 每条控制零模型调用且幂等 |
