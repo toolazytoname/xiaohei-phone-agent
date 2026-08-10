@@ -66,7 +66,7 @@ NEXT: 唯一下一任务 ID
 | VOICE-004 | VERIFY | VOICE-003 | 同步输入/输出所有权协调器拒绝重叠，并在终态中断时归零；仍需 Android 适配器接线和真实音频证据 | 真机证明录音与 TTS 不重叠 |
 | VOICE-005 | VERIFY | VOICE-004 | 仅信号策略把来电、闹钟、媒体和 Activity 中断映射为停止输入/输出并释放所有权，绝不自动恢复；主页 Activity 暂停已用于 ASR，仍需共享 Android 来源/TTS 接线和设备音频证据 | 每种中断停止 TTS/ASR、状态可解释 |
 | VOICE-006 | DONE | BASE-005 | 30–50 条真人开放中文问句语料协议，原始音频不入 Git | 双语分层模板、脱敏结果格式和重复失败限制已发布 |
-| VOICE-007 | BACKLOG | VOICE-006 | 当前命令 ASR 与至少一个开放对话 ASR A/B | WER/语义成功率/延迟/内存，不能只报单句 |
+| VOICE-007 | HUMAN | VOICE-006 | 当前命令 ASR 与至少一个开放对话 ASR A/B；必须使用预注册真人中文样本与设备测量，不能用合成重试替代 | WER/语义成功率/延迟/内存，不能只报单句 |
 | VOICE-008 | BACKLOG | VOICE-007 | 命令 ASR 和对话 ASR 独立 profile | 命令热词不会改写聊天文本 |
 | VOICE-009 | BACKLOG | VOICE-008 | 流式 partial/final 转写与 UI | 乱序、重复 final、取消和超时测试 |
 | VOICE-010 | VERIFY | VOICE-004 | 代际化句子队列已接入系统 TTS 适配器：立即提供首句，仅在当前完成后推进；替换、停止、中断或销毁会使已排队/迟到完成事件失效；仍需设备上的可听延迟/取消证据 | 队列取消不继续播报过期文本 |

@@ -59,7 +59,7 @@ ROLLBACK / REMAINS / NEXT
 | VOICE-004 | VERIFY | VOICE-003 | Synchronized input/output ownership arbiter rejects overlap and returns to none on terminal interruption; Android adapter wiring and real audio evidence remain required |
 | VOICE-005 | VERIFY | VOICE-004 | Signal-only policy maps call, alarm, media and Activity interruption to stop input/output and release ownership with no auto-resume; home Activity pause uses it for ASR, while shared Android source/TTS wiring and device audio evidence remain required |
 | VOICE-006 | DONE | BASE-005 | Protocol for 30–50 human open-ended Mandarin utterances; no raw audio in Git; bilingual sampling and redaction template published |
-| VOICE-007 | BACKLOG | VOICE-006 | A/B command ASR against an open-conversation ASR on accuracy/latency/memory |
+| VOICE-007 | HUMAN | VOICE-006 | A/B command ASR against an open-conversation ASR on accuracy/latency/memory; requires the pre-registered real Mandarin samples and device measurements, not synthetic retries |
 | VOICE-008 | BACKLOG | VOICE-007 | Independent command/conversation ASR profiles; command correction cannot rewrite chat |
 | VOICE-009 | BACKLOG | VOICE-008 | Ordered partial/final streaming transcript UI with cancel/timeout tests |
 | VOICE-010 | VERIFY | VOICE-004 | Generation-bound sentence queue is wired to the system-TTS adapter: it exposes a first sentence immediately, advances only after current completion, and invalidates queued/late completions on replacement, stop, interruption or destroy; device audible latency/cancellation evidence remains required |
