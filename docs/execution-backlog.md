@@ -81,14 +81,14 @@ ROLLBACK / REMAINS / NEXT
 | CHAT-009 | DONE | CHAT-007 | Stop/repeat/clear/continue/end share an exact local parser and idempotent state; unit/static gates and fresh AOSP button path keep mock count at one baseline call |
 | CHAT-010 | DONE | CHAT-007 | Independent system/relay TTS selector |
 | CHAT-011 | DONE | CHAT-007 | Deterministic five-topic/25-phrase offline FAQ after failed remote turns; visible non-model label, ten unknown/action/injection rejections, zero added model/action/context use, and clean AOSP known/unknown paths |
-| CHAT-012 | READY | CHAT-009 | 20 questions, 5 interruptions, 5 timeouts, 5 privacy denials; no crash/recorder residue |
+| CHAT-012 | VERIFY | CHAT-009 | Automated exact-candidate 20-question/5-interruption/5-timeout/5-local-privacy-denial matrix, static zero-recorder path, signed APK, and clean AOSP privacy UI with zero fatal/ANR/active recorder pass; human Mandarin TTS/intelligibility/interruption remains |
 
 ## Routing, planning, and authorization
 
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
 | ROUTE-001 | DONE | — | Local deterministic `CommandRouter` with ambiguity tests |
-| ROUTE-002 | BACKLOG | CHAT-004 | Three-way chat / deterministic command / complex-task classifier |
+| ROUTE-002 | READY | CHAT-004 | Three-way chat / deterministic command / complex-task classifier |
 | ROUTE-003 | BACKLOG | ROUTE-002 | Low confidence asks; never guesses an action |
 | ROUTE-004 | BACKLOG | BASE-006,ROUTE-002 | “Help me do” becomes an unconfirmed `ActionRequest`, never direct execution |
 | PLAN-001 | BACKLOG | BASE-006 | Rules-first planner and versioned plan schema |
