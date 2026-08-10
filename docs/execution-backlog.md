@@ -128,7 +128,7 @@ ROLLBACK / REMAINS / NEXT
 | OC-005 | DONE | OC-004 | Typed lifecycle projection is wired to a read-only visible card; it exposes only kind, stage, and bounded completed-step count while rejecting prompt/token/path/terminal-output surfaces |
 | OC-006 | DONE | OC-004 | Registered-task stop cancels the worker, revokes active local gateway tokens, stops injected process/listener/tmux handles, and recursively releases only the private lease without following symlinks; real OS-handle/device acceptance remains open |
 | OC-007 | DONE | OC-004 | Fail-closed typed intent policy permits only project summary, test diagnosis, and controlled organization; denies root, sensitive paths, destructive Git/delete, network, shell escape, and unknown text with zero execution |
-| OC-008 | BACKLOG | OC-007 | Three rounds each: project summary, test diagnosis, controlled file organization |
+| OC-008 | DONE | OC-007 | Nine synthetic temporary-workspace rounds: three each for project summary, test diagnosis, and controlled organization; every round passes protocol/policy/bounded adapter/result/cleanup and each kind denies Git/network intent; real OpenCode remains untested |
 | OC-009 | BACKLOG | OC-008 | Optional Web takeover with explicit ownership handoff |
 | OC-010 | BACKLOG | OC-008 | Local-small-model recommendation remains visible and non-automatic |
 

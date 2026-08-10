@@ -76,6 +76,8 @@ required_files=(
   docs/opencode-stop-cleanup.zh-CN.md
   docs/opencode-restricted-tools.md
   docs/opencode-restricted-tools.zh-CN.md
+  docs/opencode-acceptance-matrix.md
+  docs/opencode-acceptance-matrix.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -156,6 +158,7 @@ python3 scripts/verify-opencode-bounded-runner.py
 python3 scripts/verify-opencode-progress-projection.py
 python3 scripts/verify-opencode-stop-cleanup.py
 python3 scripts/verify-opencode-tool-policy.py
+python3 scripts/verify-opencode-acceptance-matrix.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
