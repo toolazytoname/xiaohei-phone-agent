@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/tool-input-empty.v1.schema.json",
+  "title": "Xiaohei Empty Tool Input v1",
+  "description": "No-argument input for reviewed public Android intents.",
+  "type": "object",
+  "maxProperties": 0,
+  "additionalProperties": false
+}

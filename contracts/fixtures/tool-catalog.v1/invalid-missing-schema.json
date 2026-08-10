@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "catalog_id": "xiaohei.tool-catalog.v1",
+  "tools": [
+    {"name":"android.observe","version":1,"risk":"observe","input_schema":"xiaohei.tool.input.observe.v1","rollback":{"mode":"none"},"audience":"android_gateway","timeout_ms":3000}
+  ]
+}

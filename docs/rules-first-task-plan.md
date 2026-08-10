@@ -19,7 +19,7 @@ Forward dependencies are structurally valid: list order is display order, not au
 
 ## Rules-first boundary
 
-The validator checks the current five-entry reviewed local catalog: Open Settings, Open Gallery, Open Dialer, Adjust Volume, and Observe. An unknown name such as `root.shell`, `android.tap`, or `opencode.run` is denied, as is a known tool with a mismatched risk. This does not pre-approve the five tools for execution; it only proves that a proposed plan uses known names and declared risks.
+The validator checks the current [five-entry reviewed versioned catalog](versioned-tool-catalog.md): Open Settings, Open Gallery, Open Dialer, Adjust Volume, and Observe. An unknown name such as `root.shell`, `android.tap`, or `opencode.run` is denied, as is a known tool with a mismatched risk. This does not pre-approve the five tools for execution; it only proves that a proposed plan uses known names and declared risks.
 
 Tool execution, Android services, model clients, and network code are absent. `TaskPlanValidator` is not referenced by the main, Conversation, or existing Phone Agent activity. `POLICY-002` now supplies a separate fresh-confirmation foundation; `PLAN-002` still defines the minimal remote adapter, while capability tokens and the tool gateway remain independent later gates.
 
