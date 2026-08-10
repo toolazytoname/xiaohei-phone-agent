@@ -151,3 +151,4 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `TOOL-008`：新增只认 `xiaohei-test` 测试账户的日历工具；预览不读取既有事件，创建无提醒事件，回滚仅删除当前内存实例创建的 event ID。用户授权、网关和设备回滚仍为 VERIFY。
 - `TOOL-003` 接线：新增封闭 Android 工具注册表，只能解析受审的 MediaStore 测试和日历测试适配器；仍没有页面/模型绕过网关的执行路径，真实权限、调用方与设备证据保持 VERIFY。
 - `TOOL-003` bridge：现有一次性网关授权可进入有界协调器并解析封闭 Android 注册表；未增加 UI/模型调用入口，实际用户确认、权限和设备执行仍为 VERIFY。
+- `UX-006`：Agent 脱敏轨迹存储改为默认关闭；页面可显式启用、删除最新一条、清空，或关闭并立即清空。真实工具结果历史接线与独立设备行为仍为 VERIFY。
