@@ -1,0 +1,1 @@
+{"schema_version":1,"profile":"relay_openai","agent":"organize","timeout_ms":500,"token_limit":10,"step_limit":3,"output_limit":100,"public_log_safe":false,"command":"forbidden"}
