@@ -76,6 +76,9 @@ final class ToolCatalog {
         descriptors.add(descriptor("android.observe", Risk.OBSERVE,
                 "xiaohei.tool.input.observe.v1", "xiaohei.tool.output.observation.v1",
                 RollbackMode.NONE, "", 3000));
+        descriptors.add(descriptor("android.media_test_collection", Risk.REVERSIBLE,
+                "xiaohei.tool.input.media_test_collection.v1", "xiaohei.tool.output.media_test_collection.v1",
+                RollbackMode.REVERSE_TOOL, "android.media_test_collection", 10000));
         Code code = validate(descriptors);
         if (code != Code.OK) throw new IllegalStateException("invalid built-in tool catalog: " + code);
         DESCRIPTORS = Collections.unmodifiableList(new ArrayList<>(descriptors));

@@ -6,6 +6,7 @@
     {"name":"android.open_gallery","version":1,"risk":"low","input_schema":"xiaohei.tool.input.empty.v1","output_schema":"xiaohei.tool.output.activity.v1","rollback":{"mode":"none"},"audience":"android_gateway","timeout_ms":5000},
     {"name":"android.open_dialer","version":1,"risk":"low","input_schema":"xiaohei.tool.input.empty.v1","output_schema":"xiaohei.tool.output.activity.v1","rollback":{"mode":"none"},"audience":"android_gateway","timeout_ms":5000},
     {"name":"android.adjust_volume","version":1,"risk":"reversible","input_schema":"xiaohei.tool.input.volume.v1","output_schema":"xiaohei.tool.output.volume.v1","rollback":{"mode":"restore_snapshot","tool":"android.adjust_volume"},"audience":"android_gateway","timeout_ms":3000},
-    {"name":"android.observe","version":1,"risk":"observe","input_schema":"xiaohei.tool.input.observe.v1","output_schema":"xiaohei.tool.output.observation.v1","rollback":{"mode":"none"},"audience":"android_gateway","timeout_ms":3000}
+    {"name":"android.observe","version":1,"risk":"observe","input_schema":"xiaohei.tool.input.observe.v1","output_schema":"xiaohei.tool.output.observation.v1","rollback":{"mode":"none"},"audience":"android_gateway","timeout_ms":3000},
+    {"name":"android.media_test_collection","version":1,"risk":"reversible","input_schema":"xiaohei.tool.input.media_test_collection.v1","output_schema":"xiaohei.tool.output.media_test_collection.v1","rollback":{"mode":"reverse_tool","tool":"android.media_test_collection"},"audience":"android_gateway","timeout_ms":10000}
   ]
 }

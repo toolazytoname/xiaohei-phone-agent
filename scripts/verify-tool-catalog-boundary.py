@@ -32,11 +32,11 @@ for field in ("inputSchema", "outputSchema", "rollbackMode", "rollbackTool", "au
 
 expected_tools = {
     "android.open_settings", "android.open_gallery", "android.open_dialer",
-    "android.adjust_volume", "android.observe",
+    "android.adjust_volume", "android.observe", "android.media_test_collection",
 }
 for tool in expected_tools:
     require(f'"{tool}"' in CATALOG, f"reviewed tool {tool}")
-require(CATALOG.count("descriptors.add(descriptor(") == 5, "exact five-entry built-in catalog")
+require(CATALOG.count("descriptors.add(descriptor(") == 6, "exact six-entry built-in catalog")
 require("Collections.unmodifiableList" in CATALOG and "Collections.unmodifiableMap" in CATALOG,
         "immutable built-in views")
 require("identities.contains(key(descriptor.rollbackTool, descriptor.version))" in CATALOG,
@@ -57,11 +57,11 @@ for forbidden in (
     require(forbidden not in CATALOG, f"no execution/platform/persistence path: {forbidden}")
 
 require("ToolCatalog" not in UI, "catalog metadata adds no new UI execution wiring")
-require("descriptors=5 lookup=5 duplicate=3 unknown_version=3 missing=5 rollback=4" in TEST,
+require("descriptors=6 lookup=6 duplicate=3 unknown_version=3 missing=5 rollback=4" in TEST,
         "catalog Java acceptance matrix")
-require(TEST.count("expectDescriptor(") == 6,
-        "five exact descriptor assertions plus helper declaration")
+require(TEST.count("expectDescriptor(") == 7,
+        "six exact descriptor assertions plus helper declaration")
 require("unknown_tool=5 risk_mismatch=4 immutable=true execution_paths=0" in TEST,
         "unknown/risk/immutability/zero execution acceptance")
 
-print("PASS tool catalog boundary descriptors=5 schemas=6 rollback=bound immutable=true execution_paths=0 ui_wired=0")
+print("PASS tool catalog boundary descriptors=6 schemas=8 rollback=bound immutable=true execution_paths=0 ui_wired=0")
