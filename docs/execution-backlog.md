@@ -98,7 +98,7 @@ ROLLBACK / REMAINS / NEXT
 | POLICY-001 | DONE | — | L0–L4 risk, sensitive-surface denial, and package allowlist foundation |
 | POLICY-002 | DONE | ROUTE-004 | Memory-only one-use local-user confirmation bound to task/request/plan, salted target/content digests, eligible foreground/unlocked device state, and a 1–60-second monotonic window; exact 50-case matrix rejects changes, expiry, lock/background, assistant forgeries, cancellation, and replay with zero model/action calls; remains unwired |
 | POLICY-003 | DONE | POLICY-002 | In-memory audience-tier boundary allows only same-tier Android/OpenCode metadata and rejects all cross-tier requests; root remains denied until a broker exists |
-| POLICY-004 | BACKLOG | POLICY-003 | Permanent payment/OTP/password/evasion denial corpus |
+| POLICY-004 | DONE | POLICY-003 | Permanent local payment/OTP/password/evasion denial corpus over package, visible-text, and requested-label surfaces; 19-case regression with zero model/action calls |
 
 ## Tool gateway and Android capabilities
 

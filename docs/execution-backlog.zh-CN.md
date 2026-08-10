@@ -105,7 +105,7 @@ NEXT: 唯一下一任务 ID
 | POLICY-001 | DONE | — | L0–L4 风险、敏感页面拒绝和包允许列表基础 | `AgentPolicyTest` 与 M5 证据 |
 | POLICY-002 | DONE | ROUTE-004 | 绑定目标、内容、时间和任务 ID 的新鲜确认 | 纯内存一次性本机用户确认绑定 task/request/plan、加盐目标/内容摘要、前台解锁设备状态和 1–60 秒单调时窗；精确 50 条矩阵拒绝变化、过期、锁屏/后台、助手伪造、取消与重放，零模型/动作调用，尚未接线 |
 | POLICY-003 | DONE | POLICY-002 | Android/OpenCode/root 内存 audience 分层边界，只允许 Android/OpenCode 同层元数据，拒绝所有跨层请求；broker 出现前 root 继续拒绝 | 低层 token 不能调用高层工具 |
-| POLICY-004 | BACKLOG | POLICY-003 | 支付/OTP/密码/风控绕过永久拒绝回归库 | 模型诱导、UI 文案变体均为 DENY |
+| POLICY-004 | DONE | POLICY-003 | 覆盖包名、可见文本和请求标签的本地支付/OTP/密码/规避风控永久拒绝语料库；19-case 回归且零模型/动作调用 | 模型诱导、UI 文案变体均为 DENY |
 
 ## 7. 工具网关与 Android 能力
 
