@@ -9,6 +9,7 @@ ACTIVITY = ANDROID / "src" / "io" / "github" / "toolazytoname" / "xiaohei" / "Co
 CLIENT = ANDROID / "src" / "io" / "github" / "toolazytoname" / "xiaohei" / "ConversationClient.java"
 COORDINATOR = ANDROID / "src" / "io" / "github" / "toolazytoname" / "xiaohei" / "ConversationSessionCoordinator.java"
 MEMORY = ANDROID / "src" / "io" / "github" / "toolazytoname" / "xiaohei" / "MemoryConversationSession.java"
+CONTROLS = ANDROID / "src" / "io" / "github" / "toolazytoname" / "xiaohei" / "ConversationControlPolicy.java"
 MAIN = ANDROID / "src" / "io" / "github" / "toolazytoname" / "xiaohei" / "MainActivity.java"
 MANIFEST = ANDROID / "AndroidManifest.xml"
 SCHEMA = ROOT / "contracts" / "conversation-session.v1.schema.json"
@@ -23,6 +24,7 @@ activity = ACTIVITY.read_text(encoding="utf-8")
 client = CLIENT.read_text(encoding="utf-8")
 coordinator = COORDINATOR.read_text(encoding="utf-8")
 memory = MEMORY.read_text(encoding="utf-8")
+controls = CONTROLS.read_text(encoding="utf-8")
 main = MAIN.read_text(encoding="utf-8")
 schema = SCHEMA.read_text(encoding="utf-8")
 
@@ -32,6 +34,10 @@ for identifier in (
     "conversation-input",
     "conversation-send",
     "conversation-cancel",
+    "conversation-stop",
+    "conversation-repeat",
+    "conversation-clear",
+    "conversation-continue",
     "conversation-end",
     "conversation-output",
 ):
@@ -50,7 +56,8 @@ for forbidden in (
     "AccessibilityService",
 ):
     require(forbidden not in activity and forbidden not in client
-            and forbidden not in coordinator and forbidden not in memory,
+            and forbidden not in coordinator and forbidden not in memory
+            and forbidden not in controls,
             f"forbidden action path {forbidden}")
 
 require("模型没有手机操作、工具、通知、文件或 root 权限" in activity,
@@ -64,6 +71,13 @@ require("begin.messages" in activity and "模型回复中（不能输入下一�
 require("onLocked()" in activity and "onBackgrounded()" in activity
         and "checkProfile(" in activity and "END_COMMAND_CLEARED" in activity,
         "lock/background/profile/end clearing wired")
+require("ConversationControlPolicy.parse(userText)" in activity
+        and "applyControl(ConversationControlPolicy.Action" in activity,
+        "text/ASR-ready and button controls share one local path")
+require("final int modelCalls;" in controls and "this.modelCalls = 0;" in controls,
+        "all conversation controls declare zero model calls")
+require("ConversationClient" not in controls and "ConversationPromptPolicy" not in controls,
+        "control policy cannot construct model requests")
 require("6 轮半双工（无动作权限）" in main, "public main-screen label matches behavior")
 
 tree = ET.parse(MANIFEST)
@@ -73,4 +87,4 @@ matches = [node for node in activities if node.get(namespace + "name") == ".Conv
 require(len(matches) == 1, "one ConversationActivity manifest declaration")
 require(matches[0].get(namespace + "exported") == "false", "ConversationActivity must not be exported")
 
-print("PASS Conversation UI boundary ids=7 exported=false action_paths=0 authority=none half_duplex=6")
+print("PASS Conversation UI boundary ids=11 exported=false action_paths=0 authority=none half_duplex=6 controls=zero-call")

@@ -61,4 +61,4 @@
 
 ## 剩余范围
 
-最小系统 Prompt 与对抗性 Prompt/工具伪造测试现已由 `CHAT-008` 覆盖；`CHAT-009` 仍负责“停止、重说、清空、继续聊”的零模型调用与幂等控制；语音输入/TTS 仍属于 `CHAT-005`，最终真人对话验收属于 `CHAT-012`。
+最小系统 Prompt 与对抗性 Prompt/工具伪造测试由 `CHAT-008` 覆盖；[零调用本地控制](conversation-local-controls.zh-CN.md)由 `CHAT-009` 覆盖；语音输入/TTS 仍属于 `CHAT-005`，最终真人对话验收属于 `CHAT-012`。
