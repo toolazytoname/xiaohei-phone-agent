@@ -155,10 +155,12 @@ required_files=(
   contracts/tool-input-volume.v1.schema.json
   contracts/tool-input-observe.v1.schema.json
   contracts/tool-input-media_test_collection.v1.schema.json
+  contracts/tool-input-calendar_test_account.v1.schema.json
   contracts/tool-output-activity.v1.schema.json
   contracts/tool-output-volume.v1.schema.json
   contracts/tool-output-observation.v1.schema.json
   contracts/tool-output-media_test_collection.v1.schema.json
+  contracts/tool-output-calendar_test_account.v1.schema.json
   contracts/agent-step-result.v1.schema.json
   contracts/diagnostics.v1.schema.json
   contracts/conversation-session.v1.schema.json
