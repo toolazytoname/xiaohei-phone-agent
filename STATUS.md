@@ -147,3 +147,4 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `VOICE-011`：对话页已接入选中的系统 TTS，并提供独立“停止播报（保留聊天）”按钮；停止、清空、离页会中断且不自动恢复。真实设备的可听打断时延和回声资格仍待验证。
 - `TOOL-007`：新增封闭 MediaStore 测试集合工具，只能处理 `Pictures/XiaoheiTest/` 内的单项查询/复制/改名移动和本次内存 rollback ID；任意 URI、路径、批量与未知操作都拒绝。真实 Android 权限、网关和设备回滚仍为 VERIFY。
 - `TOOL-008`：新增只认 `xiaohei-test` 测试账户的日历工具；预览不读取既有事件，创建无提醒事件，回滚仅删除当前内存实例创建的 event ID。用户授权、网关和设备回滚仍为 VERIFY。
+- `TOOL-003` 接线：新增封闭 Android 工具注册表，只能解析受审的 MediaStore 测试和日历测试适配器；仍没有页面/模型绕过网关的执行路径，真实权限、调用方与设备证据保持 VERIFY。
