@@ -74,6 +74,7 @@ public final class ConversationActivity extends Activity {
         notice.setText(
                 "最多 6 轮、5 分钟、2048 估算 token；离开页面或锁屏即清空。\n" +
                         "模型没有手机操作、工具、通知、文件或 root 权限。\n" +
+                        "远端失败时只匹配带标记的本地固定 FAQ；未知问题不会猜。\n" +
                         "Up to 6 turns, 5 minutes, and 2048 estimated tokens; leaving or locking clears context."
         );
         notice.setContentDescription("conversation-authority-notice");
@@ -239,6 +240,11 @@ public final class ConversationActivity extends Activity {
                 return;
             }
             if (!result.ok) {
+                OfflineFaqFallback.Result fallback = OfflineFaqFallback.answer(userText);
+                if (fallback.handled) {
+                    acceptReply(userText, fallback.text, now, true);
+                    return;
+                }
                 coordinator.abort(now);
                 controls.markRequestFinished(false);
                 state.setText("状态：请求失败，本轮未加入上下文 / Status: failed; turn rolled back");
@@ -247,31 +253,36 @@ public final class ConversationActivity extends Activity {
                 return;
             }
 
-            ConversationSessionCoordinator.Code completion = coordinator.complete(result.text, now);
-            if (completion == ConversationSessionCoordinator.Code.REPLY_ACCEPTED) {
-                controls.markRequestFinished(true);
-                appendVisible(userText, result.text);
-                input.setText("");
-                showReadyStatus(now);
-                setRunning(false);
-            } else if (completion == ConversationSessionCoordinator.Code.TURN_LIMIT_CLEARED) {
-                controls.markRequestFinished(true);
-                controls.apply(ConversationControlPolicy.Action.CLEAR);
-                visibleTranscript.setLength(0);
-                lastAssistantReply = null;
-                input.setText("");
-                cancelTimeout();
-                state.setText("状态：已达到 6 轮，会话结束并清空 / Status: turn limit; session cleared");
-                output.setText("最后回复（不再保留上下文）\n" + result.text);
-                setRunning(false);
-            } else if (completion == ConversationSessionCoordinator.Code.TIMEOUT_CLEARED) {
-                controls.markRequestFinished(false);
-                clearVisible("回复到达时会话已超时，内容未加入上下文 / Reply arrived after timeout; cleared");
-            } else {
-                controls.markRequestFinished(false);
-                clearVisible("回复超过预算或无效，内存上下文已清空 / Reply exceeded budget or was invalid; cleared");
-            }
+            acceptReply(userText, result.text, now, false);
         });
+    }
+
+    private void acceptReply(String userText, String reply, long now, boolean localFallback) {
+        ConversationSessionCoordinator.Code completion = coordinator.complete(reply, now);
+        if (completion == ConversationSessionCoordinator.Code.REPLY_ACCEPTED) {
+            controls.markRequestFinished(true);
+            appendVisible(userText, reply);
+            input.setText("");
+            if (localFallback) showLocalFallbackStatus(now);
+            else showReadyStatus(now);
+            setRunning(false);
+        } else if (completion == ConversationSessionCoordinator.Code.TURN_LIMIT_CLEARED) {
+            controls.markRequestFinished(true);
+            controls.apply(ConversationControlPolicy.Action.CLEAR);
+            visibleTranscript.setLength(0);
+            lastAssistantReply = null;
+            input.setText("");
+            cancelTimeout();
+            state.setText("状态：已达到 6 轮，会话结束并清空 / Status: turn limit; session cleared");
+            output.setText("最后回复（不再保留上下文）\n" + reply);
+            setRunning(false);
+        } else if (completion == ConversationSessionCoordinator.Code.TIMEOUT_CLEARED) {
+            controls.markRequestFinished(false);
+            clearVisible("回复到达时会话已超时，内容未加入上下文 / Reply arrived after timeout; cleared");
+        } else {
+            controls.markRequestFinished(false);
+            clearVisible("回复超过预算或无效，内存上下文已清空 / Reply exceeded budget or was invalid; cleared");
+        }
     }
 
     private void appendVisible(String userText, String assistantText) {
@@ -286,6 +297,13 @@ public final class ConversationActivity extends Activity {
         state.setText("状态：等待追问 · " + safe.completedTurns + "/" + safe.maxTurns
                 + " 轮 · " + safe.usedTokens + "/" + safe.tokenBudget
                 + " 估算 token / Status: follow-up ready");
+    }
+
+    private void showLocalFallbackStatus(long now) {
+        ConversationSessionCoordinator.SafeStatus safe = coordinator.status(now);
+        state.setText("状态：远端未成功 · 本地固定 FAQ（不是模型） · "
+                + safe.completedTurns + "/" + safe.maxTurns
+                + " 轮 / Status: remote failed; local fixed FAQ, not a model");
     }
 
     private void applyControl(ConversationControlPolicy.Action action) {
