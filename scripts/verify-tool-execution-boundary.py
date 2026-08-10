@@ -72,7 +72,8 @@ for term in ("MediaStoreTestCollectionAdapter", "CalendarTestAccountAdapter",
              "call.audience != ToolCatalog.Audience.ANDROID_GATEWAY", "return null"):
     require(term in REGISTRY, f"closed Android adapter registry term {term}")
 for term in ("ToolGateway.Result authorization", "resolver.resolve(call)",
-             "coordinator.execute(authorization, call", "CancellationSignal cancellation"):
+             "coordinator.execute(authorization, call", "CancellationSignal cancellation",
+             "GlobalStopRegistry.Resource.TOOL", "Reason.GLOBAL_STOP", "registration.close"):
     require(term in BRIDGE, f"authorized Android execution bridge term {term}")
 require("success=5 timeout=5 cancel=5 structured_failure=5 denied_replay=5" in TEST,
         "exact 25-group lifecycle matrix")
