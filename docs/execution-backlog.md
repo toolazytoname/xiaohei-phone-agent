@@ -96,7 +96,7 @@ ROLLBACK / REMAINS / NEXT
 | PLAN-003 | BACKLOG | PLAN-001 | Re-observe after every step; app-switch race causes zero out-of-scope actions |
 | PLAN-004 | BACKLOG | PLAN-003 | One evidence-changing recovery, no unchanged retry loop |
 | POLICY-001 | DONE | — | L0–L4 risk, sensitive-surface denial, and package allowlist foundation |
-| POLICY-002 | READY | ROUTE-004 | Fresh confirmation bound to task, target, content, and expiry |
+| POLICY-002 | DONE | ROUTE-004 | Memory-only one-use local-user confirmation bound to task/request/plan, salted target/content digests, eligible foreground/unlocked device state, and a 1–60-second monotonic window; exact 50-case matrix rejects changes, expiry, lock/background, assistant forgeries, cancellation, and replay with zero model/action calls; remains unwired |
 | POLICY-003 | BACKLOG | POLICY-002 | Separate Android/OpenCode/root authorization tiers |
 | POLICY-004 | BACKLOG | POLICY-003 | Permanent payment/OTP/password/evasion denial corpus |
 
@@ -104,7 +104,7 @@ ROLLBACK / REMAINS / NEXT
 
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
-| TOOL-001 | BACKLOG | BASE-006 | Versioned tool catalog with risk, schema, and rollback |
+| TOOL-001 | READY | BASE-006 | Versioned tool catalog with risk, schema, and rollback |
 | TOOL-002 | BACKLOG | TOOL-001,POLICY-002 | Loopback gateway and short-lived capability tokens; reject remote/replay/cross-task |
 | TOOL-003 | BACKLOG | TOOL-002 | Timeout, cancel, idempotency, and structured error per tool |
 | TOOL-004 | DONE | — | Public intent/settings/gallery/camera/browser/map/dialer actions |

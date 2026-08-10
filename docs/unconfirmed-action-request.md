@@ -34,4 +34,4 @@ The public `action-request.v1` Schema now enforces that pending requests require
 
 The deterministic matrix contains 39 cases: ten complex user requests created as pending dry-run, ten assistant confirmation forgeries rejected, ten chats/short commands not upgraded, five ambiguous inputs returned to clarification, and four invalid metadata cases rejected. All paths make zero model and action calls.
 
-This foundation is intentionally not wired to `MainActivity` or `ConversationActivity`. `PLAN-001` now defines the bounded dry-run plan output; `POLICY-002` must still define a fresh confirmation transition bound to task, target, content, expiry, and device state, while `PLAN-002` supplies the later minimal remote adapter. Until those gates exist, the request stops at `pending`.
+This foundation is intentionally not wired to `MainActivity` or `ConversationActivity`. `PLAN-001` now defines the bounded dry-run plan and `POLICY-002` defines a separate one-use fresh confirmation grant without mutating model-visible request text. `PLAN-002`, `UX-004`, and the tool/capability gates remain before visible execution; until then, the request itself stays `pending`.

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/confirmation-grant.v1.schema.json",
+  "title": "Xiaohei Confirmation Grant v1",
+  "description": "A memory-only, one-use local-user confirmation bound to task/request/plan and salted target/content digests. It is not a capability token.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "confirmation_id",
+    "task_id",
+    "request_id",
+    "plan_id",
+    "target_digest",
+    "content_digest",
+    "issued_at_elapsed_ms",
+    "expires_at_elapsed_ms",
+    "ttl_ms",
+    "source",
+    "single_use",
+    "persistence",
+    "public_log_safe"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "confirmation_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "task_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "request_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "plan_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "target_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "content_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "issued_at_elapsed_ms": {"type": "integer", "minimum": 0},
+    "expires_at_elapsed_ms": {"type": "integer", "minimum": 1},
+    "ttl_ms": {"type": "integer", "minimum": 1000, "maximum": 60000},
+    "source": {"const": "local_user_gesture"},
+    "single_use": {"const": true},
+    "persistence": {"const": "memory_only"},
+    "public_log_safe": {"const": false}
+  },
+  "additionalProperties": false
+}

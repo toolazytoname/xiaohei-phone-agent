@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "confirmation_id": "confirmation-public-0004",
+  "task_id": "task-public-0001",
+  "request_id": "request-public-0001",
+  "plan_id": "plan-public-0001",
+  "target_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "content_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "issued_at_elapsed_ms": 100000,
+  "expires_at_elapsed_ms": 130000,
+  "ttl_ms": 30000,
+  "source": "local_user_gesture",
+  "single_use": true,
+  "persistence": "memory_only",
+  "public_log_safe": false,
+  "raw_content": "forbidden even in a synthetic grant"
+}

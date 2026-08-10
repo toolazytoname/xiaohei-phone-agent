@@ -42,6 +42,7 @@ Shows `OFF / ARMING / ARMED / LISTENING / THINKING / CONFIRMING / ACTING / ERROR
 - `wakeword-event.v1.schema.json`: no raw audio; describes the source, keyword alias, confidence, and capture boundary.
 - `action-request.v1.schema.json`: describes target, action, risk, confirmation, dry-run state, and redaction policy.
 - `task-plan.v1.schema.json`: describes a request-bound, 1–8-step dry-run DAG with tool/risk, dependency, idempotency, and timeout limits; it grants no execution authority.
+- `confirmation-grant.v1.schema.json`: describes a one-use memory-only local gesture bound to task/request/plan, target/content digests, and a 1–60 second monotonic window; it is not a capability token.
 
 Runtime payloads may contain private user data in memory, but fixtures and public acceptance reports must be redacted before storage or publication.
 
