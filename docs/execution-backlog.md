@@ -136,7 +136,7 @@ ROLLBACK / REMAINS / NEXT
 
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
-| ROOT-001 | BACKLOG | BASE-006 | Bilingual root threat model, allow/deny catalog, recovery responsibility |
+| ROOT-001 | DONE | BASE-006 | Bilingual root threat model, closed allow/deny catalog, and explicit human-device-owner recovery responsibility; catalog grants no capability and generic `su -c` remains denied |
 | ROOT-002 | BACKLOG | ROOT-001,POLICY-003 | Signature-bound broker with fixed action ids and exact schemas |
 | ROOT-003 | BACKLOG | ROOT-002 | Bounded redacted read-only service/port/battery/audio/package/profile diagnostics |
 | ROOT-004 | BACKLOG | ROOT-002 | Service lifecycle with package/PID/port verification and no wrong-process kill |

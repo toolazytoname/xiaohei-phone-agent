@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "public_log_safe": true,
+  "root_broker_implemented": false,
+  "allowlisted_future_action_ids": ["root.read_service_status", "root.read_battery_status", "root.read_audio_status"],
+  "denied_surfaces": ["generic_su", "arbitrary_command", "arbitrary_path", "credential_store", "payment_otp_password", "destructive_git", "system_partition_write", "boot_image", "network_exfiltration"],
+  "recovery_owner": "human_device_owner",
+  "recovery_requirements": ["explicit_backup", "fresh_confirmation", "reversible_plan", "independent_device_validation"],
+  "notes": "Catalog metadata grants no root capability and cannot be used as a command allowlist."
+}

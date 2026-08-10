@@ -78,6 +78,8 @@ required_files=(
   docs/opencode-restricted-tools.zh-CN.md
   docs/opencode-acceptance-matrix.md
   docs/opencode-acceptance-matrix.zh-CN.md
+  docs/root-capability-boundary.md
+  docs/root-capability-boundary.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -110,6 +112,7 @@ required_files=(
   contracts/opencode-task.v1.schema.json
   contracts/opencode-workspace-lease.v1.schema.json
   contracts/opencode-run-budget.v1.schema.json
+  contracts/root-capability-catalog.v1.json
   manifests/product.yaml
   manifests/github-progress.v1.json
 )
@@ -159,6 +162,7 @@ python3 scripts/verify-opencode-progress-projection.py
 python3 scripts/verify-opencode-stop-cleanup.py
 python3 scripts/verify-opencode-tool-policy.py
 python3 scripts/verify-opencode-acceptance-matrix.py
+python3 scripts/verify-root-capability-catalog.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
