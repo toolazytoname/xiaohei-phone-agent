@@ -131,3 +131,4 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 6. GitHub 上建议使用 Project 表格，字段固定为 `Task ID`、`State`、`Owner`、`Dependency`、`Evidence`、`Gate`、`Next`；本页仍是仓库内可离线读取的权威摘要。
 - `UX-004`：Phone Agent 确认前固定展示 App、目标、内容、权限和停止/回滚；取消是默认安全路径，预览不申请权限、不签发能力、不调用模型/工具/root 或执行器。
 - `UX-007`：主页只读权限中心展示麦克风、相机、通知、通知读取、无障碍和未接线 root 的用途、状态、最近使用可见性及用户撤销路径；系统页跳转不申请或改变权限。
+- `VOICE-003`：系统 TTS 生命周期已区分播报、等待后续输入和中断；完成或中断均不自动恢复音频/麦克风。真实发声、焦点和真人打断仍需独立设备证据。

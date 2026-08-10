@@ -55,7 +55,7 @@ ROLLBACK / REMAINS / NEXT
 |---|---|---|---|
 | VOICE-001 | VERIFY | BASE-005 | Read-only Chinese TTS probe implemented and built; initial OnePlus/AOSP package probes found no engine, pending candidate-package independent-device UI path |
 | VOICE-002 | VERIFY | VOICE-001 | System TTS adapter with explicit lifecycle; 10 transitions/build pass, real speech/stop awaits a device with a registered engine |
-| VOICE-003 | BACKLOG | VOICE-002 | Add `SPEAKING`, `WAITING_FOLLOWUP`, and `INTERRUPTED` legal transitions |
+| VOICE-003 | DONE | VOICE-002 | Pure TTS lifecycle models `SPEAKING`, `WAITING_FOLLOWUP`, and `INTERRUPTED` transitions; adapter labels completion/interruption without auto-resume; real audio remains gated |
 | VOICE-004 | BACKLOG | VOICE-003 | Half-duplex lifecycle; audio evidence proves recorder and TTS do not overlap |
 | VOICE-005 | BACKLOG | VOICE-004 | Calls, alarms, media, and Activity interruption release audio cleanly |
 | VOICE-006 | DONE | BASE-005 | Protocol for 30–50 human open-ended Mandarin utterances; no raw audio in Git; bilingual sampling and redaction template published |
