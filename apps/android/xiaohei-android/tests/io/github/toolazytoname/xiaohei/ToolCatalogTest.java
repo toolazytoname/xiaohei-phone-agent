@@ -14,15 +14,15 @@ public final class ToolCatalogTest {
         rejectsFiveMissingFields();
         rejectsFourRollbackErrors();
         rejectsUnknownToolsAndRiskMismatch();
-        System.out.println("PASS ToolCatalogTest descriptors=6 lookup=6 duplicate=3 unknown_version=3 missing=5 rollback=4 unknown_tool=5 risk_mismatch=4 immutable=true execution_paths=0");
+        System.out.println("PASS ToolCatalogTest descriptors=7 lookup=7 duplicate=3 unknown_version=3 missing=5 rollback=4 unknown_tool=5 risk_mismatch=4 immutable=true execution_paths=0");
     }
 
     private static void builtInDescriptorsAreComplete() {
         List<ToolCatalog.Descriptor> descriptors = ToolCatalog.all();
-        check(descriptors.size() == 6, "exact built-in count");
+        check(descriptors.size() == 7, "exact built-in count");
         for (String name : new String[] {
                 "android.open_settings", "android.open_gallery", "android.open_dialer",
-                "android.adjust_volume", "android.observe", "android.media_test_collection"
+                "android.adjust_volume", "android.observe", "android.media_test_collection", "android.calendar_test_account"
         }) {
             ToolCatalog.Descriptor descriptor = ToolCatalog.lookup(name, 1);
             check(descriptor != null && descriptor.version == 1, "lookup " + name);
@@ -49,6 +49,9 @@ public final class ToolCatalogTest {
         expectDescriptor("android.media_test_collection", ToolCatalog.Risk.REVERSIBLE,
                 "xiaohei.tool.input.media_test_collection.v1", "xiaohei.tool.output.media_test_collection.v1",
                 ToolCatalog.RollbackMode.REVERSE_TOOL, "android.media_test_collection", 10000);
+        expectDescriptor("android.calendar_test_account", ToolCatalog.Risk.REVERSIBLE,
+                "xiaohei.tool.input.calendar_test_account.v1", "xiaohei.tool.output.calendar_test_account.v1",
+                ToolCatalog.RollbackMode.REVERSE_TOOL, "android.calendar_test_account", 10000);
         boolean immutable = false;
         try { descriptors.clear(); } catch (UnsupportedOperationException expected) { immutable = true; }
         check(immutable, "catalog list mutable");
