@@ -91,3 +91,9 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/IntentRouteClassifier.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/IntentRouteClassifierTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.IntentRouteClassifierTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/CommandRouter.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/IntentRouteClassifier.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/RouteClarificationPolicy.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/RouteClarificationPolicyTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.RouteClarificationPolicyTest
