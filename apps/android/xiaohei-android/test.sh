@@ -207,6 +207,10 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/AuthorizationTierPolicyTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.AuthorizationTierPolicyTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/RootCapabilityBroker.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/RootCapabilityBrokerTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.RootCapabilityBrokerTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/FreshConfirmationGate.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/FreshConfirmationGateTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.FreshConfirmationGateTest
