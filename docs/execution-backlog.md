@@ -92,7 +92,7 @@ ROLLBACK / REMAINS / NEXT
 | ROUTE-003 | DONE | ROUTE-002 | Pure local clarification passes an exact 50-case matrix: 10 target, 10 intent, 10 scope asks and 20 clear controls; every ask carries chat/unknown with zero guessed actions, model calls, or action calls and remains unwired |
 | ROUTE-004 | DONE | BASE-006,ROUTE-002 | Typed user complex tasks become immutable schema-v1 high-risk pending dry-run requests; 39-case matrix rejects assistant confirmation forgeries, chats/commands, ambiguities, and invalid metadata with zero model/action calls; remains unwired |
 | PLAN-001 | DONE | BASE-006 | Versioned dry-run DAG plus rules-first validator; 34 Java cases and five public fixtures cover valid forward/linear plans, exact eight-step/60-second bounds, unknown tools, risk/version/idempotency/dependency/argument failures, and five real cycles with zero model/action calls; remains unwired |
-| PLAN-002 | BACKLOG | PLAN-001 | Remote planner receives minimum snapshot only |
+| PLAN-002 | VERIFY | PLAN-001 | Fixed five-field planner envelope permits only action, dry-run, bounded budgets and catalog version; it carries no user text/UI data/path/image/request identity/credential and has no transport or execution capability; real adapter evidence remains required |
 | PLAN-003 | BACKLOG | PLAN-001 | Re-observe after every step; app-switch race causes zero out-of-scope actions |
 | PLAN-004 | BACKLOG | PLAN-003 | One evidence-changing recovery, no unchanged retry loop |
 | POLICY-001 | DONE | — | L0–L4 risk, sensitive-surface denial, and package allowlist foundation |

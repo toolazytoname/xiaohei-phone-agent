@@ -60,6 +60,12 @@ java -cp "$test_dir" io.github.toolazytoname.xiaohei.ToolExecutionCoordinatorTes
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/ToolCatalog.java" "$project_dir/src/io/github/toolazytoname/xiaohei/TaskPlanValidator.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/TaskPlanValidatorTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.TaskPlanValidatorTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ToolCatalog.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/TaskPlanValidator.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/MinimalPlannerRequest.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/MinimalPlannerRequestTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.MinimalPlannerRequestTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/TtsChannelConfig.java" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/ModelChannelBackup.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/ModelChannelBackupTest.java"
