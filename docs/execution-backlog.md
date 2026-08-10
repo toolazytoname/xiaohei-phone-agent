@@ -97,7 +97,7 @@ ROLLBACK / REMAINS / NEXT
 | PLAN-004 | BACKLOG | PLAN-003 | One evidence-changing recovery, no unchanged retry loop |
 | POLICY-001 | DONE | — | L0–L4 risk, sensitive-surface denial, and package allowlist foundation |
 | POLICY-002 | DONE | ROUTE-004 | Memory-only one-use local-user confirmation bound to task/request/plan, salted target/content digests, eligible foreground/unlocked device state, and a 1–60-second monotonic window; exact 50-case matrix rejects changes, expiry, lock/background, assistant forgeries, cancellation, and replay with zero model/action calls; remains unwired |
-| POLICY-003 | BACKLOG | POLICY-002 | Separate Android/OpenCode/root authorization tiers |
+| POLICY-003 | DONE | POLICY-002 | In-memory audience-tier boundary allows only same-tier Android/OpenCode metadata and rejects all cross-tier requests; root remains denied until a broker exists |
 | POLICY-004 | BACKLOG | POLICY-003 | Permanent payment/OTP/password/evasion denial corpus |
 
 ## Tool gateway and Android capabilities
