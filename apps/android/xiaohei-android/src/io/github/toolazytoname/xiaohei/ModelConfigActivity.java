@@ -60,6 +60,14 @@ public final class ModelConfigActivity extends Activity {
             new String[] {"小黑离线中文 ASR", "Android 系统识别服务"}));
         root.addView(asr);
 
+        TextView localModelNotice = new TextView(this);
+        localModelNotice.setText("本地小模型建议 / Local-small-model guidance\n"
+            + "当前公开 APK 不内置生成式本地模型。未来本地小模型最多用于分类、固定 FAQ、隐私改写和离线解释；它不会自动启用、切换模型、规划任务或调用工具。\n"
+            + "The public APK bundles no generative local model. A future local-small model may only assist classification, fixed FAQ, privacy rewrite, and offline explanation; it cannot auto-enable, switch models, plan, or call tools.");
+        localModelNotice.setContentDescription("local-small-model-guidance");
+        localModelNotice.setPadding(0, pad, 0, 0);
+        root.addView(localModelNotice);
+
         TextView conversationLabel = new TextView(this);
         conversationLabel.setText("Conversation（只负责聊天；独立 Token，不调用工具）");
         conversationLabel.setPadding(0, pad, 0, 0);
