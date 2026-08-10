@@ -157,7 +157,7 @@ ROLLBACK / REMAINS / NEXT
 | UX-004 | DONE | POLICY-002 | Fixed bilingual confirmation preview shows app, target, content, permission, and stop/rollback; cancel remains default and it grants/executes nothing |
 | UX-005 | BACKLOG | TOOL-003 | App/notification/voice/widget global stop; all resources reach zero |
 | UX-006 | BACKLOG | TOOL-012 | Redacted history delete-one/clear-all/disable-storage |
-| UX-007 | BACKLOG | ROOT-003 | Permission center with purpose, last use, revoke, unsupported reason |
+| UX-007 | DONE | ROOT-003 | Read-only bilingual permission center shows purpose, bounded state/recent-use availability, user-owned Android revoke path, and root's unsupported/unwired reason; it grants nothing |
 | UX-008 | BACKLOG | UX-003 | Every failure shows cause, impact, and one valid recovery path |
 
 ## Reliability, security, and release

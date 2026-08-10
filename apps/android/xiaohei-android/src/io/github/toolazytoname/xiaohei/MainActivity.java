@@ -43,6 +43,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private TextView cpuKwsStateView;
     private TextView ttsStateView;
     private TextView independentStatusView;
+    private TextView permissionCenterView;
     private DspProfileClient dspProfile;
     private SystemTtsProbe ttsProbe;
     private final BroadcastReceiver dspStatusReceiver = new BroadcastReceiver() {
@@ -234,6 +235,17 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         independentStatusView.setPadding(0, pad, 0, 0);
         root.addView(independentStatusView);
         refreshIndependentStatus();
+        permissionCenterView = new TextView(this);
+        permissionCenterView.setContentDescription("permission-center-read-only");
+        permissionCenterView.setPadding(0, pad, 0, 0);
+        root.addView(permissionCenterView);
+        refreshPermissionCenter();
+        Button permissionCenterButton = new Button(this);
+        permissionCenterButton.setText("打开系统权限设置（由你授予或撤销）");
+        permissionCenterButton.setOnClickListener(v -> startActivity(new Intent(
+            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            android.net.Uri.parse("package:" + getPackageName()))));
+        root.addView(permissionCenterButton);
         Button ttsProbeButton = new Button(this);
         ttsProbeButton.setText("检查系统中文 TTS（只读）");
         ttsProbeButton.setOnClickListener(v -> refreshTtsStatus());
@@ -354,6 +366,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         refreshDspStatus();
         refreshCpuKwsStatus();
         refreshIndependentStatus();
+        refreshPermissionCenter();
         notificationAccessWatchActive = true;
         mainHandler.post(notificationAccessWatch);
     }
@@ -404,6 +417,20 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             + "\nPhone Agent: " + agent + "（仅按用户请求 / user-invoked only）"
             + "\nOpenCode: 未连接 / disconnected（未运行任务）"
             + "\nRoot broker: 未接线 / not wired（不授予 root）");
+    }
+
+    /** Reads only Android-visible state; it does not open a settings screen or request a permission. */
+    private void refreshPermissionCenter() {
+        if (permissionCenterView == null) return;
+        boolean notifications = Build.VERSION.SDK_INT < 33 || checkSelfPermission(
+            Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+        permissionCenterView.setText(PermissionCenterProjection.visibleText(
+            new PermissionCenterProjection.Snapshot(
+                checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED,
+                checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED,
+                notifications,
+                XiaoheiNotificationListener.accessGranted(this),
+                XiaoheiAccessibilityService.isConnected())));
     }
 
     private void refreshTtsStatus() {
