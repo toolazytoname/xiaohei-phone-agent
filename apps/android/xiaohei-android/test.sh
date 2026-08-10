@@ -163,6 +163,21 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/OpenCodeProgressProjectionTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.OpenCodeProgressProjectionTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/CommandRouter.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/IntentRouteClassifier.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/RouteClarificationPolicy.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/MemoryConversationSession.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/UnconfirmedActionRequest.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/FreshConfirmationGate.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ToolCatalog.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ToolGateway.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/OpenCodeTaskProtocol.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/OpenCodeWorkspaceBoundary.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/OpenCodeBoundedRunner.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/OpenCodeStopCoordinator.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/OpenCodeStopCoordinatorTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.OpenCodeStopCoordinatorTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/FreshConfirmationGate.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/FreshConfirmationGateTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.FreshConfirmationGateTest

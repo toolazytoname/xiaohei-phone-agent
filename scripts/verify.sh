@@ -72,6 +72,8 @@ required_files=(
   docs/opencode-bounded-runner.zh-CN.md
   docs/opencode-progress-card.md
   docs/opencode-progress-card.zh-CN.md
+  docs/opencode-stop-cleanup.md
+  docs/opencode-stop-cleanup.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -150,6 +152,7 @@ python3 scripts/verify-opencode-task-boundary.py
 python3 scripts/verify-opencode-workspace-boundary.py
 python3 scripts/verify-opencode-bounded-runner.py
 python3 scripts/verify-opencode-progress-projection.py
+python3 scripts/verify-opencode-stop-cleanup.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
