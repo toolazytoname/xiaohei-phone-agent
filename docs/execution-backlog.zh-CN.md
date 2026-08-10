@@ -158,7 +158,7 @@ NEXT: 唯一下一任务 ID
 
 | ID | 状态 | 依赖 | 交付物 | 完成证据 |
 |---|---|---|---|---|
-| UX-001 | BACKLOG | CHAT-004 | 首页分开显示唤醒、ASR、Conversation、Phone Agent、OpenCode、Root | 切任一配置其他状态不变 |
+| UX-001 | DONE | CHAT-004 | 首页展示彼此独立的唤醒/ASR/Conversation/Phone Agent/OpenCode/root 元数据状态；不启动运行时、不暴露凭据，并明确未接线路径 | 切任一配置其他状态不变 |
 | UX-002 | BACKLOG | CHAT-005 | 对话界面：听到的文字、回复、停止、清空和隐私状态 | 大字号、深色、中英文、旋转/重建 |
 | UX-003 | BACKLOG | PLAN-001 | 任务卡：目标、计划、当前步骤、预算、结果和接管 | 不显示内部思维链或凭据 |
 | UX-004 | BACKLOG | POLICY-002 | 风险确认页展示 App、目标、内容、权限和回滚 | 取消默认焦点，高风险不得倒计时确认 |
