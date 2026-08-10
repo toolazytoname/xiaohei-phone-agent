@@ -43,6 +43,7 @@
 - `action-request.v1.schema.json`：描述目标、动作、风险、确认、dry-run 和脱敏策略。
 - `task-plan.v1.schema.json`：描述绑定请求、1–8 步的 dry-run DAG，以及工具/风险、依赖、幂等与超时边界；它不授予执行权限。
 - `confirmation-grant.v1.schema.json`：描述一次性、纯内存的本机手势确认，绑定 task/request/plan、目标/内容摘要和 1–60 秒单调时钟窗口；它不是能力令牌。
+- `tool-catalog.v1.schema.json`：描述不可变的受审工具元数据、真实封闭输入/输出 Schema、回滚声明、受众和超时。目录成员资格不等于执行权限，详见[版本化工具目录边界](versioned-tool-catalog.zh-CN.md)。
 
 运行时 payload 可以在内存里含有用户私密信息，但 fixture 和公开验收报告在保存或发布前必须脱敏。
 

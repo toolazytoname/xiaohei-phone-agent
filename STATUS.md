@@ -21,8 +21,8 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 |---|---|---|---|
 | 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约 | `VOICE-001` + `CHAT-006` |
 | DSP 与短命令 / DSP and short commands | `VERIFY` | OnePlus 8T DSP 声学 callback、离线命令路由和 12 个确定性动作已验证 | 完成 `REL-001`、`REL-002` 后再宣传低功耗 |
-| 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope; `POLICY-002` done | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复；路由、计划与一次性新鲜确认边界通过 | `TOOL-001`, then capability gateway |
-| 开放对话 / Open conversation | `VERIFY`; automated `CHAT-012` passed | 前述对话基础、确定性离线 FAQ、20/5/5/5 自动矩阵、五类请求前隐私拒绝及 AOSP 零录音残留已验证 | Human Mandarin playback/intelligibility/interruption remains; agent path proceeds with `TOOL-001` |
+| 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope; `TOOL-001` done | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复；路由、计划、一次性确认与五工具版本化目录边界通过 | `TOOL-002` capability gateway |
+| 开放对话 / Open conversation | `VERIFY`; automated `CHAT-012` passed | 前述对话基础、确定性离线 FAQ、20/5/5/5 自动矩阵、五类请求前隐私拒绝及 AOSP 零录音残留已验证 | Human Mandarin playback/intelligibility/interruption remains; agent path proceeds with `TOOL-002` |
 | OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION` | 手机上的 OpenCode TUI/Web 和独立模型 profile 已有集成证据 | `OC-002`; do not grant Android/root directly |
 | 受控 root / Controlled root | `READY` | 设备已经 root；产品级 capability broker 尚未实现 | `ROOT-001`; generic `su -c` remains forbidden |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
@@ -39,7 +39,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 唯一执行队列 / Ordered queue
 
-1. `TOOL-001` → `TOOL-002` — 为已确认但尚无消费者的 dry-run 计划补版本化工具目录和能力网关；此前仍不接执行。
+1. `TOOL-002` — 为已确认但尚无消费者的 dry-run 计划补仅 loopback、短时一次性的能力网关；目录已经完成，但此前仍不接执行。
 2. `OC-002` → `ROOT-001` — 接入受控 OpenCode 和 root 能力，不把原始 shell 暴露给模型。
 3. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
 4. `VOICE-001` → `CHAT-005` → `CHAT-012` — 注册可用 TTS 后完成真人语音闭环和最终听感/打断门禁。
@@ -66,8 +66,9 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `TOOL-001`：不可变五工具 v1 Android 目录为每项固定版本、风险、真实输入/输出 Schema、回滚声明、受众和 100–60000 ms 超时；六个封闭 Schema 禁止额外字段，观察明确不含正文/无障碍树/截图/原始媒体，所有输出均不可写入公开日志。Java 测试与五个公开 fixture 拒绝重名、未知版本、缺失 Schema、无法解析回滚、未知工具及风险错配；静态门禁确认零模型/平台/执行/持久化路径且无新增 UI 接线。目录不授予权限，下一门禁为 `TOOL-002`。
 - `POLICY-002`：纯内存一次性确认门只接受前台、可交互、已解锁状态下的本机用户手势，并绑定 task/request/plan、加盐目标/内容摘要及 1–60 秒单调时窗；50 条矩阵覆盖 10 次精确单次放行、15 种范围变化、过期/时钟、设备、10 条助手伪造和重放/取消，全部零模型/动作调用。4 个公开夹具拒绝助手来源、非法时窗与原始内容；尚未接 UI/执行器。
-- `PLAN-001`：版本化 `task-plan.v1` 强制绑定 request、dry-run、1–8 步与 1–60 秒边界；34 条 Java 矩阵和 5 个公开夹具覆盖前向/线性 DAG、8 步边界、5 个未知工具、9 步拒绝、风险/版本/幂等/依赖/参数失败及 5 个真实循环，全部零模型/动作调用。确认基础已完成；校验器仍未接 UI、模型或执行器，下一门禁是 TOOL-001。
+- `PLAN-001`：版本化 `task-plan.v1` 强制绑定 request、dry-run、1–8 步与 1–60 秒边界；34 条 Java 矩阵和 5 个公开夹具覆盖前向/线性 DAG、8 步边界、5 个未知工具、9 步拒绝、风险/版本/幂等/依赖/参数失败及 5 个真实循环，全部零模型/动作调用。确认与工具目录基础已完成；校验器仍未接 UI、模型或执行器，下一门禁是 `TOOL-002`。
 - `ROUTE-004`：只有有类型的用户复杂任务才能生成不可变 schema-v1 请求，字段固定为 high-risk、requires-confirmation、pending、dry-run；39 条矩阵中 10 条助手确认伪造、10 条聊天/短命令、5 条歧义与 4 条非法边界均零请求或回到追问，固定零模型/动作调用。公开 Schema 额外拒绝 pending/live、pending/免确认与未知字段；尚未接入页面，等待 PLAN-002、UI 与工具门禁。
 - `ROUTE-003`：纯本地澄清策略精确通过 50 条合成非私人文本：10 条多目标、10 条动作意图、10 条范围缺失全部变成聊天加未知命令的追问，20 条明确输入正常放行；固定零猜测动作、零模型/动作调用。静态门禁确认尚未接入主页，等待规划、策略与确认门禁。
 - `ROUTE-002`：纯三路分类器精确通过 100 条合成非私人文本（40 确定性命令、35 聊天、25 复杂任务），结果固定零模型/动作调用；“回复消息是什么意思”不再被旧关键词误当草稿，“打开相册和相机”保持惰性，高风险复杂请求只分类不授权。分类器尚未接入主页，等待规划、策略与确认门禁。

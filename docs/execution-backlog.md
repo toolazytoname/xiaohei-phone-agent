@@ -104,8 +104,8 @@ ROLLBACK / REMAINS / NEXT
 
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
-| TOOL-001 | READY | BASE-006 | Versioned tool catalog with risk, schema, and rollback |
-| TOOL-002 | BACKLOG | TOOL-001,POLICY-002 | Loopback gateway and short-lived capability tokens; reject remote/replay/cross-task |
+| TOOL-001 | DONE | BASE-006 | Immutable five-entry v1 catalog with exact risk, six closed input/output schemas, rollback declaration, audience, and timeout; Java/fixture/static gates reject duplicates, unknown versions, missing schemas, and unresolved rollback without execution wiring |
+| TOOL-002 | READY | TOOL-001,POLICY-002 | Loopback gateway and short-lived capability tokens; reject remote/replay/cross-task |
 | TOOL-003 | BACKLOG | TOOL-002 | Timeout, cancel, idempotency, and structured error per tool |
 | TOOL-004 | DONE | — | Public intent/settings/gallery/camera/browser/map/dialer actions |
 | TOOL-005 | DONE | — | Current-notification summary and confirmed volatile drafts |

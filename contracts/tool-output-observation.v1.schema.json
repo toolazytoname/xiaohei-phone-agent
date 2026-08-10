@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/tool-output-observation.v1.schema.json",
+  "title": "Xiaohei Minimal Observation Output v1",
+  "description": "Bounded metadata only; screen text, accessibility trees, screenshots, and raw media are forbidden.",
+  "type": "object",
+  "required": ["snapshot_id", "foreground_package", "public_log_safe"],
+  "properties": {
+    "snapshot_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "foreground_package": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_.]{0,254}$"},
+    "public_log_safe": {"const": false}
+  },
+  "additionalProperties": false
+}

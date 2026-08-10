@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/tool-input-observe.v1.schema.json",
+  "title": "Xiaohei Minimal Observation Input v1",
+  "description": "Requests bounded state metadata without screen text, an accessibility tree, or a screenshot.",
+  "type": "object",
+  "required": ["scope", "include_text"],
+  "properties": {
+    "scope": {"const": "foreground_package"},
+    "include_text": {"const": false}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/tool-output-volume.v1.schema.json",
+  "title": "Xiaohei Volume Tool Output v1",
+  "type": "object",
+  "required": ["before_percent", "after_percent", "public_log_safe"],
+  "properties": {
+    "before_percent": {"type": "integer", "minimum": 0, "maximum": 100},
+    "after_percent": {"type": "integer", "minimum": 0, "maximum": 100},
+    "public_log_safe": {"const": false}
+  },
+  "additionalProperties": false
+}

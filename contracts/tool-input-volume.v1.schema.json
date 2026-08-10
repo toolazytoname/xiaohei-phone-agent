@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/tool-input-volume.v1.schema.json",
+  "title": "Xiaohei Relative Volume Input v1",
+  "description": "A bounded relative media-volume adjustment; zero is not a valid operation.",
+  "type": "object",
+  "required": ["mode", "delta_percent"],
+  "properties": {
+    "mode": {"const": "relative"},
+    "delta_percent": {
+      "type": "integer",
+      "oneOf": [
+        {"minimum": -10, "maximum": -1},
+        {"minimum": 1, "maximum": 10}
+      ]
+    }
+  },
+  "additionalProperties": false
+}
