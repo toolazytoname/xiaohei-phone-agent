@@ -22,7 +22,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 | 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约 | `VOICE-001` + `CHAT-006` |
 | DSP 与短命令 / DSP and short commands | `VERIFY` | OnePlus 8T DSP 声学 callback、离线命令路由和 12 个确定性动作已验证 | 完成 `REL-001`、`REL-002` 后再宣传低功耗 |
 | 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复 | `ROUTE-002`, then expand tools through `TOOL-*` |
-| 开放对话 / Open conversation | `FOUNDATION`; `CHAT-011` done | 独立配置/Keystore、有界传输、6 轮纯内存半双工、最小 Prompt、零调用控制、独立 TTS 选择及带非模型标签的确定性离线 FAQ 已验证 | `CHAT-012`; device credential/playback/human TTS gates remain separate |
+| 开放对话 / Open conversation | `VERIFY`; automated `CHAT-012` passed | 前述对话基础、确定性离线 FAQ、20/5/5/5 自动矩阵、五类请求前隐私拒绝及 AOSP 零录音残留已验证 | Human Mandarin playback/intelligibility/interruption remains; proceed `ROUTE-002` |
 | OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION` | 手机上的 OpenCode TUI/Web 和独立模型 profile 已有集成证据 | `OC-002`; do not grant Android/root directly |
 | 受控 root / Controlled root | `READY` | 设备已经 root；产品级 capability broker 尚未实现 | `ROOT-001`; generic `su -c` remains forbidden |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
@@ -39,12 +39,10 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 唯一执行队列 / Ordered queue
 
-1. `CHAT-012` — 执行 20 问、5 中断、5 超时、5 隐私拒绝的精确候选验收，并检查零崩溃/录音残留。
-2. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
-3. `VOICE-001` — 候选包上验证只读 TTS 探针；当前两台测试设备均无注册引擎，绝不自动下载。
-4. `CHAT-005` — 在前述独立设备门禁后做“说一句、答一句”。
-5. `ROUTE-002` → `PLAN-001` → `TOOL-001` — 把聊天升级为受策略约束的可执行 Agent。
-6. `OC-002` → `ROOT-001` — 接入受控 OpenCode 和 root 能力，不把原始 shell 暴露给模型。
+1. `ROUTE-002` → `PLAN-001` → `TOOL-001` — 把聊天升级为受策略约束的可执行 Agent。
+2. `OC-002` → `ROOT-001` — 接入受控 OpenCode 和 root 能力，不把原始 shell 暴露给模型。
+3. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
+4. `VOICE-001` → `CHAT-005` → `CHAT-012` — 注册可用 TTS 后完成真人语音闭环和最终听感/打断门禁。
 
 完整的 102 个稳定任务、依赖和证据要求见[执行任务账本](docs/execution-backlog.zh-CN.md)。执行模型一次只能领取一个 `READY` 任务。
 
@@ -68,6 +66,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `CHAT-012` 自动部分：20 问、5 中断、5 超时、5 隐私拒绝精确矩阵通过；通知/联系人/位置/私人媒体/凭据五类请求在会话与模型之前本地拒绝。全新 AOSP 页面显示双语零调用标签，保持 Conversation 前台，零 Fatal/ANR、零 Active Record Client。因 Relay 播放未实现、真人中文听感/自然打断未验，准确保持 `VERIFY`。
 - `CHAT-011`：远端失败后只匹配五类/25 条精确中英文 FAQ，固定显示“本地固定 FAQ｜不是远端模型”；10 条未知/动作/注入和超长输入拒绝，兜底固定零新增模型/动作/上下文使用。全新 AOSP 未启用远端渠道时，命中项显示本地标签，动作型未知项只报渠道未启用且前台仍为 Conversation；零 Fatal/ANR，未使用网络模型、语音或实体机。
 - `CHAT-010`：Off/System/Relay 使用独立配置键与 TTS Relay Keystore 槽，v3 无 Token 备份兼容 v2 恢复。全新 AOSP 正常入口先保存非空 Relay 配置，再只切 System，Conversation/Phone Agent 六字段逐字不变；零 TTS 初始化、服务启动、Fatal/ANR。Relay 播放与真人听感未据此虚报。
 - `CHAT-009`：23 条精确中英文控制短语与停止/重说/清空/继续/结束按钮共用本地幂等状态机，五类结果固定 `modelCalls=0`。全新 AOSP 用户路径先产生一次 `CONTROL_BASE_OK`，再依次操作四个按钮；Mock 计数始终为 1，最终 UI 正文为空且无 Fatal/ANR。真人声学/TTS 未据此虚报。

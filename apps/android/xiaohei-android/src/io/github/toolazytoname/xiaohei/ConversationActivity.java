@@ -159,6 +159,13 @@ public final class ConversationActivity extends Activity {
             input.setText("");
             return;
         }
+        ConversationPrivacyPolicy.Result privacy = ConversationPrivacyPolicy.evaluate(userText);
+        if (privacy.denied) {
+            input.setText("");
+            state.setText("状态：本地隐私拒绝；零模型/动作调用 / Status: local privacy denial; zero model/action calls");
+            output.setText(privacy.text);
+            return;
+        }
         if (!controls.canSend()) {
             state.setText("状态：已暂停；点“继续聊”后再发送 / Status: paused; press Continue");
             return;

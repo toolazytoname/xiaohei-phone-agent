@@ -74,3 +74,15 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/OfflineFaqFallback.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/OfflineFaqFallbackTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.OfflineFaqFallbackTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ConversationPrivacyPolicy.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/ConversationPrivacyPolicyTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.ConversationPrivacyPolicyTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/MemoryConversationSession.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ConversationSessionCoordinator.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ConversationPromptPolicy.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ConversationControlPolicy.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ConversationPrivacyPolicy.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/ConversationAcceptanceMatrixTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.ConversationAcceptanceMatrixTest
