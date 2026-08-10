@@ -37,3 +37,7 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/ModelChannelBackup.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/ModelChannelBackupTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.ModelChannelBackupTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/BoundedConversationTransport.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/BoundedConversationTransportTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.BoundedConversationTransportTest
