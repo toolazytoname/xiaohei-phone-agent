@@ -103,7 +103,7 @@ NEXT: 唯一下一任务 ID
 | PLAN-003 | BACKLOG | PLAN-001 | 每步执行后重新观察和验证后置条件 | 人为抢切 App 得到零越界动作 |
 | PLAN-004 | BACKLOG | PLAN-003 | 一次有证据恢复和失败指纹去重 | 未改变条件不重试；改变条件最多一次 |
 | POLICY-001 | DONE | — | L0–L4 风险、敏感页面拒绝和包允许列表基础 | `AgentPolicyTest` 与 M5 证据 |
-| POLICY-002 | READY | ROUTE-004 | 绑定目标、内容、时间和任务 ID 的新鲜确认 | 目标变化、超时、锁屏后确认失效 |
+| POLICY-002 | DONE | ROUTE-004 | 绑定目标、内容、时间和任务 ID 的新鲜确认 | 纯内存一次性本机用户确认绑定 task/request/plan、加盐目标/内容摘要、前台解锁设备状态和 1–60 秒单调时窗；精确 50 条矩阵拒绝变化、过期、锁屏/后台、助手伪造、取消与重放，零模型/动作调用，尚未接线 |
 | POLICY-003 | BACKLOG | POLICY-002 | Root/OpenCode/普通 Android 分层授权 | 较低层令牌不能调用较高层工具 |
 | POLICY-004 | BACKLOG | POLICY-003 | 支付/OTP/密码/风控绕过永久拒绝回归库 | 模型诱导、UI 文案变体均为 DENY |
 
@@ -111,7 +111,7 @@ NEXT: 唯一下一任务 ID
 
 | ID | 状态 | 依赖 | 交付物 | 完成证据 |
 |---|---|---|---|---|
-| TOOL-001 | BACKLOG | BASE-006 | 工具注册表：名称、版本、风险、输入/输出、回滚 | 重名、未知版本和缺失字段拒绝 |
+| TOOL-001 | READY | BASE-006 | 工具注册表：名称、版本、风险、输入/输出、回滚 | 重名、未知版本和缺失字段拒绝 |
 | TOOL-002 | BACKLOG | TOOL-001,POLICY-002 | loopback Tool Gateway 与短时 capability token | 非本机、过期、重放和跨任务调用拒绝 |
 | TOOL-003 | BACKLOG | TOOL-002 | 每工具超时、取消、幂等键和结构化错误 | 杀进程/断网/重复调用测试 |
 | TOOL-004 | DONE | — | 公开 Intent、Settings、相册、相机、浏览器、地图、拨号基础 | M2 确定性动作证据 |

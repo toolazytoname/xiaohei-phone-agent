@@ -105,3 +105,7 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/UnconfirmedActionRequest.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/UnconfirmedActionRequestTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.UnconfirmedActionRequestTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/FreshConfirmationGate.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/FreshConfirmationGateTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.FreshConfirmationGateTest
