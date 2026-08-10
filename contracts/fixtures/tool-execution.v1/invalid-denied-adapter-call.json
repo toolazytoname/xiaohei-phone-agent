@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task_id": "job-execution-public-0005",
+  "call_id": "call-execution-public-0005",
+  "tool": "android.open_dialer",
+  "status": "denied",
+  "error_code": "authorization_denied",
+  "output": {},
+  "started_at_elapsed_ms": 160000,
+  "finished_at_elapsed_ms": 160000,
+  "duration_ms": 0,
+  "adapter_calls": 1,
+  "public_log_safe": false
+}

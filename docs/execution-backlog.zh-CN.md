@@ -113,7 +113,7 @@ NEXT: 唯一下一任务 ID
 |---|---|---|---|---|
 | TOOL-001 | DONE | BASE-006 | 不可变五工具 v1 目录：精确风险、六个封闭输入/输出 Schema、回滚声明、受众与超时 | Java/fixture/静态门禁拒绝重名、未知版本、缺失 Schema 和无法解析回滚，零执行接线 |
 | TOOL-002 | DONE | TOOL-001,POLICY-002 | 纯 loopback/同 UID 授权核心把一次内部确认 receipt 换成一次 1–30 秒、绑定完整调用的 capability | 50 组 Java 与 7 个 fixture 文件拒绝远端、跨 UID、确认复用/错范围、非法/陈旧调用漂移、过期、时钟回退、重放与跨网关，适配器执行为 0 |
-| TOOL-003 | READY | TOOL-002 | 每工具超时、取消、幂等键和结构化错误 | 杀进程/断网/重复调用测试 |
+| TOOL-003 | VERIFY | TOOL-002 | 纯协调器把目录上限内超时绑定到一次性权限，最多调用一个注入式适配器；超时/取消中断 worker，范围/幂等重放拒绝，结果私有且有界 | 25 组 Java 与 5 个结果 fixture 已通过；真实进程 kill、断网及适配器资源关闭仍缺证据，不能用合成故障冒充 |
 | TOOL-004 | DONE | — | 公开 Intent、Settings、相册、相机、浏览器、地图、拨号基础 | M2 确定性动作证据 |
 | TOOL-005 | DONE | — | 当前通知汇总和确认式消息草稿 | M4 隐私/撤权/零发送证据 |
 | TOOL-006 | DONE | — | 包绑定语义无障碍与一次内存视觉恢复 | M5 10 App 和恢复证据 |
@@ -129,7 +129,7 @@ NEXT: 唯一下一任务 ID
 | ID | 状态 | 依赖 | 交付物 | 完成证据 |
 |---|---|---|---|---|
 | OC-001 | DONE | — | 手机 OpenCode TUI/Web、独立模型 profile 与真实中转调用 | Android AI Stack 验收记录 |
-| OC-002 | BACKLOG | TOOL-002 | 小黑到 OpenCode 的任务协议，不暴露通用 shell | 协议 fixture 与未知字段拒绝 |
+| OC-002 | READY | TOOL-002 | 小黑到 OpenCode 的任务协议，不暴露通用 shell | 协议 fixture 与未知字段拒绝 |
 | OC-003 | BACKLOG | OC-002 | 每任务独立工作区、允许目录和清理策略 | 路径逃逸、符号链接和跨任务读取拒绝 |
 | OC-004 | BACKLOG | OC-003 | `oc run` 有界 runner：模型、agent、超时、token/步骤预算 | 卡死、退出、取消和输出上限测试 |
 | OC-005 | BACKLOG | OC-004 | 流式进度映射到小黑任务卡 | 不把 Prompt、Token 或完整终端日志展示给用户 |

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task_id": "job-execution-public-0001",
+  "call_id": "call-execution-public-0001",
+  "tool": "android.open_gallery",
+  "status": "success",
+  "error_code": "none",
+  "output": {"activity": "gallery"},
+  "started_at_elapsed_ms": 120000,
+  "finished_at_elapsed_ms": 120025,
+  "duration_ms": 25,
+  "adapter_calls": 1,
+  "public_log_safe": false
+}

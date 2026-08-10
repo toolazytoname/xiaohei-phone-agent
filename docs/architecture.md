@@ -44,7 +44,8 @@ Shows `OFF / ARMING / ARMED / LISTENING / THINKING / CONFIRMING / ACTING / ERROR
 - `task-plan.v1.schema.json`: describes a request-bound, 1–8-step dry-run DAG with tool/risk, dependency, idempotency, and timeout limits; it grants no execution authority.
 - `confirmation-grant.v1.schema.json`: describes a one-use memory-only local gesture bound to task/request/plan, target/content digests, and a 1–60 second monotonic window; it is not a capability token.
 - `tool-catalog.v1.schema.json`: describes immutable reviewed tool metadata, concrete closed input/output schemas, rollback declaration, audience, and timeout. Catalog membership is not execution authority; see the [versioned catalog boundary](versioned-tool-catalog.md).
-- `tool-call.v1.schema.json` and `capability-token.v1.schema.json`: bind one call to task/request/plan/call/catalog scope and a 1–30 second in-memory capability. Numeric-loopback/same-UID enforcement and the absence of a listener/executor are documented in the [gateway authorization boundary](loopback-tool-gateway.md).
+- `tool-call.v1.schema.json` and `capability-token.v1.schema.json`: bind one call, including its catalog-capped timeout, to task/request/plan/call/catalog scope and a 1–30 second in-memory capability. Numeric-loopback/same-UID authorization is documented in the [gateway boundary](loopback-tool-gateway.md).
+- `tool-result.v1.schema.json`: represents one private, structured zero-or-one-adapter outcome with monotonic timing and bounded output. The pure coordinator, typed cancellation/errors, and explicit test-only adapter boundary are documented in the [execution lifecycle](tool-execution-lifecycle.md).
 
 Runtime payloads may contain private user data in memory, but fixtures and public acceptance reports must be redacted before storage or publication.
 

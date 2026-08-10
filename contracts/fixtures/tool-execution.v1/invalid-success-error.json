@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task_id": "job-execution-public-0004",
+  "call_id": "call-execution-public-0004",
+  "tool": "android.open_settings",
+  "status": "success",
+  "error_code": "adapter_failure",
+  "output": {},
+  "started_at_elapsed_ms": 150000,
+  "finished_at_elapsed_ms": 150010,
+  "duration_ms": 10,
+  "adapter_calls": 1,
+  "public_log_safe": false
+}

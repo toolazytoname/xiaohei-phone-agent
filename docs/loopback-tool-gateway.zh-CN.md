@@ -8,7 +8,8 @@
 
 1. `FreshConfirmationGate` 只接受前台、解锁且可交互状态下的本机用户手势；精确比较 task/request/plan/target/content 后，以私有 capability receipt 返回 `ALLOW_ONCE`。
 2. 只有网关能消费该 receipt。它先校验 peer 与调用元数据，再把 receipt 一次性换成不透明内存 Token；复用同一个结果会得到 `CONFIRMATION_REPLAY`。
-3. Token 只授权与其加盐 SHA-256 调用摘要完全一致的一次调用。成功、过期、时钟回退、本机范围/目录失败、幂等重放或显式全局撤销都会移除活动 Token。
+3. Token 只授权与其加盐 SHA-256 调用摘要（包含目录上限内超时）完全一致的一次调用。成功、过期、时钟回退、本机范围/目录失败、幂等重放或显式全局撤销都会移除活动 Token。
+4. 成功授权会产生一个私有执行许可；`TOOL-003` 只消费一次、重新匹配未变化的调用摘要，之后最多提交一个注入式适配器，详见[有界执行生命周期](tool-execution-lifecycle.zh-CN.md)。
 
 receipt 只带 confirmation/task/request/plan ID，不带目标、内容、UI 文字、截图、无障碍树或摘要。确认与调用的 task/request/plan 不同时，receipt 会被消费并拒绝。
 
@@ -38,6 +39,6 @@ python3 scripts/verify-loopback-tool-gateway-boundary.py
 bash scripts/verify.sh
 ```
 
-## 尚未完成的执行工作
+## 执行边界与剩余集成
 
-当前 Android UI 与 Activity 不引用 `ToolGateway`，没有 socket 监听器或适配器调用。`TOOL-003` 必须加入结构化超时/取消/幂等执行结果；后续集成还必须提供由可信传输层产生的 peer 证据与可访问确认 UI。OpenCode 与 root 保持独立受众，不能使用 Android capability。
+当前 Android UI 与 Activity 仍不引用 `ToolGateway`，没有 socket 监听器或真实 Android 适配器调用。`TOOL-003` 已加入纯注入式适配器协调器，覆盖绑定超时、取消、幂等重放拒绝与结构化私有结果；其中进程/网络失败只是模拟映射测试，不能当作真实资源关闭证据。后续集成还必须提供由可信传输层产生的 peer 证据、可访问确认 UI 与真实适配器生命周期测试。OpenCode 与 root 保持独立受众，不能使用 Android capability。

@@ -7,7 +7,7 @@
   "required": [
     "schema_version", "token_id", "confirmation_id", "task_id", "request_id",
     "plan_id", "call_id", "tool", "tool_version", "risk", "audience",
-    "call_digest", "issued_at_elapsed_ms", "expires_at_elapsed_ms", "ttl_ms",
+    "call_digest", "call_timeout_ms", "issued_at_elapsed_ms", "expires_at_elapsed_ms", "ttl_ms",
     "single_use", "persistence", "public_log_safe"
   ],
   "properties": {
@@ -23,6 +23,7 @@
     "risk": {"enum": ["observe", "low", "reversible", "high"]},
     "audience": {"enum": ["android_gateway", "opencode_gateway", "root_broker"]},
     "call_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "call_timeout_ms": {"type": "integer", "minimum": 100, "maximum": 60000},
     "issued_at_elapsed_ms": {"type": "integer", "minimum": 0},
     "expires_at_elapsed_ms": {"type": "integer", "minimum": 1},
     "ttl_ms": {"type": "integer", "minimum": 1000, "maximum": 30000},
