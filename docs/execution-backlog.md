@@ -144,7 +144,7 @@ ROLLBACK / REMAINS / NEXT
 | ROOT-006 | BACKLOG | ROOT-002 | Transactional device-profile install/uninstall with reboot checks |
 | ROOT-007 | BACKLOG | ROOT-002 | Dry-run, diff preview, and fresh confirmation for system changes |
 | ROOT-008 | BACKLOG | ROOT-003 | Redacted root audit and token revocation on global stop |
-| ROOT-009 | BACKLOG | ROOT-004 | Denial corpus for destructive commands, broad paths, and credential/payment data |
+| ROOT-009 | DONE | ROOT-004 | Fail-closed destructive-command, broad/system-path, and credential/payment/evasion denial corpus; all unmatched root-shaped input stays denied and no command executes |
 | ROOT-010 | BACKLOG | ROOT-009 | Install/upgrade/rollback/uninstall on an independent test device first |
 
 ## UX and human control

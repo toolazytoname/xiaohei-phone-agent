@@ -90,6 +90,8 @@ required_files=(
   docs/root-read-only-diagnostics.zh-CN.md
   docs/root-service-lifecycle.md
   docs/root-service-lifecycle.zh-CN.md
+  docs/root-destructive-denial.md
+  docs/root-destructive-denial.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -181,6 +183,7 @@ python3 scripts/verify-sensitive-action-denial.py
 python3 scripts/verify-root-broker.py
 python3 scripts/verify-root-read-only-diagnostics.py
 python3 scripts/verify-root-service-lifecycle.py
+python3 scripts/verify-root-destructive-denial.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
