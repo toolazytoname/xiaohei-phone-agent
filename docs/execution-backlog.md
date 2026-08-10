@@ -105,8 +105,8 @@ ROLLBACK / REMAINS / NEXT
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
 | TOOL-001 | DONE | BASE-006 | Immutable five-entry v1 catalog with exact risk, six closed input/output schemas, rollback declaration, audience, and timeout; Java/fixture/static gates reject duplicates, unknown versions, missing schemas, and unresolved rollback without execution wiring |
-| TOOL-002 | READY | TOOL-001,POLICY-002 | Loopback gateway and short-lived capability tokens; reject remote/replay/cross-task |
-| TOOL-003 | BACKLOG | TOOL-002 | Timeout, cancel, idempotency, and structured error per tool |
+| TOOL-002 | DONE | TOOL-001,POLICY-002 | Pure loopback/same-UID authorization core exchanges one internal confirmation receipt for one 1–30-second call-bound capability; 50 Java groups and seven fixture files reject remote, cross-UID, confirmation reuse/scope, malformed/stale call drift, expiry, clock rollback, replay, and foreign gateways with zero adapter execution |
+| TOOL-003 | READY | TOOL-002 | Timeout, cancel, idempotency, and structured error per tool |
 | TOOL-004 | DONE | — | Public intent/settings/gallery/camera/browser/map/dialer actions |
 | TOOL-005 | DONE | — | Current-notification summary and confirmed volatile drafts |
 | TOOL-006 | DONE | — | Package-bound semantic Accessibility and one memory-only visual recovery |

@@ -79,11 +79,34 @@ final class FreshConfirmationGate {
         final Code code;
         final int modelCalls;
         final int actionCalls;
+        private CapabilityReceipt capabilityReceipt;
 
-        private Result(Code code) {
+        private Result(Code code, CapabilityReceipt capabilityReceipt) {
             this.code = code;
             this.modelCalls = 0;
             this.actionCalls = 0;
+            this.capabilityReceipt = capabilityReceipt;
+        }
+
+        /** Package-private one-time exchange; no text, target, content, or digest leaves the gate. */
+        synchronized CapabilityReceipt takeCapabilityReceipt() {
+            CapabilityReceipt current = capabilityReceipt;
+            capabilityReceipt = null;
+            return current;
+        }
+    }
+
+    static final class CapabilityReceipt {
+        final String confirmationId;
+        final String taskId;
+        final String requestId;
+        final String planId;
+
+        private CapabilityReceipt(Grant grant) {
+            this.confirmationId = grant.confirmationId;
+            this.taskId = grant.taskId;
+            this.requestId = grant.requestId;
+            this.planId = grant.planId;
         }
     }
 
@@ -138,8 +161,9 @@ final class FreshConfirmationGate {
             return invalidate(Code.TARGET_CHANGED);
         if (!grant.contentDigest.equals(digest(grant.confirmationId, current.content)))
             return invalidate(Code.CONTENT_CHANGED);
+        CapabilityReceipt receipt = new CapabilityReceipt(grant);
         active = null;
-        return result(Code.ALLOW_ONCE);
+        return result(Code.ALLOW_ONCE, receipt);
     }
 
     synchronized Result cancel() {
@@ -165,8 +189,12 @@ final class FreshConfirmationGate {
     }
 
     private Result result(Code code) {
+        return result(code, null);
+    }
+
+    private Result result(Code code, CapabilityReceipt receipt) {
         lastCode = code;
-        return new Result(code);
+        return new Result(code, receipt);
     }
 
     private static boolean validScope(Scope scope) {

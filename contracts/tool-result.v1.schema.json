@@ -8,6 +8,6 @@
     "schema_version":{"const":1}, "task_id":{"type":"string","minLength":8,"maxLength":128}, "call_id":{"type":"string","minLength":8,"maxLength":128},
     "status":{"enum":["success","denied","cancelled","timeout","failed","rollback_required"]},
     "result":{"type":"object","maxProperties":32}, "error_code":{"type":"string","maxLength":96},
-    "observed_at":{"type":"string","format":"date-time"}, "public_log_safe":{"const":true}
+    "observed_at":{"type":"string","format":"date-time"}, "public_log_safe":{"const":false}
   }, "additionalProperties":false
 }

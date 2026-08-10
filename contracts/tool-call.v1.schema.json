@@ -2,18 +2,32 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/tool-call.v1.schema.json",
   "title": "Xiaohei Tool Call v1",
+  "description": "One exact call proposal. It requires a separately issued in-memory capability and grants no authority by itself.",
   "type": "object",
-  "required": ["schema_version", "task_id", "call_id", "tool", "tool_version", "risk", "arguments", "idempotency_key", "requested_at"],
+  "required": [
+    "schema_version", "task_id", "request_id", "plan_id", "call_id", "tool",
+    "tool_version", "risk", "audience", "arguments", "idempotency_key",
+    "requested_at_elapsed_ms", "public_log_safe"
+  ],
   "properties": {
     "schema_version": {"const": 1},
-    "task_id": {"type":"string","minLength":8,"maxLength":128},
-    "call_id": {"type":"string","minLength":8,"maxLength":128},
-    "tool": {"type":"string","pattern":"^[a-z][a-z0-9_.-]{2,63}$"},
-    "tool_version": {"type":"integer","minimum":1,"maximum":255},
-    "risk": {"enum":["observe","low","reversible","high"]},
-    "arguments": {"type":"object","maxProperties":32},
-    "idempotency_key": {"type":"string","minLength":16,"maxLength":128},
-    "requested_at": {"type":"string","format":"date-time"}
+    "task_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "request_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "plan_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "call_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "tool": {"type": "string", "pattern": "^[a-z][a-z0-9_.-]{2,63}$"},
+    "tool_version": {"const": 1},
+    "risk": {"enum": ["observe", "low", "reversible", "high"]},
+    "audience": {"enum": ["android_gateway", "opencode_gateway", "root_broker"]},
+    "arguments": {
+      "type": "object",
+      "maxProperties": 32,
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_]{0,63}$"},
+      "additionalProperties": {"type": "string", "maxLength": 1024}
+    },
+    "idempotency_key": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{15,127}$"},
+    "requested_at_elapsed_ms": {"type": "integer", "minimum": 0},
+    "public_log_safe": {"const": false}
   },
   "additionalProperties": false
 }
