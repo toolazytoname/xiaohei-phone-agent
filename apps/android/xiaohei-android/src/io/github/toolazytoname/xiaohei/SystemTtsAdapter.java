@@ -33,7 +33,7 @@ final class SystemTtsAdapter {
             if (status != TextToSpeech.SUCCESS) { lifecycle.initialized(false); report("系统 TTS 初始化失败"); return; }
             engine.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                 @Override public void onStart(String id) { }
-                @Override public void onDone(String id) { if (id.equals(utteranceId) && lifecycle.finished()) report("播报完成"); }
+                @Override public void onDone(String id) { if (id.equals(utteranceId) && lifecycle.finished()) report("播报完成；等待后续输入"); }
                 @Override public void onError(String id) { if (id.equals(utteranceId)) { lifecycle.fail(); report("系统 TTS 播报失败"); } }
             });
             lifecycle.initialized(true);
@@ -55,6 +55,13 @@ final class SystemTtsAdapter {
         handler.removeCallbacks(timeout);
         if (engine != null) engine.stop();
         if (lifecycle.stop()) report(detail);
+    }
+
+    /** User/system interruption is distinct from a completed utterance and never resumes audio. */
+    void interrupt(String detail) {
+        handler.removeCallbacks(timeout);
+        if (engine != null) engine.stop();
+        if (lifecycle.interrupt()) report(detail);
     }
 
     void destroy() {

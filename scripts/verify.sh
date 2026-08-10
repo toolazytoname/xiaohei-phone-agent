@@ -116,6 +116,8 @@ required_files=(
   docs/confirmation-preview.zh-CN.md
   docs/permission-center.md
   docs/permission-center.zh-CN.md
+  docs/tts-interaction-lifecycle.md
+  docs/tts-interaction-lifecycle.zh-CN.md
   docs/release-checklist.md
   docs/release-checklist.zh-CN.md
   docs/release-scope-0.2.0-alpha.3.md
@@ -217,6 +219,7 @@ python3 scripts/verify-local-small-model-guidance.py
 python3 scripts/verify-independent-status.py
 python3 scripts/verify-confirmation-preview.py
 python3 scripts/verify-permission-center.py
+python3 scripts/verify-tts-interaction-lifecycle.py
 python3 scripts/verify-task-card.py
 bash scripts/test-pr-delivery-metadata.sh
 
