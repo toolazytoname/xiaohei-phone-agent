@@ -26,6 +26,7 @@
 | `CHAT-010` — 独立 TTS 选择器 | 已完成任务范围 | Off/System/Relay 配置隔离、独立 Keystore 槽、v3 无 Token 备份与 v2 恢复兼容、单元/静态/构建门禁；全新 AOSP Relay → System 用户路径保持 Conversation/Phone Agent 六字段不变，零 TTS 初始化、服务启动、Fatal/ANR。 | 本任务未实现 Relay 播放；已注册引擎朗读、真人可懂度、打断和完整语音轮次仍属 `VOICE-001`、`CHAT-005`、`CHAT-012`。 |
 | `CHAT-011` — 确定性离线 FAQ | 已完成任务范围 | 五类/25 条精确短语，10 条未知/动作/注入及超长拒绝；固定双语非模型标签；零新增模型/动作/上下文使用；远端失败后接入及未启用渠道零网络线程静态门禁；全新 AOSP 命中与动作型未知拒绝均留在 Conversation，零 Fatal/ANR。 | 未内置 0.6B 权重或生成式本地模型；更广离线推理、语音与动作属于独立后续门禁。 |
 | `CHAT-012` — 最终 Conversation 验收 | 自动范围通过；真人门禁未完成 | 精确 20 问、5 中断、5 超时、5 本地隐私拒绝；五类/15 短语请求前隐私策略；静态零录音 API 路径、签名 APK；全新 AOSP 拒绝保持在 Conversation，零 Fatal/ANR、零 Active Record Client。 | `VERIFY`：尚无已实现 Relay 播放或真人中文可懂度/自然打断验收，自动化不能关闭该门禁。 |
+| `ROUTE-002` — 惰性三路分类器 | 已完成任务范围 | 纯聊天/确定性命令/复杂任务结果；已审核 `CommandRouter` 加祈使线索；精确 100 条合成矩阵（40/35/25）；零模型/动作调用；概念关键词、双目标歧义、多步骤和高风险回归；签名 APK/静态门禁通过。 | 尚未接入 `MainActivity`；歧义/低置信追问属于 `ROUTE-003`，未确认 ActionRequest 接入属于 `ROUTE-004`。 |
 
 ## 证据规则
 

@@ -88,8 +88,8 @@ ROLLBACK / REMAINS / NEXT
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
 | ROUTE-001 | DONE | — | Local deterministic `CommandRouter` with ambiguity tests |
-| ROUTE-002 | READY | CHAT-004 | Three-way chat / deterministic command / complex-task classifier |
-| ROUTE-003 | BACKLOG | ROUTE-002 | Low confidence asks; never guesses an action |
+| ROUTE-002 | DONE | CHAT-004 | Inert three-way classifier; exact 100-case matrix passes 40 deterministic commands, 35 chats, and 25 complex tasks with zero model/action calls; conceptual keyword and ambiguous-action regressions remain non-actions |
+| ROUTE-003 | READY | ROUTE-002 | Low confidence asks; never guesses an action |
 | ROUTE-004 | BACKLOG | BASE-006,ROUTE-002 | “Help me do” becomes an unconfirmed `ActionRequest`, never direct execution |
 | PLAN-001 | BACKLOG | BASE-006 | Rules-first planner and versioned plan schema |
 | PLAN-002 | BACKLOG | PLAN-001 | Remote planner receives minimum snapshot only |
