@@ -369,9 +369,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     }
 
     @Override protected void onPause() {
-        if (voiceSession != null && voiceSession.isActive()) {
+        AudioInterruptionPolicy.Result interruption = AudioInterruptionPolicy.decide(
+            AudioInterruptionPolicy.Source.ACTIVITY, voiceSession != null && voiceSession.isActive(), false);
+        if (interruption.stopInput) {
             voiceSession.stop();
-            broker.finishCommand("会话被来电或界面切换中断；麦克风已释放，可重新唤起");
+            broker.finishCommand(interruption.safeReason + "；麦克风已释放，可重新唤起");
         }
         super.onPause();
     }

@@ -15,6 +15,8 @@ required_files=(
   docs/evidence-changing-recovery.zh-CN.md
   docs/global-stop-registry.md
   docs/global-stop-registry.zh-CN.md
+  docs/audio-interruption-policy.md
+  docs/audio-interruption-policy.zh-CN.md
   STATUS.md
   LICENSE
   SECURITY.md
@@ -238,6 +240,7 @@ python3 scripts/verify-minimal-planner-request.py
 python3 scripts/verify-plan-step-observation.py
 python3 scripts/verify-evidence-changing-recovery.py
 python3 scripts/verify-global-stop-registry.py
+python3 scripts/verify-audio-interruption-policy.py
 python3 scripts/verify-task-card.py
 bash scripts/test-pr-delivery-metadata.sh
 
