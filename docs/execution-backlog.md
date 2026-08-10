@@ -57,7 +57,7 @@ ROLLBACK / REMAINS / NEXT
 | VOICE-002 | VERIFY | VOICE-001 | System TTS adapter with explicit lifecycle; 10 transitions/build pass, real speech/stop awaits a device with a registered engine |
 | VOICE-003 | DONE | VOICE-002 | Pure TTS lifecycle models `SPEAKING`, `WAITING_FOLLOWUP`, and `INTERRUPTED` transitions; adapter labels completion/interruption without auto-resume; real audio remains gated |
 | VOICE-004 | VERIFY | VOICE-003 | Synchronized input/output ownership arbiter rejects overlap and returns to none on terminal interruption; Android adapter wiring and real audio evidence remain required |
-| VOICE-005 | BACKLOG | VOICE-004 | Calls, alarms, media, and Activity interruption release audio cleanly |
+| VOICE-005 | VERIFY | VOICE-004 | Signal-only policy maps call, alarm, media and Activity interruption to stop input/output and release ownership with no auto-resume; home Activity pause uses it for ASR, while shared Android source/TTS wiring and device audio evidence remain required |
 | VOICE-006 | DONE | BASE-005 | Protocol for 30–50 human open-ended Mandarin utterances; no raw audio in Git; bilingual sampling and redaction template published |
 | VOICE-007 | BACKLOG | VOICE-006 | A/B command ASR against an open-conversation ASR on accuracy/latency/memory |
 | VOICE-008 | BACKLOG | VOICE-007 | Independent command/conversation ASR profiles; command correction cannot rewrite chat |

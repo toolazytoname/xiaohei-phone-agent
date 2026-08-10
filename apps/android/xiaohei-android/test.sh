@@ -40,6 +40,10 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/AudioDuplexArbiter.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/AudioDuplexArbiterTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.AudioDuplexArbiterTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/AudioInterruptionPolicy.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/AudioInterruptionPolicyTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.AudioInterruptionPolicyTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/FailureFingerprint.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/FailureFingerprintTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.FailureFingerprintTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
