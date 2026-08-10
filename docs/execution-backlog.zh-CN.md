@@ -111,7 +111,7 @@ NEXT: 唯一下一任务 ID
 
 | ID | 状态 | 依赖 | 交付物 | 完成证据 |
 |---|---|---|---|---|
-| TOOL-001 | DONE | BASE-006 | 不可变五工具 v1 目录：精确风险、六个封闭输入/输出 Schema、回滚声明、受众与超时 | Java/fixture/静态门禁拒绝重名、未知版本、缺失 Schema 和无法解析回滚，零执行接线 |
+| TOOL-001 | DONE | BASE-006 | 不可变七工具 v1 目录：精确风险、十个封闭输入/输出 Schema、回滚声明、受众与超时 | Java/fixture/静态门禁拒绝重名、未知版本、缺失 Schema 和无法解析回滚，零执行接线 |
 | TOOL-002 | DONE | TOOL-001,POLICY-002 | 纯 loopback/同 UID 授权核心把一次内部确认 receipt 换成一次 1–30 秒、绑定完整调用的 capability | 50 组 Java 与 7 个 fixture 文件拒绝远端、跨 UID、确认复用/错范围、非法/陈旧调用漂移、过期、时钟回退、重放与跨网关，适配器执行为 0 |
 | TOOL-003 | VERIFY | TOOL-002 | 协调器把目录上限内超时绑定到一次性权限，最多调用一个适配器；超时/取消中断 worker，范围/幂等重放拒绝，结果私有且有界。受权 Android bridge 现在只消费既有 gateway result，并只解析受审的 MediaStore 测试/日历测试适配器；真实权限、面向用户的网关调用方、资源关闭和设备证据仍未验证 | 不用合成故障冒充设备证据 |
 | TOOL-004 | DONE | — | 公开 Intent、Settings、相册、相机、浏览器、地图、拨号基础 | M2 确定性动作证据 |

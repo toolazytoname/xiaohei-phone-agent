@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `文档勘误（TOOL-001/003）`：当前目录是七项/十个 Schema，不再是早期五项/六个 Schema；`TOOL-003` 已有封闭 Android 注册表、受权 bridge 和全局停止取消信号，但没有可见确认调用方或设备权限/结果证据，故仍为 `VERIFY`。
 - `UX-003`：只读任务卡可显示经批准目标摘要、审核步骤/当前步骤、时间/步骤预算、固定结果和人工接管；默认没有已审核任务，且不接受任务正文、路径、Token、模型回复或推理过程，更不产生执行接线。
 - `UX-001`：主页的独立能力状态卡只显示唤醒、ASR、Conversation、Phone Agent、OpenCode 和 root 的非敏感元数据；它不启动运行时、不读取 Token，并明确 OpenCode/root 未接线。
 - `OC-010`：模型渠道页现明确展示本地小模型建议边界；公开 APK 不内置生成式权重，未来小模型不得自动启用/切换、规划或调用工具，真实运行时和设备资源验收仍独立保留。

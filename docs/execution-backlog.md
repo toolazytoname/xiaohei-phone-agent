@@ -104,7 +104,7 @@ ROLLBACK / REMAINS / NEXT
 
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
-| TOOL-001 | DONE | BASE-006 | Immutable five-entry v1 catalog with exact risk, six closed input/output schemas, rollback declaration, audience, and timeout; Java/fixture/static gates reject duplicates, unknown versions, missing schemas, and unresolved rollback without execution wiring |
+| TOOL-001 | DONE | BASE-006 | Immutable seven-entry v1 catalog with exact risk, ten closed input/output schemas, rollback declaration, audience, and timeout; Java/fixture/static gates reject duplicates, unknown versions, missing schemas, and unresolved rollback without execution wiring |
 | TOOL-002 | DONE | TOOL-001,POLICY-002 | Pure loopback/same-UID authorization core exchanges one internal confirmation receipt for one 1–30-second call-bound capability; 50 Java groups and seven fixture files reject remote, cross-UID, confirmation reuse/scope, malformed/stale call drift, expiry, clock rollback, replay, and foreign gateways with zero adapter execution |
 | TOOL-003 | VERIFY | TOOL-002 | Coordinator binds catalog-capped timeout into one-use authority, limits execution to one adapter, interrupts timeout/cancel workers, rejects scope/idempotency replay, and returns bounded private structured errors. The authorized Android bridge now consumes only the existing gateway result and resolves only reviewed MediaStore-test/calendar-test adapters; real permission, user-facing gateway caller, teardown and device evidence remain unverified |
 | TOOL-004 | DONE | — | Public intent/settings/gallery/camera/browser/map/dialer actions |
