@@ -158,7 +158,7 @@ ROLLBACK / REMAINS / NEXT
 | UX-005 | BACKLOG | TOOL-003 | App/notification/voice/widget global stop; all resources reach zero |
 | UX-006 | BACKLOG | TOOL-012 | Redacted history delete-one/clear-all/disable-storage |
 | UX-007 | DONE | ROOT-003 | Read-only bilingual permission center shows purpose, bounded state/recent-use availability, user-owned Android revoke path, and root's unsupported/unwired reason; it grants nothing |
-| UX-008 | BACKLOG | UX-003 | Every failure shows cause, impact, and one valid recovery path |
+| UX-008 | VERIFY | UX-003 | Typed public failure projection supplies cause, impact and one recovery path without raw error text; task-card failure is wired, remaining surfaces need adoption |
 
 ## Reliability, security, and release
 
