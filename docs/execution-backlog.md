@@ -125,7 +125,7 @@ ROLLBACK / REMAINS / NEXT
 | OC-002 | DONE | TOOL-002 | Closed private pending dry-run protocol accepts only three reviewed task kinds from an existing typed-user complex request; Java/fixture/static gates reject forged source, live state, unknown authority-shaped fields, and generic shell/workspace/network/root/credential surfaces with zero execution |
 | OC-003 | DONE | OC-002 | Task-private input/output lease below a trusted app-private root; real temporary-filesystem matrix rejects absolute/traversal, symbolic-link, duplicate-task, and cross-task paths with zero content/process execution |
 | OC-004 | DONE | OC-003 | Injected-adapter bounded runner enforces reviewed profile/agent plus time/token/step/redacted-output limits; matrix covers success, budget exceed, denial, timeout and cancellation with zero real process/network/content paths |
-| OC-005 | BACKLOG | OC-004 | Redacted streaming progress mapped to the visible task card |
+| OC-005 | DONE | OC-004 | Typed lifecycle projection is wired to a read-only visible card; it exposes only kind, stage, and bounded completed-step count while rejecting prompt/token/path/terminal-output surfaces |
 | OC-006 | BACKLOG | OC-004 | Stop kills subprocess, tokens, listeners, tmux, and temp workspace |
 | OC-007 | BACKLOG | OC-004 | Restricted tools; deny root, key directories, and destructive Git |
 | OC-008 | BACKLOG | OC-007 | Three rounds each: project summary, test diagnosis, controlled file organization |
