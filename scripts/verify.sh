@@ -84,6 +84,8 @@ required_files=(
   docs/authorization-tiers.zh-CN.md
   docs/root-broker-core.md
   docs/root-broker-core.zh-CN.md
+  docs/root-read-only-diagnostics.md
+  docs/root-read-only-diagnostics.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -118,6 +120,7 @@ required_files=(
   contracts/opencode-run-budget.v1.schema.json
   contracts/root-capability-catalog.v1.json
   contracts/root-request.v1.schema.json
+  contracts/root-diagnostics.v1.schema.json
   manifests/product.yaml
   manifests/github-progress.v1.json
 )
@@ -170,6 +173,7 @@ python3 scripts/verify-opencode-acceptance-matrix.py
 python3 scripts/verify-root-capability-catalog.py
 python3 scripts/verify-authorization-tier-policy.py
 python3 scripts/verify-root-broker.py
+python3 scripts/verify-root-read-only-diagnostics.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
