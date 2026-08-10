@@ -2,8 +2,11 @@ package io.github.toolazytoname.xiaohei;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.FileVisitResult;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -124,6 +127,27 @@ final class OpenCodeWorkspaceBoundary {
             if (!candidate.startsWith(root)) return result(Code.PATH_ESCAPE, lease, null);
             if (containsSymbolicLink(root, candidate)) return result(Code.SYMLINK_REJECTED, lease, null);
             return result(Code.CREATED, lease, candidate);
+        } catch (IOException | SecurityException failure) {
+            return result(Code.IO_FAILURE, lease, null);
+        }
+    }
+
+    /** Deletes only the registered task-private lease tree; never follows symlinks or accepts a caller path. */
+    static Result release(Lease lease) {
+        if (lease == null || lease.ownerRoot == null || lease.rootFor(Area.INPUT) == null
+                || lease.rootFor(Area.OUTPUT) == null) return result(Code.WRONG_LEASE, null, null);
+        try {
+            Path base = lease.rootFor(Area.INPUT).getParent();
+            if (base == null || !base.getParent().endsWith(WORKSPACES_DIR)
+                    || containsSymbolicLink(lease.ownerRoot, base))
+                return result(Code.SYMLINK_REJECTED, lease, null);
+            Files.walkFileTree(base, new SimpleFileVisitor<Path>() {
+                @Override public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
+                        throws IOException { Files.delete(file); return FileVisitResult.CONTINUE; }
+                @Override public FileVisitResult postVisitDirectory(Path directory, IOException failure)
+                        throws IOException { if (failure != null) throw failure; Files.delete(directory); return FileVisitResult.CONTINUE; }
+            });
+            return result(Code.CREATED, lease, null);
         } catch (IOException | SecurityException failure) {
             return result(Code.IO_FAILURE, lease, null);
         }
