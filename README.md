@@ -1,6 +1,6 @@
 # Xiaohei Phone Agent
 
-[简体中文](README.zh-CN.md) · [Long-term master plan](docs/sovereign-mobile-agent-master-plan.md) · [Execution backlog](docs/execution-backlog.md) · [Current status](STATUS.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [On-phone operation card](docs/phone-operation-card.md) · [Evidence matrix](docs/delivery-evidence-matrix.md) · [Root broker threat model](docs/root-capability-broker-threat-model.md) · [Release scope](docs/release-scope-0.2.0-alpha.3.md) · [Threat model](docs/threat-model.md) · [Security](SECURITY.md)
+[简体中文](README.zh-CN.md) · [Long-term master plan](docs/sovereign-mobile-agent-master-plan.md) · [Execution backlog](docs/execution-backlog.md) · [Current status](STATUS.md) · [GitHub delivery board](docs/github-progress-board.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [On-phone operation card](docs/phone-operation-card.md) · [Evidence matrix](docs/delivery-evidence-matrix.md) · [Root broker threat model](docs/root-capability-broker-threat-model.md) · [Release scope](docs/release-scope-0.2.0-alpha.3.md) · [Threat model](docs/threat-model.md) · [Security](SECURITY.md)
 
 > Wake it. Say it. Let your phone act — locally when possible, visibly, and with confirmation when it matters.
 

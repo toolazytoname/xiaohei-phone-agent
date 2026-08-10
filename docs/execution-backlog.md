@@ -186,7 +186,7 @@ ROLLBACK / REMAINS / NEXT
 |---|---|---|---|
 | PROGRESS-001 | DONE | BASE-004 | Bilingual PR template and CI fixtures reject missing status, missing ledger mirror, multiple tasks, or unknown IDs |
 | PROGRESS-002 | DONE | PROGRESS-001 | Required ten-field Issue Form, disabled public blanks, two chooser links, and structure/YAML checks pass |
-| PROGRESS-003 | READY | PROGRESS-002 | GitHub Project: Inbox/Ready/In progress/Verify/Done plus gate labels |
+| PROGRESS-003 | BLOCKED | PROGRESS-002 | Ten labels created/read back and manifest/drift checks pass; Project authorization surface unavailable; resume condition is documented |
 | PROGRESS-004 | READY | PROGRESS-001 | Read-only status summary script; never auto-edits evidence |
 
 ## Recommended serial path
