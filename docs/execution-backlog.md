@@ -129,7 +129,7 @@ ROLLBACK / REMAINS / NEXT
 | OC-006 | DONE | OC-004 | Registered-task stop cancels the worker, revokes active local gateway tokens, stops injected process/listener/tmux handles, and recursively releases only the private lease without following symlinks; real OS-handle/device acceptance remains open |
 | OC-007 | DONE | OC-004 | Fail-closed typed intent policy permits only project summary, test diagnosis, and controlled organization; denies root, sensitive paths, destructive Git/delete, network, shell escape, and unknown text with zero execution |
 | OC-008 | DONE | OC-007 | Nine synthetic temporary-workspace rounds: three each for project summary, test diagnosis, and controlled organization; every round passes protocol/policy/bounded adapter/result/cleanup and each kind denies Git/network intent; real OpenCode remains untested |
-| OC-009 | BACKLOG | OC-008 | Optional Web takeover with explicit ownership handoff |
+| OC-009 | VERIFY | OC-008 | In-memory local/Web ownership state transfers control only to a verified opaque web-session handle; duplicate/wrong/terminal transfers deny and no transfer can start, resume or duplicate a task; real Web handoff evidence remains required |
 | OC-010 | DONE | OC-008 | Visible bilingual local-small-model guidance limits future use to non-authoritative suggestions; no automatic enable/model switch/planning/tool/root path and no bundled weights |
 
 ## Root Capability Broker

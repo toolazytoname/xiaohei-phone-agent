@@ -19,6 +19,8 @@ required_files=(
   docs/audio-interruption-policy.zh-CN.md
   docs/tool-outcome-evidence.md
   docs/tool-outcome-evidence.zh-CN.md
+  docs/opencode-web-takeover.md
+  docs/opencode-web-takeover.zh-CN.md
   STATUS.md
   LICENSE
   SECURITY.md
@@ -244,6 +246,7 @@ python3 scripts/verify-evidence-changing-recovery.py
 python3 scripts/verify-global-stop-registry.py
 python3 scripts/verify-audio-interruption-policy.py
 python3 scripts/verify-tool-outcome-evidence.py
+python3 scripts/verify-opencode-web-takeover.py
 python3 scripts/verify-task-card.py
 bash scripts/test-pr-delivery-metadata.sh
 
