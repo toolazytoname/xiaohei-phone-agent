@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "request_id": "request-public-fixture-0003",
+  "target": "local_service",
+  "action": "plan_complex_task",
+  "risk": "medium",
+  "requires_confirmation": false,
+  "confirmation_state": "pending",
+  "dry_run": true,
+  "created_at": "2026-08-10T08:30:00Z",
+  "redaction": {
+    "public_log_safe": false
+  }
+}

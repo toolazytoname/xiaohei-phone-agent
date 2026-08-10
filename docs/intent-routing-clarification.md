@@ -29,4 +29,4 @@ This is a conservative command boundary, not general natural-language understand
 
 The synthetic, non-private matrix contains 50 texts: ten target ambiguities, ten intent ambiguities, ten incomplete scopes, and twenty clear controls. All 30 ambiguous cases ask with an unknown command and zero side effects; all 20 clear cases remain routable. Static enforcement rejects Android APIs, action dispatch, model clients, tool gateways, shell, and network.
 
-`RouteClarificationPolicy` is intentionally not referenced by `MainActivity` yet. `ROUTE-004` must first create a versioned, unconfirmed `ActionRequest`; only then can a later integration connect clarification and routing to a user-visible flow without turning model text into authority.
+`RouteClarificationPolicy` is intentionally not referenced by `MainActivity` yet. `ROUTE-004` now provides a versioned, unconfirmed `ActionRequest`; a later integration must still wait for bounded planning, policy, and fresh confirmation before connecting routing to a user-visible action flow.

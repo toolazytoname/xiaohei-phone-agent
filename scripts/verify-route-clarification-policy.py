@@ -43,7 +43,7 @@ for forbidden in (
     require(forbidden not in POLICY, f"policy has no execution/model path: {forbidden}")
 
 require("RouteClarificationPolicy" not in MAIN,
-        "ROUTE-003 remains inert until ROUTE-004 creates unconfirmed requests")
+        "ROUTE-003 remains inert before planning/policy/confirmation integration")
 require("clarifications=30 target=10 intent=10 scope=10 clear=20" in TEST,
         "exact 50-case redacted acceptance matrix")
 require("打开相册和相机" in TEST and "相册是什么" in TEST and "替我转账给某人" in TEST,
