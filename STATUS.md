@@ -72,7 +72,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `PROGRESS-002`：新增中英双语 GitHub Issue Form；10 个执行字段全部必填，公开空白 Issue 关闭，状态/安全入口和本地结构校验均已接入仓库门禁。
 - `PROGRESS-001`：新增双语 PR 交付模板和 CI 门禁；自动正反例证明缺少状态页、缺少任一账本镜像、多个任务 ID 或未知 ID 均被拒绝。
 - `BASE-005`：`conversation-session.v1` 明确拒绝未知字段、越界 turn/token/timeout、非 memory-only 持久化和任何动作权限；2 个有效及 3 个拒绝夹具均通过 stdlib-only 校验。
-- `BASE-004`：长期总纲、102 项双语任务账本、状态页和 README 导航已接入仓库门禁；本地 `scripts/verify.sh` 全部通过。
+- `BASE-004`：长期总纲、102 项双语任务账本、状态页、双语 README 产品总览图和干净 AOSP 基础模式界面证据已接入仓库；本地 `scripts/verify.sh` 全部通过。
 - `xiaohei-phone-agent` PR #12：修正 OnePlus 拔线静置预检说明，检查通过并合并。
 - `xiaohei-phone-agent` PR #11：release 构建自动强制 non-debuggable 门禁，检查通过并合并。
 - `VOICE-006`：真人中文评测协议、匿名分层样本模板和删除规则已双语发布；实际采样仍是 `REL-003` 人类门禁。
