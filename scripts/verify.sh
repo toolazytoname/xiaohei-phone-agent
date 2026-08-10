@@ -30,6 +30,8 @@ required_files=(
   docs/sovereign-mobile-agent-master-plan.zh-CN.md
   docs/execution-backlog.md
   docs/execution-backlog.zh-CN.md
+  docs/github-progress-board.md
+  docs/github-progress-board.zh-CN.md
   docs/threat-model.md
   docs/threat-model.zh-CN.md
   docs/release-checklist.md
@@ -49,6 +51,7 @@ required_files=(
   contracts/tool-result.v1.schema.json
   contracts/capability-token.v1.schema.json
   manifests/product.yaml
+  manifests/github-progress.v1.json
 )
 
 for required_file in "${required_files[@]}"; do
@@ -65,6 +68,7 @@ done
 python3 scripts/verify-conversation-session-contract.py
 python3 scripts/verify-tool-gateway-contract.py
 python3 scripts/verify-github-templates.py
+python3 scripts/verify-github-progress-manifest.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

@@ -193,7 +193,7 @@ NEXT: 唯一下一任务 ID
 |---|---|---|---|---|
 | PROGRESS-001 | DONE | BASE-004 | 每个 PR 更新 `STATUS.md` 的 Now/Next/Blocked/Evidence | 双语模板 + CI 正反例拒绝缺失状态、账本镜像、多任务或未知 ID |
 | PROGRESS-002 | DONE | PROGRESS-001 | GitHub Issue 模板包含任务 ID、依赖、验收、回滚和人类门禁 | 10 个必填字段、禁用公开空白 Issue、双入口链接及结构/YAML 校验通过 |
-| PROGRESS-003 | READY | PROGRESS-002 | GitHub Project 五列和标签映射 | 人类能从手机查看 Now/Verify/Human gates |
+| PROGRESS-003 | BLOCKED | PROGRESS-002 | GitHub Project 五列和标签映射 | 10 标签已创建回读、manifest/漂移检查通过；Project 授权面不可用，恢复条件见看板文档 |
 | PROGRESS-004 | READY | PROGRESS-001 | 生成只读状态摘要的脚本，不自动修改证据 | 输出任务状态、最近 PR、阻断和下一项 |
 
 ## 13. 当前推荐顺序

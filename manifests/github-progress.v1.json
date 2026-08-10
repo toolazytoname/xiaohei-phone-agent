@@ -1,0 +1,44 @@
+{
+  "schema_version": "xiaohei.github-progress.v1",
+  "owner": "toolazytoname",
+  "repository": "xiaohei-phone-agent",
+  "project": {
+    "title": "Xiaohei Delivery / 小黑交付",
+    "views": [
+      {
+        "name": "Delivery Board / 交付看板",
+        "layout": "board",
+        "group_by": "Delivery State / 交付状态",
+        "columns": ["Inbox", "Ready", "In progress", "Verify", "Done"]
+      }
+    ],
+    "fields": [
+      {
+        "name": "Delivery State / 交付状态",
+        "type": "single_select",
+        "options": ["Inbox", "Ready", "In progress", "Verify", "Done"]
+      },
+      {"name": "Task ID / 任务 ID", "type": "text"},
+      {"name": "Dependency / 依赖", "type": "text"},
+      {"name": "Evidence / 证据", "type": "text"},
+      {
+        "name": "Gate / 门禁",
+        "type": "single_select",
+        "options": ["None", "Human", "Device", "Power", "Offline media"]
+      },
+      {"name": "Next / 下一步", "type": "text"}
+    ]
+  },
+  "labels": [
+    {"name": "delivery", "color": "0052CC", "description": "Xiaohei delivery ledger item / 小黑交付账本任务"},
+    {"name": "state:inbox", "color": "D4C5F9", "description": "Not triaged / 未分流"},
+    {"name": "state:ready", "color": "0E8A16", "description": "Dependencies satisfied / 依赖已满足"},
+    {"name": "state:in-progress", "color": "1D76DB", "description": "One actively claimed task / 当前唯一领取任务"},
+    {"name": "state:verify", "color": "FBCA04", "description": "Implementation awaits independent evidence / 实现等待独立证据"},
+    {"name": "state:done", "color": "6F42C1", "description": "Acceptance evidence complete / 验收证据完成"},
+    {"name": "gate:human", "color": "B60205", "description": "Requires a person / 需要真人"},
+    {"name": "gate:device", "color": "D93F0B", "description": "Requires a physical device / 需要物理设备"},
+    {"name": "gate:power", "color": "E99695", "description": "Requires uncontaminated power evidence / 需要未污染功耗证据"},
+    {"name": "gate:offline-media", "color": "5319E7", "description": "Requires independent offline media / 需要独立离线介质"}
+  ]
+}
