@@ -19,6 +19,15 @@ final class AuthorizedAndroidToolExecution {
 
     ToolExecutionCoordinator.Result execute(ToolGateway.Result authorization, ToolGateway.Call call,
             ToolExecutionCoordinator.CancellationSignal cancellation) {
-        return coordinator.execute(authorization, call, resolver.resolve(call), cancellation);
+        ToolExecutionCoordinator.CancellationSignal signal = cancellation == null
+                ? new ToolExecutionCoordinator.CancellationSignal() : cancellation;
+        ApplicationStopHub.Registration registration = ApplicationStopHub.register(
+                GlobalStopRegistry.Resource.TOOL, () -> signal.cancel(
+                        ToolExecutionCoordinator.CancellationSignal.Reason.GLOBAL_STOP));
+        try {
+            return coordinator.execute(authorization, call, resolver.resolve(call), signal);
+        } finally {
+            registration.close();
+        }
     }
 }
