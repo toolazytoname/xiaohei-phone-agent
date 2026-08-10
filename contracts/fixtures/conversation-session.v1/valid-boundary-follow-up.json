@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "session_id": "12345678901234567890123456789012123456789012345678901234567890121234567890123456789012345678901212345678901234567890123456789012",
+  "profile_id": "abcdefghijklmnopabcdefghijklmnopabcdefghijklmnopabcdefghijklmnop",
+  "mode": "follow_up",
+  "input_modality": "voice",
+  "output_modality": "text_and_speech",
+  "state": "waiting_follow_up",
+  "turn_index": 8,
+  "max_turns": 8,
+  "token_budget": 8192,
+  "timeout_ms": 900000,
+  "action_authority": "none",
+  "persistence": "memory_only",
+  "started_at": "2026-08-10T00:00:00Z",
+  "public_log_safe": true
+}

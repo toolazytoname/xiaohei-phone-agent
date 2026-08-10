@@ -7,6 +7,7 @@ cd "$repo_root"
 required_files=(
   README.md
   README.zh-CN.md
+  STATUS.md
   LICENSE
   SECURITY.md
   CONTRIBUTING.md
@@ -22,6 +23,10 @@ required_files=(
   docs/roadmap.zh-CN.md
   docs/product-delivery-plan.md
   docs/product-delivery-plan.zh-CN.md
+  docs/sovereign-mobile-agent-master-plan.md
+  docs/sovereign-mobile-agent-master-plan.zh-CN.md
+  docs/execution-backlog.md
+  docs/execution-backlog.zh-CN.md
   docs/threat-model.md
   docs/threat-model.zh-CN.md
   docs/release-checklist.md
@@ -36,6 +41,10 @@ required_files=(
   contracts/action-request.v1.schema.json
   contracts/agent-step-result.v1.schema.json
   contracts/diagnostics.v1.schema.json
+  contracts/conversation-session.v1.schema.json
+  contracts/tool-call.v1.schema.json
+  contracts/tool-result.v1.schema.json
+  contracts/capability-token.v1.schema.json
   manifests/product.yaml
 )
 
@@ -49,6 +58,9 @@ done
 for schema in contracts/*.json; do
   python3 -m json.tool "$schema" >/dev/null
 done
+
+python3 scripts/verify-conversation-session-contract.py
+python3 scripts/verify-tool-gateway-contract.py
 
 python3 - scripts/*.py <<'PY'
 import pathlib

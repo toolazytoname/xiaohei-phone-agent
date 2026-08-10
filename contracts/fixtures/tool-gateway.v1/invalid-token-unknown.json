@@ -1,0 +1,1 @@
+{"schema_version":1,"token_id":"capability-token-0002","task_id":"task-0001","tool":"android.observe","audience":"android_gateway","issued_at":"2026-08-10T00:00:00Z","expires_at":"2026-08-10T00:05:00Z","single_use":true,"secret":"forbidden"}

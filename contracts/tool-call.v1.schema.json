@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/tool-call.v1.schema.json",
+  "title": "Xiaohei Tool Call v1",
+  "type": "object",
+  "required": ["schema_version", "task_id", "call_id", "tool", "tool_version", "risk", "arguments", "idempotency_key", "requested_at"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "task_id": {"type":"string","minLength":8,"maxLength":128},
+    "call_id": {"type":"string","minLength":8,"maxLength":128},
+    "tool": {"type":"string","pattern":"^[a-z][a-z0-9_.-]{2,63}$"},
+    "tool_version": {"type":"integer","minimum":1,"maximum":255},
+    "risk": {"enum":["observe","low","reversible","high"]},
+    "arguments": {"type":"object","maxProperties":32},
+    "idempotency_key": {"type":"string","minLength":16,"maxLength":128},
+    "requested_at": {"type":"string","format":"date-time"}
+  },
+  "additionalProperties": false
+}

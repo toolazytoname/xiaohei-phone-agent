@@ -19,6 +19,10 @@ import java.net.URI;
 /** Independent ASR and Phone Agent channels; changing one never starts or stops the other. */
 public final class ModelConfigActivity extends Activity {
     private Spinner asr;
+    private Switch conversationEnabled;
+    private EditText conversationEndpoint;
+    private EditText conversationModel;
+    private EditText conversationToken;
     private Switch agentEnabled;
     private EditText endpoint;
     private EditText model;
@@ -51,6 +55,26 @@ public final class ModelConfigActivity extends Activity {
         asr.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
             new String[] {"小黑离线中文 ASR", "Android 系统识别服务"}));
         root.addView(asr);
+
+        TextView conversationLabel = new TextView(this);
+        conversationLabel.setText("Conversation（只负责聊天；独立 Token，不调用工具）");
+        conversationLabel.setPadding(0, pad, 0, 0);
+        root.addView(conversationLabel);
+        conversationEnabled = new Switch(this);
+        conversationEnabled.setText("启用 Conversation 渠道");
+        root.addView(conversationEnabled);
+        conversationEndpoint = field("Conversation OpenAI-compatible HTTPS base URL");
+        conversationModel = field("Conversation 模型名 / model id");
+        conversationToken = field("Conversation 新 Token（留空则保持原值）");
+        conversationToken.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        root.addView(conversationEndpoint); root.addView(conversationModel); root.addView(conversationToken);
+        Button clearConversationToken = new Button(this);
+        clearConversationToken.setText("清除 Conversation Token");
+        clearConversationToken.setOnClickListener(v -> {
+            SecureSecretStore.clear(this, SecureSecretStore.Slot.CONVERSATION);
+            show("Conversation Token 已清除");
+        });
+        root.addView(clearConversationToken);
 
         TextView agentLabel = new TextView(this);
         agentLabel.setText("Phone Agent（只负责复杂任务规划；短命令不调用）");
@@ -112,30 +136,50 @@ public final class ModelConfigActivity extends Activity {
     private void load() {
         android.content.SharedPreferences prefs = getSharedPreferences("model_channels", Context.MODE_PRIVATE);
         asr.setSelection(prefs.getInt("asr_mode", LocalAsrEngine.isBundled() ? 0 : 1));
+        conversationEnabled.setChecked(prefs.getBoolean(ChannelProfileConfig.CONVERSATION_ENABLED, false));
+        conversationEndpoint.setText(prefs.getString(ChannelProfileConfig.CONVERSATION_ENDPOINT, ""));
+        conversationModel.setText(prefs.getString(ChannelProfileConfig.CONVERSATION_MODEL, ""));
         agentEnabled.setChecked(prefs.getBoolean("agent_enabled", false));
         endpoint.setText(prefs.getString("agent_endpoint", ""));
         model.setText(prefs.getString("agent_model", ""));
-        show("ASR 与 Phone Agent 相互独立；Token "
+        show("ASR、Conversation 与 Phone Agent 相互独立；Conversation Token "
+            + (SecureSecretStore.isConfigured(this, SecureSecretStore.Slot.CONVERSATION) ? "已安全配置" : "未配置")
+            + "；Phone Agent Token "
             + (SecureSecretStore.isConfigured(this) ? "已安全配置" : "未配置"));
     }
 
     private void save() {
         String url = endpoint.getText().toString().trim();
+        String conversationUrl = conversationEndpoint.getText().toString().trim();
+        if (conversationEnabled.isChecked() && !validEndpoint(conversationUrl)) {
+            show("未保存：启用 Conversation 时 URL 必须是 HTTPS，或本机 localhost/127.0.0.1");
+            return;
+        }
         if (agentEnabled.isChecked() && !validEndpoint(url)) {
             show("未保存：启用 Agent 时 URL 必须是 HTTPS，或本机 localhost/127.0.0.1");
             return;
         }
         try {
             String newToken = token.getText().toString();
+            String newConversationToken = conversationToken.getText().toString();
             if (!newToken.isEmpty()) SecureSecretStore.save(this, newToken);
+            if (!newConversationToken.isEmpty())
+                SecureSecretStore.save(this, SecureSecretStore.Slot.CONVERSATION, newConversationToken);
             getSharedPreferences("model_channels", Context.MODE_PRIVATE).edit()
                 .putInt("asr_mode", asr.getSelectedItemPosition())
+                .putBoolean(ChannelProfileConfig.CONVERSATION_ENABLED, conversationEnabled.isChecked())
+                .putString(ChannelProfileConfig.CONVERSATION_ENDPOINT, conversationUrl)
+                .putString(ChannelProfileConfig.CONVERSATION_MODEL,
+                    conversationModel.getText().toString().trim())
                 .putBoolean("agent_enabled", agentEnabled.isChecked())
                 .putString("agent_endpoint", url)
                 .putString("agent_model", model.getText().toString().trim())
                 .apply();
             token.setText("");
-            show("已保存；未启动任何服务。Token "
+            conversationToken.setText("");
+            show("已保存；未启动任何服务。Conversation 无工具权限；Conversation Token "
+                + (SecureSecretStore.isConfigured(this, SecureSecretStore.Slot.CONVERSATION) ? "已安全配置" : "未配置")
+                + "；Phone Agent Token "
                 + (SecureSecretStore.isConfigured(this) ? "已安全配置" : "未配置"));
         } catch (Exception error) {
             show("保存失败：Android Keystore 不可用");
@@ -144,7 +188,8 @@ public final class ModelConfigActivity extends Activity {
 
     private void exportBackup() {
         try {
-            String value = ModelChannelBackup.export(asr.getSelectedItemPosition(), agentEnabled.isChecked(),
+            String value = ModelChannelBackup.export(asr.getSelectedItemPosition(), conversationEnabled.isChecked(),
+                conversationEndpoint.getText().toString(), conversationModel.getText().toString(), agentEnabled.isChecked(),
                 endpoint.getText().toString(), model.getText().toString());
             startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain")
                 .putExtra(Intent.EXTRA_SUBJECT, "Xiaohei non-secret model-channel backup")
@@ -166,16 +211,24 @@ public final class ModelConfigActivity extends Activity {
             ModelChannelBackup.Data value = ModelChannelBackup.parse(backup.getText().toString());
             getSharedPreferences("model_channels", Context.MODE_PRIVATE).edit()
                 .putInt("asr_mode", value.asrMode)
+                .putBoolean(ChannelProfileConfig.CONVERSATION_ENABLED, false)
+                .putString(ChannelProfileConfig.CONVERSATION_ENDPOINT, value.conversationEndpoint)
+                .putString(ChannelProfileConfig.CONVERSATION_MODEL, value.conversationModel)
                 .putBoolean("agent_enabled", false)
                 .putString("agent_endpoint", value.endpoint)
                 .putString("agent_model", value.model)
                 .apply();
             SecureSecretStore.clear(this);
+            SecureSecretStore.clear(this, SecureSecretStore.Slot.CONVERSATION);
+            conversationEnabled.setChecked(false);
+            conversationEndpoint.setText(value.conversationEndpoint);
+            conversationModel.setText(value.conversationModel);
+            conversationToken.setText("");
             agentEnabled.setChecked(false);
             endpoint.setText(value.endpoint);
             model.setText(value.model);
             token.setText("");
-            show("已恢复非敏感配置；Token 已清除，Phone Agent 保持关闭且未启动服务");
+            show("已恢复非敏感配置；两个 Token 均已清除，Conversation 与 Phone Agent 保持关闭且未启动服务");
         } catch (IllegalArgumentException invalid) { show("无法恢复：备份格式无效或不受支持"); }
     }
 

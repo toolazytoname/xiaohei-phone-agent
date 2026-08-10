@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/conversation-session.v1.schema.json",
+  "title": "Xiaohei Conversation Session v1",
+  "description": "A bounded, transient conversation session. This contract never grants action authority and never carries tokens, raw audio, screenshots, or transcript text.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "session_id",
+    "profile_id",
+    "mode",
+    "input_modality",
+    "output_modality",
+    "state",
+    "turn_index",
+    "max_turns",
+    "token_budget",
+    "timeout_ms",
+    "action_authority",
+    "persistence",
+    "started_at",
+    "public_log_safe"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "session_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"
+    },
+    "profile_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "mode": { "enum": ["single_turn", "follow_up"] },
+    "input_modality": { "enum": ["text", "voice"] },
+    "output_modality": { "enum": ["text", "speech", "text_and_speech"] },
+    "state": {
+      "enum": ["created", "listening", "transcribing", "thinking", "speaking", "waiting_follow_up", "completed", "cancelled", "failed"]
+    },
+    "turn_index": { "type": "integer", "minimum": 0, "maximum": 8 },
+    "max_turns": { "type": "integer", "minimum": 1, "maximum": 8 },
+    "token_budget": { "type": "integer", "minimum": 64, "maximum": 8192 },
+    "timeout_ms": { "type": "integer", "minimum": 1000, "maximum": 900000 },
+    "action_authority": { "const": "none" },
+    "persistence": { "const": "memory_only" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "cancel_reason": { "enum": ["user", "timeout", "interrupted", "privacy", "error"] },
+    "public_log_safe": { "const": true }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "mode": { "const": "single_turn" } }, "required": ["mode"] },
+      "then": { "properties": { "max_turns": { "const": 1 } } }
+    },
+    {
+      "if": { "properties": { "state": { "const": "waiting_follow_up" } }, "required": ["state"] },
+      "then": { "properties": { "mode": { "const": "follow_up" }, "turn_index": { "minimum": 1 } } }
+    },
+    {
+      "if": { "properties": { "state": { "const": "cancelled" } }, "required": ["state"] },
+      "then": { "required": ["cancel_reason"] }
+    }
+  ],
+  "additionalProperties": false
+}

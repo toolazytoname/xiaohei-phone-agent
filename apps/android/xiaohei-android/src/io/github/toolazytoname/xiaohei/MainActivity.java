@@ -41,7 +41,9 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     private Button armButton;
     private TextView dspStateView;
     private TextView cpuKwsStateView;
+    private TextView ttsStateView;
     private DspProfileClient dspProfile;
+    private SystemTtsProbe ttsProbe;
     private final BroadcastReceiver dspStatusReceiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
             String state = intent.getStringExtra("state");
@@ -85,6 +87,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         broker = new WakewordBroker(this);
         voiceSession = new VoiceCommandSession(this, this);
         dspProfile = new DspProfileClient(this);
+        ttsProbe = new SystemTtsProbe(this);
         setShowWhenLocked(true);
         setTurnScreenOn(true);
         setContentView(buildView());
@@ -220,6 +223,15 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         cpuKwsStop.setOnClickListener(v -> stopService(new Intent(this, CpuWakewordService.class)));
         root.addView(cpuKwsStop);
 
+        ttsStateView = new TextView(this);
+        ttsStateView.setPadding(0, pad, 0, 0);
+        ttsStateView.setText("TTS：尚未探测（不会自动下载或播报）");
+        root.addView(ttsStateView);
+        Button ttsProbeButton = new Button(this);
+        ttsProbeButton.setText("检查系统中文 TTS（只读）");
+        ttsProbeButton.setOnClickListener(v -> refreshTtsStatus());
+        root.addView(ttsProbeButton);
+
         Button talkButton = new Button(this);
         talkButton.setText("按一下开始说话（通用模式）");
         talkButton.setOnClickListener(v -> {
@@ -264,9 +276,14 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         root.addView(fixedCommandButton);
 
         Button channelsButton = new Button(this);
-        channelsButton.setText("模型渠道：ASR / Phone Agent 独立配置");
+        channelsButton.setText("模型渠道：ASR / Conversation / Phone Agent 独立配置");
         channelsButton.setOnClickListener(v -> startActivity(new Intent(this, ModelConfigActivity.class)));
         root.addView(channelsButton);
+
+        Button conversationButton = new Button(this);
+        conversationButton.setText("小黑聊天：单轮文字（无动作权限）");
+        conversationButton.setOnClickListener(v -> startActivity(new Intent(this, ConversationActivity.class)));
+        root.addView(conversationButton);
 
         Button agentButton = new Button(this);
         agentButton.setText("可见 Phone Agent：观察 / 执行 / 停止");
@@ -361,6 +378,13 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         showCpuKwsStatus(prefs.getString("state", LocalKwsEngine.isBundled() ? "OFF" : "UNAVAILABLE"),
             prefs.getString("detail", LocalKwsEngine.isBundled()
                 ? "默认关闭；启用后会持续占用 CPU 和麦克风" : "当前安装包未包含 KWS 模型"));
+    }
+
+    private void refreshTtsStatus() {
+        if (ttsStateView != null) ttsStateView.setText("TTS：正在只读探测…");
+        ttsProbe.refresh(result -> runOnUiThread(() -> {
+            if (ttsStateView != null) ttsStateView.setText("TTS：" + result.state + "\n" + result.detail);
+        }));
     }
 
     private void showCpuKwsStatus(String state, String detail) {
@@ -591,6 +615,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
     @Override protected void onDestroy() {
         mainHandler.removeCallbacksAndMessages(null);
         voiceSession.stop();
+        ttsProbe.shutdown();
         super.onDestroy();
     }
 }

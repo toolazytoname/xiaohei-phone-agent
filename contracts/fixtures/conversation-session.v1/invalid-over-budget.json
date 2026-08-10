@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "session_id": "chat-20260810-0003",
+  "profile_id": "conversation-default",
+  "mode": "follow_up",
+  "input_modality": "voice",
+  "output_modality": "speech",
+  "state": "thinking",
+  "turn_index": 1,
+  "max_turns": 9,
+  "token_budget": 8193,
+  "timeout_ms": 900001,
+  "action_authority": "none",
+  "persistence": "memory_only",
+  "started_at": "2026-08-10T00:00:00Z",
+  "public_log_safe": true
+}

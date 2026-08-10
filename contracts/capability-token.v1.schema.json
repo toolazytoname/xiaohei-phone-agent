@@ -1,0 +1,12 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://github.com/toolazytoname/xiaohei-phone-agent/contracts/capability-token.v1.schema.json",
+  "title":"Xiaohei Capability Token v1",
+  "type":"object",
+  "required":["schema_version","token_id","task_id","tool","audience","issued_at","expires_at","single_use"],
+  "properties":{
+    "schema_version":{"const":1}, "token_id":{"type":"string","minLength":16,"maxLength":128}, "task_id":{"type":"string","minLength":8,"maxLength":128},
+    "tool":{"type":"string","pattern":"^[a-z][a-z0-9_.-]{2,63}$"}, "audience":{"enum":["android_gateway","opencode_gateway","root_broker"]},
+    "issued_at":{"type":"string","format":"date-time"}, "expires_at":{"type":"string","format":"date-time"}, "single_use":{"const":true}
+  }, "additionalProperties":false
+}

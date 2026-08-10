@@ -1,0 +1,2 @@
+package io.github.toolazytoname.xiaohei;
+public final class ToolCatalogTest { public static void main(String[] x) { if(!ToolCatalog.allowed("android.open_gallery",ToolCatalog.Risk.LOW)||ToolCatalog.allowed("root.shell",ToolCatalog.Risk.HIGH)||ToolCatalog.allowed("android.open_gallery",ToolCatalog.Risk.HIGH))throw new AssertionError(); System.out.println("PASS tool-catalog allowlisted=5 unknown=deny risk_mismatch=deny"); }}

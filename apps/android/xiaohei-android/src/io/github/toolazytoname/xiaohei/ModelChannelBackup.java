@@ -7,12 +7,16 @@ import java.util.Map;
 
 /** Explicit, non-secret backup for model-channel preferences. Tokens never enter this format. */
 final class ModelChannelBackup {
-    private static final String HEADER = "xiaohei-model-channels.v1";
+    private static final String HEADER = "xiaohei-model-channels.v2";
 
-    static String export(int asrMode, boolean agentEnabled, String endpoint, String model) {
+    static String export(int asrMode, boolean conversationEnabled, String conversationEndpoint,
+            String conversationModel, boolean agentEnabled, String endpoint, String model) {
         if (asrMode != 0 && asrMode != 1) throw new IllegalArgumentException("invalid ASR mode");
         return HEADER + "\n"
             + "asr_mode=" + asrMode + "\n"
+            + "conversation_enabled=" + conversationEnabled + "\n"
+            + "conversation_endpoint_b64=" + encode(clean(conversationEndpoint, 2048)) + "\n"
+            + "conversation_model_b64=" + encode(clean(conversationModel, 256)) + "\n"
             + "agent_enabled=" + agentEnabled + "\n"
             + "agent_endpoint_b64=" + encode(clean(endpoint, 2048)) + "\n"
             + "agent_model_b64=" + encode(clean(model, 256)) + "\n";
@@ -21,7 +25,7 @@ final class ModelChannelBackup {
     static Data parse(String document) {
         if (document == null || document.length() > 8192) throw new IllegalArgumentException("backup too large");
         String[] lines = document.replace("\r\n", "\n").split("\n");
-        if (lines.length < 5 || !HEADER.equals(lines[0])) throw new IllegalArgumentException("unsupported backup");
+        if (lines.length < 8 || !HEADER.equals(lines[0])) throw new IllegalArgumentException("unsupported backup");
         Map<String, String> values = new HashMap<>();
         for (int index = 1; index < lines.length; index++) {
             int equals = lines[index].indexOf('=');
@@ -33,9 +37,13 @@ final class ModelChannelBackup {
         try { asrMode = Integer.parseInt(required(values, "asr_mode")); }
         catch (NumberFormatException badNumber) { throw new IllegalArgumentException("invalid ASR mode"); }
         if (asrMode != 0 && asrMode != 1) throw new IllegalArgumentException("invalid ASR mode");
+        String conversationEnabled = required(values, "conversation_enabled");
         String enabled = required(values, "agent_enabled");
+        if (!"true".equals(conversationEnabled) && !"false".equals(conversationEnabled)) throw new IllegalArgumentException("invalid Conversation state");
         if (!"true".equals(enabled) && !"false".equals(enabled)) throw new IllegalArgumentException("invalid Agent state");
-        return new Data(asrMode, Boolean.parseBoolean(enabled),
+        return new Data(asrMode, Boolean.parseBoolean(conversationEnabled),
+            clean(decode(required(values, "conversation_endpoint_b64")), 2048),
+            clean(decode(required(values, "conversation_model_b64")), 256), Boolean.parseBoolean(enabled),
             clean(decode(required(values, "agent_endpoint_b64")), 2048),
             clean(decode(required(values, "agent_model_b64")), 256));
     }
@@ -64,11 +72,18 @@ final class ModelChannelBackup {
 
     static final class Data {
         final int asrMode;
+        final boolean conversationEnabled;
+        final String conversationEndpoint;
+        final String conversationModel;
         final boolean agentEnabled;
         final String endpoint;
         final String model;
-        Data(int asrMode, boolean agentEnabled, String endpoint, String model) {
+        Data(int asrMode, boolean conversationEnabled, String conversationEndpoint,
+                String conversationModel, boolean agentEnabled, String endpoint, String model) {
             this.asrMode = asrMode;
+            this.conversationEnabled = conversationEnabled;
+            this.conversationEndpoint = conversationEndpoint;
+            this.conversationModel = conversationModel;
             this.agentEnabled = agentEnabled;
             this.endpoint = endpoint;
             this.model = model;
