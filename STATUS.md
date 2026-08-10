@@ -19,10 +19,10 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 | 工作流 / Workstream | 状态 / State | 已有证据 / Evidence now | 下一任务 / Next task |
 |---|---|---|---|
-| 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约 | `VOICE-001` + `CHAT-001` |
+| 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约 | `VOICE-001` + `CHAT-004` |
 | DSP 与短命令 / DSP and short commands | `VERIFY` | OnePlus 8T DSP 声学 callback、离线命令路由和 12 个确定性动作已验证 | 完成 `REL-001`、`REL-002` 后再宣传低功耗 |
 | 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复 | `ROUTE-002`, then expand tools through `TOOL-*` |
-| 开放对话 / Open conversation | `FOUNDATION` | 有界会话、独立配置、两个 Keystore 槽位和可停止 TTS 适配器已实现；独立设备凭据/TTS 播报验收待做 | `CHAT-003` after device-gate review |
+| 开放对话 / Open conversation | `FOUNDATION`; `CHAT-003` done | 独立配置/Keystore、有界会话、可停止 TTS、SSE/JSON 客户端和 11 条确定性传输用例已实现 | `CHAT-004`; device credential/TTS gates remain separate |
 | OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION` | 手机上的 OpenCode TUI/Web 和独立模型 profile 已有集成证据 | `OC-002`; do not grant Android/root directly |
 | 受控 root / Controlled root | `READY` | 设备已经 root；产品级 capability broker 尚未实现 | `ROOT-001`; generic `su -c` remains forbidden |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
@@ -38,10 +38,10 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 唯一执行队列 / Ordered queue
 
-1. `CHAT-003` — 用 mock 流式/断流/限流/超时/取消测试完成有界 Conversation 客户端。
+1. `CHAT-004` — 验证无动作权限的单轮文字聊天 UI，模型回复不能调用工具。
 2. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
 3. `VOICE-001` — 候选包上验证只读 TTS 探针；当前两台测试设备均无注册引擎，绝不自动下载。
-4. `CHAT-004` → `CHAT-005` — 先交付无动作权限的文字单轮，再做“说一句、答一句”。
+4. `CHAT-005` — 在前述独立设备门禁后做“说一句、答一句”。
 5. `ROUTE-002` → `PLAN-001` → `TOOL-001` — 把聊天升级为受策略约束的可执行 Agent。
 6. `OC-002` → `ROOT-001` — 接入受控 OpenCode 和 root 能力，不把原始 shell 暴露给模型。
 
@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `CHAT-003`：Conversation 已切换为有界 SSE 优先客户端；11 条确定性用例覆盖成功/断流/429/重定向/超时/取消/上限/不安全配置和 IPv6 loopback，未调用真实模型。
 - `PROGRESS-004`：只读状态摘要支持文本和 JSON；102 项计数闭合并显示当前/下一项、最近 PR、阻断、人工门禁和公开证据，未暴露未跟踪文章目录。
 - `PROGRESS-003`：仓库侧 10 个状态/门禁标签已通过 API 创建并回读无漂移；Project 本体因无授权面保持 `BLOCKED`，未把标签完成冒充五列看板完成。
 - `PROGRESS-002`：新增中英双语 GitHub Issue Form；10 个执行字段全部必填，公开空白 Issue 关闭，状态/安全入口和本地结构校验均已接入仓库门禁。

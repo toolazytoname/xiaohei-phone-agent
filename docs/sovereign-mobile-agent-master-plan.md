@@ -116,6 +116,7 @@ sequenceDiagram
 - Begin half-duplex: listen, stop recording, then speak. Add streaming ASR/TTS, barge-in, Bluetooth routing, and echo handling later.
 - Keep bounded short-term context in memory by default. Persistent memory is opt-in, inspectable, erasable, and independently disabled.
 - Select system-offline or relay TTS through an adapter; never hard-code one vendor.
+- The implemented single-turn network boundary is specified in [Bounded Conversation Transport](conversation-transport.md); it is text-only and carries no action authority.
 
 ### Session and task orchestration
 

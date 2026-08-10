@@ -72,8 +72,8 @@ ROLLBACK / REMAINS / NEXT
 |---|---|---|---|
 | CHAT-001 | DONE | BASE-005 | Independent Conversation profile; configuration-isolation regression and AOSP user-path visibility pass; credentials/calls remain CHAT-002/003 |
 | CHAT-002 | VERIFY | CHAT-001 | Keystore credentials and token-free backup/restore; build/config/backup regression passes, pending independent-device Keystore save-clear-restore path |
-| CHAT-003 | READY | CHAT-002 | CHAT-002 implementation is complete and its independent-device Keystore gate does not block mock client tests |
-| CHAT-004 | BACKLOG | CHAT-003 | Single-turn text chat with zero action authority |
+| CHAT-003 | DONE | CHAT-002 | Eleven deterministic transport cases plus unit, APK build, and repository gates pass with zero model calls |
+| CHAT-004 | READY | CHAT-003 | Single-turn text chat with zero action authority |
 | CHAT-005 | BACKLOG | CHAT-004,VOICE-002 | Human single-turn speech → text → model → TTS; global stop works |
 | CHAT-006 | BACKLOG | CHAT-004 | In-memory session with turn/time/token budgets and no transcript restoration |
 | CHAT-007 | BACKLOG | CHAT-006 | Bounded 3–8-turn half-duplex follow-up window |

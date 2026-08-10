@@ -1,6 +1,6 @@
 # Delivery evidence matrix
 
-Status date: 2026-08-09. This is an evidence index, not a release claim. A row is `partial` whenever any stated exit gate lacks current evidence.
+Status date: 2026-08-10. This is an evidence index, not a release claim. A row is `partial` whenever any stated exit gate lacks current evidence.
 
 | Milestone | Current status | Evidence that exists | Exit gates still missing |
 |---|---|---|---|
@@ -12,6 +12,12 @@ Status date: 2026-08-09. This is an evidence index, not a release claim. A row i
 | M5 — visible Phone Agent | complete | Preview-before-execute, local policy, package binding before/after actions, global stop, Settings two-step and Calculator tasks, a 10/10 distinct-app AOSP matrix, bounded redacted trace, and a real notification-invoked local visual recovery followed by manual exact-label retry. Screenshots are never uploaded or persisted. | None for the M5 contract. |
 | M6 — public Beta hardening | partial | Debug/release separation, external release identity, exact APK scan/SBOM/provenance, exact release fresh-install rollback, upgrade/downgrade/uninstall, 100-action stress, 25 surfaces, tested non-secret backup/restore, byte-identical builds, independent ClamAV scan, and verified encrypted signing-recovery staging. | 8–24 hour physical unplugged idle/power, moving the verified signing recovery to separately controlled offline media, and final public-upload approval. Model rights block only the private model-bearing package, not the no-model generic candidate. |
 | M7 — “Xiaohei Xiaohei” and more devices | partial | Opt-in CPU KWS acoustic end-to-end to gallery, independent DSP control, a clean Android 14 ARM64 generic profile with start/stop/uninstall rollback, a narrowed no-custom-DSP claim, and a reproducible 80-case synthetic diagnostic. | Real multi-speaker/noise/distance and unplugged-power evidence; only two standard Mandarin TTS voices have intelligible positive controls, so the synthetic diagnostic cannot qualify human accuracy. |
+
+## Long-term incremental capabilities
+
+| Task | Current state | Evidence now | Remaining gates |
+|---|---|---|---|
+| `CHAT-003` — bounded Conversation transport | Complete in task scope | SSE-first with JSON fallback, loopback `NO_PROXY`, no redirects/retries, and a 64 KiB cap; eleven deterministic transport cases, APK build, and repository gates pass with zero model calls. | The `CHAT-004` UI path, `CHAT-005` human voice/TTS loop, and final `CHAT-012` conversation acceptance remain open. |
 
 ## Evidence rules
 

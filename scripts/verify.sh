@@ -30,6 +30,8 @@ required_files=(
   docs/sovereign-mobile-agent-master-plan.zh-CN.md
   docs/execution-backlog.md
   docs/execution-backlog.zh-CN.md
+  docs/conversation-transport.md
+  docs/conversation-transport.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
