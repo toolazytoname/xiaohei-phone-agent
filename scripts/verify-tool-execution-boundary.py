@@ -10,6 +10,7 @@ COORDINATOR = (JAVA / "ToolExecutionCoordinator.java").read_text(encoding="utf-8
 GATEWAY = (JAVA / "ToolGateway.java").read_text(encoding="utf-8")
 CATALOG = (JAVA / "ToolCatalog.java").read_text(encoding="utf-8")
 TEST = (ROOT / "apps/android/xiaohei-android/tests/io/github/toolazytoname/xiaohei/ToolExecutionCoordinatorTest.java").read_text(encoding="utf-8")
+REGISTRY = (JAVA / "AndroidToolAdapterRegistry.java").read_text(encoding="utf-8")
 RESULT_SCHEMA = (ROOT / "contracts/tool-result.v1.schema.json").read_text(encoding="utf-8")
 UI = "\n".join((JAVA / name).read_text(encoding="utf-8") for name in (
     "MainActivity.java", "ConversationActivity.java", "AgentActivity.java",
@@ -65,6 +66,10 @@ for forbidden in (
 ):
     require(forbidden not in COORDINATOR, f"no real adapter/platform path: {forbidden}")
 require("ToolExecutionCoordinator" not in UI, "TOOL-003 adds no UI wiring")
+for term in ("MediaStoreTestCollectionAdapter", "CalendarTestAccountAdapter",
+             '"android.media_test_collection"', '"android.calendar_test_account"',
+             "call.audience != ToolCatalog.Audience.ANDROID_GATEWAY", "return null"):
+    require(term in REGISTRY, f"closed Android adapter registry term {term}")
 require("success=5 timeout=5 cancel=5 structured_failure=5 denied_replay=5" in TEST,
         "exact 25-group lifecycle matrix")
 require("worker_interrupts=9" in TEST and "adapter_calls_bounded=true" in TEST,
@@ -87,5 +92,5 @@ for field in (
 
 print(
     "PASS tool-execution cases=25 success=5 timeout=5 cancel=5 failure=5 "
-    "denied_replay=5 worker_interrupts=9 adapter_calls=0..1 real_adapters=0 ui_wired=0"
+    "denied_replay=5 worker_interrupts=9 adapter_calls=0..1 android_registry=closed ui_wired=0"
 )
