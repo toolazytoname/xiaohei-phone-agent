@@ -44,6 +44,8 @@ required_files=(
   docs/conversation-local-controls.zh-CN.md
   docs/conversation-tts-selector.md
   docs/conversation-tts-selector.zh-CN.md
+  docs/conversation-offline-faq.md
+  docs/conversation-offline-faq.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -88,6 +90,7 @@ python3 scripts/verify-conversation-ui-boundary.py
 python3 scripts/verify-conversation-memory-boundary.py
 python3 scripts/verify-conversation-prompt-boundary.py
 python3 scripts/verify-tts-channel-boundary.py
+python3 scripts/verify-offline-faq-boundary.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

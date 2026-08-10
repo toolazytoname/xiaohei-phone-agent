@@ -70,3 +70,7 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/ConversationControlPolicy.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/ConversationControlPolicyTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.ConversationControlPolicyTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/OfflineFaqFallback.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/OfflineFaqFallbackTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.OfflineFaqFallbackTest
