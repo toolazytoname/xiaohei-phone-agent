@@ -45,3 +45,7 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/PendingConversationCall.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/PendingConversationCallTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.PendingConversationCallTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/MemoryConversationSession.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/MemoryConversationSessionTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.MemoryConversationSessionTest

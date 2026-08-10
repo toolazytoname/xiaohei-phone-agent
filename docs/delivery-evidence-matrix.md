@@ -19,6 +19,7 @@ Status date: 2026-08-10. This is an evidence index, not a release claim. A row i
 |---|---|---|---|
 | `CHAT-003` — bounded Conversation transport | Complete in task scope | SSE-first with JSON fallback, loopback `NO_PROXY`, no redirects/retries, and a 64 KiB cap; eleven deterministic transport cases, APK build, and repository gates pass with zero model calls. | The `CHAT-005` human voice/TTS loop and final `CHAT-012` conversation acceptance remain open. |
 | `CHAT-004` — single-turn Conversation UI | Complete in task scope | Zero-authority bilingual UI, race-safe cancel/destroy handling, six stable accessibility identifiers, static action-boundary gate, and one fresh AOSP-emulator user-path streaming mock reply without crash or ANR. | Physical-device credential acceptance remains `CHAT-002`; human speech/TTS and final conversation acceptance remain `CHAT-005`/`CHAT-012`. |
+| `CHAT-006` — bounded in-memory session | Complete in task scope | Contract-aligned 1–8 turn, 64–8192 estimated-token, and 1 s–15 min bounds; twelve deterministic lifecycle cases and a static no-persistence/logging gate pass. Terminal paths release session-owned transcript references; new instances restore no text. | `CHAT-007` must integrate the context into the half-duplex UI/model path; this is not a JVM memory-zeroization or physical-process test claim. |
 
 ## Evidence rules
 
