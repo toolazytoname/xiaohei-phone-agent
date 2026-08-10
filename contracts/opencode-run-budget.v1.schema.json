@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/opencode-run-budget.v1.schema.json",
+  "title": "Xiaohei OpenCode Run Budget v1",
+  "description": "Private bounded-run metadata. It is not a process, command, workspace path, model credential, or execution grant.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile", "agent", "timeout_ms", "token_limit", "step_limit", "output_limit", "public_log_safe"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "profile": {"enum": ["relay_openai", "relay_anthropic", "local_small"]},
+    "agent": {"enum": ["analyze", "diagnose", "organize"]},
+    "timeout_ms": {"type": "integer", "minimum": 100, "maximum": 60000},
+    "token_limit": {"type": "integer", "minimum": 1, "maximum": 4096},
+    "step_limit": {"type": "integer", "minimum": 1, "maximum": 32},
+    "output_limit": {"type": "integer", "minimum": 1, "maximum": 4096},
+    "public_log_safe": {"const": false}
+  }
+}
