@@ -281,7 +281,7 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         root.addView(channelsButton);
 
         Button conversationButton = new Button(this);
-        conversationButton.setText("小黑聊天：单轮文字（无动作权限）");
+        conversationButton.setText("小黑对话：6 轮半双工（无动作权限）");
         conversationButton.setOnClickListener(v -> startActivity(new Intent(this, ConversationActivity.class)));
         root.addView(conversationButton);
 

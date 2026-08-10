@@ -1,6 +1,6 @@
 # Single-turn Conversation UI
 
-Status date: 2026-08-10. This page records the `CHAT-004` implementation and its bounded AOSP-emulator acceptance. It is not evidence for speech recognition, TTS quality, a physical-device credential store, or model-driven actions.
+Status date: 2026-08-10. This page records the historical `CHAT-004` single-turn implementation and its bounded AOSP-emulator acceptance. The current UI extends that boundary with [bounded half-duplex Conversation](conversation-half-duplex.md) under `CHAT-007`; it still has zero action authority. This page is not evidence for speech recognition, TTS quality, a physical-device credential store, or model-driven actions.
 
 ## Product boundary
 
