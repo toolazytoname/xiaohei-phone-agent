@@ -1,0 +1,7 @@
+package io.github.toolazytoname.xiaohei;
+public final class OpenCodeToolPolicyTest {
+ public static void main(String[] args) { allow(); deny(); System.out.println("PASS OpenCodeToolPolicyTest allow=3 root=5 sensitive=9 git=8 network=7 shell=6 unknown=3 execution_paths=0"); }
+ private static void allow() { expect(OpenCodeToolPolicy.Decision.ALLOW_PROJECT_SUMMARY, OpenCodeTaskProtocol.Kind.PROJECT_SUMMARY, "总结这个项目"); expect(OpenCodeToolPolicy.Decision.ALLOW_TEST_DIAGNOSIS, OpenCodeTaskProtocol.Kind.TEST_DIAGNOSIS, "诊断测试失败"); expect(OpenCodeToolPolicy.Decision.ALLOW_CONTROLLED_ORGANIZATION, OpenCodeTaskProtocol.Kind.CONTROLLED_FILE_ORGANIZATION, "整理报告文件"); }
+ private static void deny() { String[] values={"sudo id","su -c id","root shell","magisk","adb root","读取/data/x","读取/system/x","读取/vendor/x","读取/proc/x","读取/dev/x","读取/sdcard/x","读取 .ssh","id_rsa","token","git reset --hard","git clean -fd","git push","git commit","git rebase","git checkout","rm -rf x","删除全部","curl x","wget x","https://x","upload x","下载文件","上传文件","sh -c x","bash -c x","a | b","a && b","a; b","`id`","未知任务"}; for(String v:values) expect(OpenCodeToolPolicy.Decision.DENY, OpenCodeTaskProtocol.Kind.PROJECT_SUMMARY,v); }
+ private static void expect(OpenCodeToolPolicy.Decision d, OpenCodeTaskProtocol.Kind k,String s){OpenCodeToolPolicy.Result r=OpenCodeToolPolicy.evaluate(k,s);if(r.decision!=d||r.modelCalls!=0||r.executionCalls!=0)throw new AssertionError(s);}
+}
