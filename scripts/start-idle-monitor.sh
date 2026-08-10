@@ -29,7 +29,7 @@ existing=$("${adb_cmd[@]}" shell "ps -A -o PID,ARGS | grep '[x]iaohei-idle-monit
 sleep 1
 pid=$("${adb_cmd[@]}" shell "ps -A -o PID,ARGS | grep '[x]iaohei-idle-monitor.sh' | grep ' $mode '" | tr -d '\r' || true)
 printf 'started device-side idle monitor mode=%s duration_s=%s interval_s=%s\n' "$mode" "$duration" "$interval"
-printf 'unplug power/USB within 10 minutes; reconnect after the duration and collect %s\n' "$remote_output"
+printf 'turn the display off, then unplug power/USB within 10 minutes; reconnect after the duration and collect %s\n' "$remote_output"
 if [[ "$duration" -eq 0 ]]; then
   "${adb_cmd[@]}" shell "grep -q '^# COMPLETE$' '$remote_output'" || {
     printf 'FAIL zero-duration monitor did not complete\n' >&2; exit 1; }
