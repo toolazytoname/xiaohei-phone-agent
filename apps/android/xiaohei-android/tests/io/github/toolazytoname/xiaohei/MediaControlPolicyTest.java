@@ -1,0 +1,2 @@
+package io.github.toolazytoname.xiaohei; import java.util.*;
+public final class MediaControlPolicyTest { public static void main(String[]x){for(String s:new String[]{"observe_route","volume_up","volume_down"}){Map<String,String>m=new HashMap<>();m.put("operation",s);if(MediaControlPolicy.parse(m)==null)throw new AssertionError(s);}Map<String,String>b=new HashMap<>();b.put("operation","play");if(MediaControlPolicy.parse(b)!=null)throw new AssertionError();System.out.println("PASS media-control route=observe volume=relative playback=absent route_force=0");}}
