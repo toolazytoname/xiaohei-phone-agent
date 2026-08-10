@@ -46,7 +46,7 @@ ROLLBACK / REMAINS / NEXT
 | BASE-003 | DONE | — | Generic Android, OnePlus DSP, and CPU KWS capability tiers |
 | BASE-004 | DONE | BASE-001 | Add master plan, ledger, and `STATUS.md` to required files and README navigation |
 | BASE-005 | DONE | BASE-004 | `conversation-session.v1` schema; two valid boundaries, three rejections, and cross-field checks pass |
-| BASE-006 | READY | BASE-005 | `tool-call.v1`, `tool-result.v1`, and capability-token contracts |
+| BASE-006 | VERIFY | BASE-005 | `tool-call.v1`, `tool-result.v1`, and capability-token contracts; fixtures reject unknown/replay/cross-task/expiry, pending gateway interoperability |
 | BASE-007 | VERIFY | BASE-006 | Unified failure fingerprint and one-recovery rule; unit regression passes, pending real gateway integration |
 
 ## Voice and conversation audio

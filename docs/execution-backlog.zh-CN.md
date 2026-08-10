@@ -53,7 +53,7 @@ NEXT: 唯一下一任务 ID
 | BASE-003 | DONE | — | 通用 Android、OnePlus DSP、CPU KWS 能力分层 | 兼容矩阵与双设备生命周期证据 |
 | BASE-004 | DONE | BASE-001 | 将本账本与 `STATUS.md` 加入仓库必需文件和 README 导航 | 仓库校验找不到链接/缺失时失败 |
 | BASE-005 | DONE | BASE-004 | 新增 `conversation-session.v1` Schema | 2 个有效边界、3 个拒绝 fixture 与跨字段校验通过 |
-| BASE-006 | READY | BASE-005 | 新增 `tool-call.v1`、`tool-result.v1` 与 capability token 契约 | Schema + 正反例 fixture，不含私有数据 |
+| BASE-006 | VERIFY | BASE-005 | 新增 `tool-call.v1`、`tool-result.v1` 与 capability token 契约 | 3 个 Schema 与正反例/重放/跨任务/过期拒绝夹具通过；待真实网关互操作 |
 | BASE-007 | VERIFY | BASE-006 | 定义统一错误指纹、取消原因和恢复条件 | 单元回归证明相同条件拒绝重试、条件变化仅一次恢复；待接入真实网关 |
 
 ## 4. 语音与对话基础
