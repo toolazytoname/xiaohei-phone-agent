@@ -24,7 +24,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 | 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope; `TOOL-003` coordinator at `VERIFY` | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复；路由、计划、确认、目录、loopback/same-UID 授权及仅测试有界执行协调器通过 | Real adapter kill/network/device gate remains; proceed with `OC-004` independently |
 | 开放对话 / Open conversation | `VERIFY`; automated `CHAT-012` passed | 前述对话基础、确定性离线 FAQ、20/5/5/5 自动矩阵、五类请求前隐私拒绝及 AOSP 零录音残留已验证 | Human Mandarin playback/intelligibility/interruption remains; agent path proceeds with `OC-004` |
 | OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION`; `OC-002–008` done | 手机上的 OpenCode TUI/Web、独立模型 profile、三类型私有任务协议、任务私有路径隔离、有界 runner、脱敏进度卡、停止/清理、受限工具策略与九轮组合回归 | Real OpenCode adapter/device acceptance remains required |
-| 受控 root / Controlled root | `FOUNDATION`; `ROOT-001–004` done | root 治理、固定只读 action 目录、内存 signer/一次性 broker、脱敏诊断投影和服务停止 dry-run 精确核验已完成；真实 root adapter 尚未实现 | `ROOT-005`; backup before any mutable root action |
+| 受控 root / Controlled root | `FOUNDATION`; `ROOT-001–004,009` done | root 治理、固定只读 action 目录、内存 signer/一次性 broker、脱敏诊断投影、服务停止 dry-run 精确核验与破坏性请求拒绝库已完成；真实 root adapter 尚未实现 | `ROOT-005`; backup before any mutable root action |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
 | 交付治理 / Delivery governance | `DONE` through `PROGRESS-004`; Project UI blocked | PR 门禁、Issue 表单、10 标签及文本/JSON 只读摘要已完成；五列 Project 缺授权面 | Resume `PROGRESS-003` after Project authorization |
 
@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `ROOT-009`：破坏命令、宽泛/系统/穿越/通配路径与凭据、支付或规避材料均由本地 fail-closed 语料库拒绝；其余 root 形态输入同样未知拒绝，且不存在命令执行路径。
 - `POLICY-004`：支付/转账、验证码/密码以及验证、风控或安全保护规避，在包名、可见文本和请求标签三个面都由本地永久拒绝语料库拦截；未匹配不授予权限，模型与执行调用为零。
 - `ROOT-004`：服务生命周期目前只有 fail-closed 的停止 dry-run 预检；包名、进程名、PID、端口与新鲜确认均必须精确匹配。它不发 PID 信号、不启停服务、不打开端口，也没有 root 或设备执行路径。
 - `ROOT-003`：六类只读诊断只投影固定类别、三态可用性和固定标签；服务 action 最多四项，电池/音频各一项。不存在命令、路径、PID、端口号、包名、profile/音频内容、用户文本、日志、Token 或原始设备输出；当前没有 root adapter 或设备执行。
