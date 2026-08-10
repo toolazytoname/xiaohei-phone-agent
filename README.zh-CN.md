@@ -1,6 +1,6 @@
 # 小黑 AI 手机助手
 
-[English](README.md) · [长期总纲](docs/sovereign-mobile-agent-master-plan.zh-CN.md) · [执行任务账本](docs/execution-backlog.zh-CN.md) · [当前状态](STATUS.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [手机离线操作卡](docs/phone-operation-card.zh-CN.md) · [交付证据矩阵](docs/delivery-evidence-matrix.zh-CN.md) · [发布范围](docs/release-scope-0.2.0-alpha.3.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [安全策略](SECURITY.md)
+[English](README.md) · [长期总纲](docs/sovereign-mobile-agent-master-plan.zh-CN.md) · [执行任务账本](docs/execution-backlog.zh-CN.md) · [当前状态](STATUS.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [手机离线操作卡](docs/phone-operation-card.zh-CN.md) · [交付证据矩阵](docs/delivery-evidence-matrix.zh-CN.md) · [Root Broker 威胁模型](docs/root-capability-broker-threat-model.zh-CN.md) · [发布范围](docs/release-scope-0.2.0-alpha.3.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [安全策略](SECURITY.md)
 
 > 唤醒它，说出需求，让手机行动——尽量本地、过程可见，高风险动作必须确认。
 
