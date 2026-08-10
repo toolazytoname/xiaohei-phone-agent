@@ -26,6 +26,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 | OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION` | 手机上的 OpenCode TUI/Web 和独立模型 profile 已有集成证据 | `OC-002`; do not grant Android/root directly |
 | 受控 root / Controlled root | `READY` | 设备已经 root；产品级 capability broker 尚未实现 | `ROOT-001`; generic `su -c` remains forbidden |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
+| 交付治理 / Delivery governance | `DONE` in `PROGRESS-001` scope | PR 模板和 CI 强制唯一任务 ID、状态页及中英文账本同步更新 | `PROGRESS-002`, then `PROGRESS-004` |
 
 ## 现在真正可用 / What works now
 
@@ -37,12 +38,13 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 唯一执行队列 / Ordered queue
 
-1. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
-2. `VOICE-001` — 候选包上验证只读 TTS 探针；当前两台测试设备均无注册引擎，绝不自动下载。
-3. `VOICE-002` + `CHAT-003` — 实现可停止 TTS 和有界流式模型客户端。
-4. `CHAT-004` → `CHAT-005` — 先交付无动作权限的文字单轮，再做“说一句、答一句”。
-5. `ROUTE-002` → `PLAN-001` → `POLICY-001` → `TOOL-001` — 再把聊天升级为可执行 Agent。
-6. `OC-002` → `ROOT-001` — 最后接入受控 OpenCode 和 root 能力，不把原始 shell 暴露给模型。
+1. `PROGRESS-002` — 用结构化 Issue 表单把任务 ID、依赖、验收、回滚和人类门禁交给后续执行模型。
+2. `PROGRESS-004` — 扩展只读状态摘要，显示最近交付证据和真实阻断。
+3. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
+4. `VOICE-001` — 候选包上验证只读 TTS 探针；当前两台测试设备均无注册引擎，绝不自动下载。
+5. `CHAT-003` → `CHAT-005` — 先交付有界客户端和无动作文字单轮，再做“说一句、答一句”。
+6. `ROUTE-002` → `PLAN-001` → `TOOL-001` — 把聊天升级为受策略约束的可执行 Agent。
+7. `OC-002` → `ROOT-001` — 接入受控 OpenCode 和 root 能力，不把原始 shell 暴露给模型。
 
 完整的 102 个稳定任务、依赖和证据要求见[执行任务账本](docs/execution-backlog.zh-CN.md)。执行模型一次只能领取一个 `READY` 任务。
 
@@ -64,6 +66,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `xiaohei-phone-agent` PR #12：修正 OnePlus 拔线静置预检说明，检查通过并合并。
 - `BASE-004`：长期总纲、102 项双语任务账本、状态页和 README 导航已接入仓库门禁；本地 `scripts/verify.sh` 全部通过。
 - `BASE-005`：`conversation-session.v1` 明确拒绝未知字段、越界 turn/token/timeout、非 memory-only 持久化和任何动作权限；2 个有效及 3 个拒绝夹具均通过 stdlib-only 校验。
+- `PROGRESS-001`：新增双语 PR 交付模板和 CI 门禁；自动正反例证明缺少状态页、缺少任一账本镜像、多个任务 ID 或未知 ID 均被拒绝。
 - `VOICE-006`：真人中文评测协议、匿名分层样本模板和删除规则已双语发布；实际采样仍是 `REL-003` 人类门禁。
 - `CHAT-001`：Conversation 配置与 Phone Agent 配置的交叉修改回归通过；AOSP 从公开主界面进入的配置页显示三条独立渠道。测试 APK 已卸载，OnePlus 上的含模型包未覆盖。
 - 2026-08-10 检查时，黑客手机主题六个仓库没有待处理 PR；该事实不代表所有长期任务已经完成。

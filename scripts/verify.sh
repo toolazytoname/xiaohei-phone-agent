@@ -61,6 +61,7 @@ done
 
 python3 scripts/verify-conversation-session-contract.py
 python3 scripts/verify-tool-gateway-contract.py
+bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
 import pathlib
