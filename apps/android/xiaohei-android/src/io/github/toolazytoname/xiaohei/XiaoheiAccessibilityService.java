@@ -32,6 +32,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private String pendingLabel;
     private String pendingPackage;
+    private SemanticAccessibilityOperationPolicy.Operation pendingOperation;
     private List<String> pendingLabels;
     private int pendingIndex;
     private String taskId;
@@ -65,6 +66,17 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         XiaoheiAccessibilityService service = active;
         return service != null && service.begin(packageName, Arrays.asList(label));
     }
+    static boolean startScrollTask(String packageName, boolean forward) {
+        XiaoheiAccessibilityService service = active;
+        return service != null && service.beginNavigation(packageName, forward
+            ? SemanticAccessibilityOperationPolicy.Operation.SCROLL_FORWARD
+            : SemanticAccessibilityOperationPolicy.Operation.SCROLL_BACKWARD);
+    }
+    static boolean startBackTask(String packageName) {
+        XiaoheiAccessibilityService service = active;
+        return service != null && service.beginNavigation(packageName,
+            SemanticAccessibilityOperationPolicy.Operation.NAVIGATE_BACK);
+    }
     static void stopTask(String reason) {
         XiaoheiAccessibilityService service = active;
         if (service != null) service.stopInternal(reason);
@@ -90,7 +102,8 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         CharSequence pkg = event.getPackageName();
         if (pkg == null || !pkg.toString().equals(pendingPackage)) return;
         executing = true;
-        handler.postDelayed(this::executePendingStep, 350);
+        handler.postDelayed(pendingOperation == null ? this::executePendingStep
+            : this::executePendingNavigation, 350);
     }
 
     @Override public int onStartCommand(Intent intent, int flags, int startId) {
@@ -109,6 +122,9 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         if (packageName == null || !AgentPolicy.packageAllowed(packageName) || labels == null
                 || labels.isEmpty() || labels.size() > 8 || pendingLabel != null) return false;
         for (String label : labels) if (label == null || label.trim().isEmpty()) return false;
+        for (String label : labels) if (SemanticAccessibilityOperationPolicy.assess(
+                SemanticAccessibilityOperationPolicy.Operation.SELECT_EXACT_LABEL, label)
+                != SemanticAccessibilityOperationPolicy.Decision.ALLOW) return false;
         pendingLabels = new java.util.ArrayList<>();
         lastTaskResult = null;
         for (String label : labels) pendingLabels.add(label.trim());
@@ -124,6 +140,52 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         showNotification("等待目标页面：" + pendingLabel);
         Log.i(TAG, "task=start id=" + taskId + " max_steps=8 timeout_ms=60000 labels=" + pendingLabels.size());
         return true;
+    }
+
+    private boolean beginNavigation(String packageName, SemanticAccessibilityOperationPolicy.Operation operation) {
+        if (packageName == null || !AgentPolicy.packageAllowed(packageName) || pendingLabel != null
+                || SemanticAccessibilityOperationPolicy.assess(operation, null)
+                    != SemanticAccessibilityOperationPolicy.Decision.ALLOW) return false;
+        pendingPackage = packageName;
+        pendingOperation = operation;
+        pendingLabel = operation == SemanticAccessibilityOperationPolicy.Operation.NAVIGATE_BACK
+            ? "返回" : operation == SemanticAccessibilityOperationPolicy.Operation.SCROLL_FORWARD
+                ? "向下滚动" : "向上滚动";
+        taskId = UUID.randomUUID().toString();
+        deadline = System.currentTimeMillis() + 60_000;
+        steps = 0;
+        recoveries = 0;
+        recoveryScheduled = false;
+        lastActionKey = null;
+        showNotification("等待目标页面：" + pendingLabel);
+        Log.i(TAG, "task=start navigation=" + pendingOperation + " timeout_ms=60000");
+        return true;
+    }
+
+    private void executePendingNavigation() {
+        executing = false;
+        if (pendingLabel == null || pendingOperation == null) return;
+        AgentSnapshot before = AgentSnapshot.capture(getRootInActiveWindow());
+        if (!pendingPackage.equals(before.packageName) || !AgentPolicy.packageAllowed(before.packageName)
+                || AgentPolicy.assess(before.packageName, before.visibleText(), pendingLabel)
+                    != AgentPolicy.Decision.ALLOW) {
+            stopInternal("导航目标已改变或不安全；未执行");
+            return;
+        }
+        if (++steps > 1) { stopInternal("超过导航操作上限"); return; }
+        boolean ok;
+        if (pendingOperation == SemanticAccessibilityOperationPolicy.Operation.NAVIGATE_BACK) {
+            ok = performGlobalAction(GLOBAL_ACTION_BACK);
+        } else {
+            AccessibilityNodeInfo scrollable = findScrollable(getRootInActiveWindow());
+            ok = scrollable != null && scrollable.performAction(
+                pendingOperation == SemanticAccessibilityOperationPolicy.Operation.SCROLL_FORWARD
+                    ? AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
+                    : AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);
+        }
+        trace(before, 0, "allow", ok, ok ? "success" : "not_available");
+        if (ok) complete("完成受限语义导航；已停止，未继续执行");
+        else stopInternal("当前页面没有可执行的受限导航动作");
     }
 
     private void executePendingStep() {
@@ -268,6 +330,16 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         return clickableMatch != null ? clickableMatch : findAnyMatch(node, label);
     }
 
+    private static AccessibilityNodeInfo findScrollable(AccessibilityNodeInfo node) {
+        if (node == null) return null;
+        if (node.isScrollable()) return node;
+        for (int i = 0; i < node.getChildCount(); i++) {
+            AccessibilityNodeInfo found = findScrollable(node.getChild(i));
+            if (found != null) return found;
+        }
+        return null;
+    }
+
     /** Prefer an exact label that can actually be acted on over passive output text. */
     private static AccessibilityNodeInfo findClickableMatch(AccessibilityNodeInfo node, String label) {
         if (node == null) return null;
@@ -310,6 +382,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         lastTaskResult = "success:" + steps;
         pendingLabel = null;
         pendingPackage = null;
+        pendingOperation = null;
         pendingLabels = null;
         recoveryScheduled = false;
         showNotification(detail);
@@ -322,6 +395,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         }
         pendingLabel = null;
         pendingPackage = null;
+        pendingOperation = null;
         pendingLabels = null;
         recoveryScheduled = false;
         executing = false;
