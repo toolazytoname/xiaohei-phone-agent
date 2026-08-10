@@ -90,6 +90,8 @@ required_files=(
   docs/root-audit-revocation.zh-CN.md
   docs/root-encrypted-backup.md
   docs/root-encrypted-backup.zh-CN.md
+  docs/root-profile-transaction.md
+  docs/root-profile-transaction.zh-CN.md
   docs/root-read-only-diagnostics.md
   docs/root-read-only-diagnostics.zh-CN.md
   docs/root-service-lifecycle.md
@@ -189,6 +191,7 @@ python3 scripts/verify-sensitive-action-denial.py
 python3 scripts/verify-root-broker.py
 python3 scripts/verify-root-audit-revocation.py
 python3 scripts/verify-root-encrypted-backup.py
+python3 scripts/verify-root-profile-transaction.py
 python3 scripts/verify-root-read-only-diagnostics.py
 python3 scripts/verify-root-service-lifecycle.py
 python3 scripts/verify-root-destructive-denial.py
