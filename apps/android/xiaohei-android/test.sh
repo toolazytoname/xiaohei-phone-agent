@@ -20,6 +20,13 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/SemanticAccessibilityOperationPolicyTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.SemanticAccessibilityOperationPolicyTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/AgentPolicy.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/SensitiveActionDenialPolicy.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/SemanticAccessibilityOperationPolicy.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/SemanticAppAdapterRegistry.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/SemanticAppAdapterRegistryTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.SemanticAppAdapterRegistryTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/SensitiveActionDenialPolicy.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/SensitiveActionDenialPolicyTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.SensitiveActionDenialPolicyTest
