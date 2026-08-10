@@ -50,6 +50,8 @@ required_files=(
   docs/conversation-acceptance-chat-012.zh-CN.md
   docs/intent-routing-three-way.md
   docs/intent-routing-three-way.zh-CN.md
+  docs/intent-routing-clarification.md
+  docs/intent-routing-clarification.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -97,6 +99,7 @@ python3 scripts/verify-tts-channel-boundary.py
 python3 scripts/verify-offline-faq-boundary.py
 python3 scripts/verify-conversation-acceptance-boundary.py
 python3 scripts/verify-intent-route-classifier.py
+python3 scripts/verify-route-clarification-policy.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'
@@ -111,12 +114,21 @@ PY
 python3 - "$repo_root" <<'PY'
 import pathlib
 import re
+import subprocess
 import sys
 import urllib.parse
 
 root = pathlib.Path(sys.argv[1]).resolve()
 failures = []
-for markdown in root.rglob("*.md"):
+tracked_markdown = subprocess.run(
+    ["git", "ls-files", "--", "*.md"],
+    cwd=root,
+    check=True,
+    capture_output=True,
+    text=True,
+).stdout.splitlines()
+for relative in tracked_markdown:
+    markdown = root / relative
     if any(part in {".git", "build", "dist", "local", "private"} for part in markdown.relative_to(root).parts):
         continue
     text = markdown.read_text(encoding="utf-8")
@@ -153,12 +165,16 @@ if [[ -n "$forbidden_binary" ]]; then
 fi
 
 scan_paths=(README.md README.zh-CN.md .github docs contracts manifests components apps device-profiles)
-if grep -RIE --exclude='*.schema.json' 'sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY' "${scan_paths[@]}"; then
+scan_files=()
+while IFS= read -r scan_file; do
+  scan_files+=("$scan_file")
+done < <(git ls-files -- "${scan_paths[@]}")
+if grep -IE --exclude='*.schema.json' 'sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY' "${scan_files[@]}"; then
   printf 'FAIL possible credential material detected\n' >&2
   exit 1
 fi
 
-if grep -RIE '/Users/[^ /]+|/home/[^ /]+|[[:space:]][0-9a-f]{16}[[:space:]]' "${scan_paths[@]}"; then
+if grep -IE '/Users/[^ /]+|/home/[^ /]+|[[:space:]][0-9a-f]{16}[[:space:]]' "${scan_files[@]}"; then
   printf 'FAIL possible private path or device identifier detected\n' >&2
   exit 1
 fi
