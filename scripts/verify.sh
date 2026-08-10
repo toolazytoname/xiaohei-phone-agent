@@ -54,6 +54,8 @@ required_files=(
   docs/intent-routing-clarification.zh-CN.md
   docs/unconfirmed-action-request.md
   docs/unconfirmed-action-request.zh-CN.md
+  docs/rules-first-task-plan.md
+  docs/rules-first-task-plan.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -68,6 +70,7 @@ required_files=(
   docs/malware-scan-0.2.0-alpha.3.zh-CN.md
   contracts/wakeword-event.v1.schema.json
   contracts/action-request.v1.schema.json
+  contracts/task-plan.v1.schema.json
   contracts/agent-step-result.v1.schema.json
   contracts/diagnostics.v1.schema.json
   contracts/conversation-session.v1.schema.json
@@ -91,6 +94,7 @@ done
 
 python3 scripts/verify-conversation-session-contract.py
 python3 scripts/verify-action-request-contract.py
+python3 scripts/verify-task-plan-contract.py
 python3 scripts/verify-tool-gateway-contract.py
 python3 scripts/verify-github-templates.py
 python3 scripts/verify-github-progress-manifest.py
@@ -104,6 +108,7 @@ python3 scripts/verify-conversation-acceptance-boundary.py
 python3 scripts/verify-intent-route-classifier.py
 python3 scripts/verify-route-clarification-policy.py
 python3 scripts/verify-unconfirmed-action-request.py
+python3 scripts/verify-task-plan-boundary.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

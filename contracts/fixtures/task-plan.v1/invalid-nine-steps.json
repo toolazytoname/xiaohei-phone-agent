@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "plan_id": "plan-public-overflow-0001",
+  "request_id": "request-public-fixture-0001",
+  "dry_run": true,
+  "step_budget": 8,
+  "timeout_ms": 60000,
+  "created_at": "2026-08-10T09:15:00Z",
+  "public_log_safe": false,
+  "steps": [
+    {"id":"s1","tool":"android.observe","tool_version":1,"risk":"observe","depends_on":[],"arguments":{},"idempotency_key":"idem-public-step-s1"},
+    {"id":"s2","tool":"android.observe","tool_version":1,"risk":"observe","depends_on":["s1"],"arguments":{},"idempotency_key":"idem-public-step-s2"},
+    {"id":"s3","tool":"android.observe","tool_version":1,"risk":"observe","depends_on":["s2"],"arguments":{},"idempotency_key":"idem-public-step-s3"},
+    {"id":"s4","tool":"android.observe","tool_version":1,"risk":"observe","depends_on":["s3"],"arguments":{},"idempotency_key":"idem-public-step-s4"},
+    {"id":"s5","tool":"android.observe","tool_version":1,"risk":"observe","depends_on":["s4"],"arguments":{},"idempotency_key":"idem-public-step-s5"},
+    {"id":"s6","tool":"android.observe","tool_version":1,"risk":"observe","depends_on":["s5"],"arguments":{},"idempotency_key":"idem-public-step-s6"},
+    {"id":"s7","tool":"android.observe","tool_version":1,"risk":"observe","depends_on":["s6"],"arguments":{},"idempotency_key":"idem-public-step-s7"},
+    {"id":"s8","tool":"android.observe","tool_version":1,"risk":"observe","depends_on":["s7"],"arguments":{},"idempotency_key":"idem-public-step-s8"},
+    {"id":"s9","tool":"android.observe","tool_version":1,"risk":"observe","depends_on":["s8"],"arguments":{},"idempotency_key":"idem-public-step-s9"}
+  ]
+}

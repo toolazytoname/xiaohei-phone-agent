@@ -41,6 +41,7 @@
 
 - `wakeword-event.v1.schema.json`：不含原始音频，只描述来源、唤醒词别名、置信度和采集边界。
 - `action-request.v1.schema.json`：描述目标、动作、风险、确认、dry-run 和脱敏策略。
+- `task-plan.v1.schema.json`：描述绑定请求、1–8 步的 dry-run DAG，以及工具/风险、依赖、幂等与超时边界；它不授予执行权限。
 
 运行时 payload 可以在内存里含有用户私密信息，但 fixture 和公开验收报告在保存或发布前必须脱敏。
 
