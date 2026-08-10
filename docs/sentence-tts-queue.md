@@ -4,4 +4,4 @@
 
 Replacing a stream or cancelling it clears queued sentences and increments the generation. Completion events from older generations are ignored, so cancelled text cannot resume or reach playback later. The queue has no Android TTS, network, audio-focus, microphone, or auto-resume capability.
 
-VOICE-010 remains `VERIFY` until it is wired to a real TTS adapter and verified for audible first-sentence latency and cancellation on device.
+The system-TTS adapter is wired to the queue for sentence advancement and cancellation. VOICE-010 remains `VERIFY` until audible first-sentence latency and cancellation are verified on device.
