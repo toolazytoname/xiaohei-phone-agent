@@ -52,6 +52,8 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/GlobalStopRegistry.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/GlobalStopRegistryTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.GlobalStopRegistryTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/GlobalStopRegistry.java" "$project_dir/src/io/github/toolazytoname/xiaohei/ApplicationStopHub.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/ApplicationStopHubTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.ApplicationStopHubTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/ToolCatalog.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/ToolCatalogTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.ToolCatalogTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/MediaTestCollectionPolicy.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/MediaTestCollectionPolicyTest.java"

@@ -41,6 +41,7 @@ public final class ConversationActivity extends Activity {
     private final StringBuilder visibleTranscript = new StringBuilder();
     private String lastAssistantReply;
     private SystemTtsAdapter systemTts;
+    private ApplicationStopHub.Registration globalStopRegistration;
     private final ConversationSessionCoordinator coordinator = new ConversationSessionCoordinator();
     private final ConversationControlPolicy.State controls = new ConversationControlPolicy.State();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -65,6 +66,8 @@ public final class ConversationActivity extends Activity {
         setTitle("小黑对话 / Xiaohei conversation");
         setContentView(build());
         initializeSystemTtsIfEnabled();
+        globalStopRegistration = ApplicationStopHub.register(GlobalStopRegistry.Resource.CONVERSATION,
+                this::stopForGlobalRequest);
     }
 
     private View build() {
@@ -443,6 +446,13 @@ public final class ConversationActivity extends Activity {
         setRunning(controls.requestInFlight());
     }
 
+    private boolean stopForGlobalRequest() {
+        closePending();
+        if (systemTts != null) systemTts.stop("全局停止已中断播报 / Global stop interrupted speech");
+        coordinator.clearByUser();
+        return true;
+    }
+
     private String currentProfileFingerprint() {
         android.content.SharedPreferences prefs =
                 getSharedPreferences("model_channels", Context.MODE_PRIVATE);
@@ -506,6 +516,10 @@ public final class ConversationActivity extends Activity {
         if (systemTts != null) {
             systemTts.destroy();
             systemTts = null;
+        }
+        if (globalStopRegistration != null) {
+            globalStopRegistration.close();
+            globalStopRegistration = null;
         }
         super.onDestroy();
     }
