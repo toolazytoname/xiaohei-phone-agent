@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `SEC-004`：注入、工作区穿越、越权和隐私外传的既有 fail-closed 语料现由双语聚合测试集持续校验；它证明本地边界而非真实 adapter、远端模型或设备行为。
 - `SEC-003`：传输/能力边界现明确记录系统 TLS、拒绝重定向、loopback `NO_PROXY`、same-UID 与一次性重放拒绝；独立设备 MITM 与真实 listener 演练仍保持 `VERIFY`。
 - `SEC-002`：新增双语、代码对应的数据流与保留规则，逐项说明音频、文本、截图、通知、位置、文件、轨迹和凭据的收集、内存、设备保留、外发和删除/撤权；静态验证检查六类及本地边界，远端、OEM 和独立设备证据没有被虚报。
 - `SEC-001`：威胁模型现覆盖聊天/通知注入、工具/Schema 投毒、OpenCode 工作区穿越、root 提权以及破坏/外传请求；所有真实 adapter、独立设备和设备级停止验收仍是明确门禁。

@@ -106,6 +106,8 @@ required_files=(
   docs/privacy-data-flow.zh-CN.md
   docs/transport-security-boundary.md
   docs/transport-security-boundary.zh-CN.md
+  docs/adversarial-security-suite.md
+  docs/adversarial-security-suite.zh-CN.md
   docs/release-checklist.md
   docs/release-checklist.zh-CN.md
   docs/release-scope-0.2.0-alpha.3.md
@@ -202,6 +204,7 @@ python3 scripts/verify-root-destructive-denial.py
 python3 scripts/verify-threat-model.py
 python3 scripts/verify-privacy-data-flow.py
 python3 scripts/verify-transport-security-boundary.py
+python3 scripts/verify-adversarial-security-suite.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

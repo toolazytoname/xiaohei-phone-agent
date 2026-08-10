@@ -173,7 +173,7 @@ ROLLBACK / REMAINS / NEXT
 | SEC-001 | DONE | ROOT-001 | Bilingual threat model covers chat/notification injection, tool/schema poisoning, OpenCode traversal, root escalation and destructive/exfiltration paths; device-level acceptance remains explicit |
 | SEC-002 | DONE | SEC-001 | Bilingual code-mapped data-flow/retention table covers audio, text, screenshots, notifications, location, files, trace and credentials; static verifier checks the six categories and current local boundaries, while third-party/device evidence remains explicit |
 | SEC-003 | VERIFY | TOOL-002 | Bilingual transport/capability boundary maps TLS, redirect, loopback, UID and replay protections to existing automated evidence; independent-device MITM/real-listener exercise remains required |
-| SEC-004 | BACKLOG | OC-007,ROOT-009 | Adversarial injection/traversal/escalation/exfiltration suite |
+| SEC-004 | DONE | OC-007,ROOT-009 | Bilingual aggregate adversarial suite preserves injection, traversal, escalation and privacy-exfiltration corpora; automated local boundaries pass while real adapters/devices remain explicit |
 | RELEASE-001 | DONE | — | Release separation, external signing, SBOM/provenance, ClamAV baseline |
 | RELEASE-002 | BACKLOG | CHAT-012,REL-004 | Versioned generic no-model release, two byte-identical builds, strict scan |
 | RELEASE-003 | BACKLOG | RELEASE-002 | Exact fresh install, upgrade/downgrade, rollback, uninstall |

@@ -180,7 +180,7 @@ NEXT: 唯一下一任务 ID
 | SEC-001 | DONE | ROOT-001 | 双语威胁模型覆盖聊天/通知注入、工具/Schema 投毒、OpenCode 穿越、root 提权与破坏/外传路径；设备级验收仍明确保留 | 双语 STRIDE/滥用用例 |
 | SEC-002 | DONE | SEC-001 | 双语代码对应数据流/保留表覆盖音频、文本、截图、通知、位置、文件、轨迹与凭据；静态验证器检查六类和当前本地边界，第三方/设备证据仍明确保留 | 每类保留期、存储、上传和删除规则 |
 | SEC-003 | VERIFY | TOOL-002 | 双语传输/能力边界将 TLS、重定向、loopback、UID 与重放保护对应到现有自动证据；独立设备 MITM/真实 listener 演练仍必需 | MITM/跨 UID/重放测试 |
-| SEC-004 | BACKLOG | OC-007,ROOT-009 | 对抗测试集：Prompt 注入、路径逃逸、越权、隐私外传 | 所有高危尝试 fail closed |
+| SEC-004 | DONE | OC-007,ROOT-009 | 双语聚合对抗测试集保留注入、穿越、越权和隐私外传语料；自动本地边界通过，真实 adapter/设备仍明确保留 | 所有高危尝试 fail closed |
 | RELEASE-001 | DONE | — | debug/release 分离、仓库外签名、SBOM/provenance/ClamAV 基线 | M6 与 PR #11 证据 |
 | RELEASE-002 | BACKLOG | CHAT-012,REL-004 | 版本递增的无模型通用 release 候选 | 两次字节一致、严格静态扫描 |
 | RELEASE-003 | BACKLOG | RELEASE-002 | 精确候选的全新安装、升级/降级、回滚、卸载 | 干净 AOSP 与 OnePlus 非破坏性路径 |
