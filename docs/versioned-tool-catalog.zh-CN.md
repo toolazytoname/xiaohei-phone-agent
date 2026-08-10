@@ -13,8 +13,9 @@
 | `android.open_dialer@1` | `low` | `empty.v1` → `activity.v1` | `none` | Android 网关 | 5 秒 |
 | `android.adjust_volume@1` | `reversible` | `volume.v1` → `volume.v1` | 通过同一版本工具恢复已捕获快照 | Android 网关 | 3 秒 |
 | `android.observe@1` | `observe` | `observe.v1` → `observation.v1` | `none` | Android 网关 | 3 秒 |
+| `android.media_test_collection@1` | `reversible` | `media_test_collection.v1` → `media_test_collection.v1` | 同一受审工具，精确 rollback id | Android 网关 | 10 秒 |
 
-六个被引用的 Schema 都是 `contracts/` 下的真实文件。无参数启动工具不接受额外字段；音量只允许有界、非零的相对变化；观察被限制为前台包名元数据，明确禁止屏幕文字、无障碍树、截图和原始媒体。所有输出均为 `public_log_safe=false`，调用方不能把它们复制到公开日志或 fixture。
+八个被引用的 Schema 都是 `contracts/` 下的真实文件。无参数启动工具不接受额外字段；音量只允许有界、非零的相对变化；观察被限制为前台包名元数据，明确禁止屏幕文字、无障碍树、截图和原始媒体。MediaStore 工具只接受 `query`、单项 `copy`、单项改名式 `move` 或精确的内存 `rollback_id`，且全部限制于 `Pictures/XiaoheiTest/`。所有输出均为 `public_log_safe=false`，调用方不能把它们复制到公开日志或 fixture。
 
 ## 回滚语义
 
@@ -37,4 +38,4 @@ python3 scripts/verify-tool-catalog-boundary.py
 bash scripts/verify.sh
 ```
 
-公开 fixture 包含一份精确五工具目录，以及重复标识、未知版本、缺失 Schema、无法解析回滚四个拒绝样例。这些是静态合成记录，不代表已经完成真机动作或回滚验收。
+公开 fixture 包含一份精确六工具目录，以及重复标识、未知版本、缺失 Schema、无法解析回滚四个拒绝样例。这些是静态合成记录，不代表已经完成真机动作或回滚验收。

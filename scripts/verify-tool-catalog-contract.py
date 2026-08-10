@@ -22,9 +22,11 @@ SCHEMA_FILES = {
     "xiaohei.tool.input.empty.v1": "tool-input-empty.v1.schema.json",
     "xiaohei.tool.input.volume.v1": "tool-input-volume.v1.schema.json",
     "xiaohei.tool.input.observe.v1": "tool-input-observe.v1.schema.json",
+    "xiaohei.tool.input.media_test_collection.v1": "tool-input-media_test_collection.v1.schema.json",
     "xiaohei.tool.output.activity.v1": "tool-output-activity.v1.schema.json",
     "xiaohei.tool.output.volume.v1": "tool-output-volume.v1.schema.json",
     "xiaohei.tool.output.observation.v1": "tool-output-observation.v1.schema.json",
+    "xiaohei.tool.output.media_test_collection.v1": "tool-output-media_test_collection.v1.schema.json",
 }
 
 
@@ -112,5 +114,5 @@ for schema_id, relative in SCHEMA_FILES.items():
 
 print(
     "PASS tool-catalog.v1 fixtures=5 valid=1 invalid=4 descriptors="
-    f"{len(valid['tools'])} duplicate=reject version=reject missing=reject rollback=reject refs=6"
+    f"{len(valid['tools'])} duplicate=reject version=reject missing=reject rollback=reject refs=8"
 )

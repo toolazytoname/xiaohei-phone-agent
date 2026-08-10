@@ -14,15 +14,15 @@ public final class ToolCatalogTest {
         rejectsFiveMissingFields();
         rejectsFourRollbackErrors();
         rejectsUnknownToolsAndRiskMismatch();
-        System.out.println("PASS ToolCatalogTest descriptors=5 lookup=5 duplicate=3 unknown_version=3 missing=5 rollback=4 unknown_tool=5 risk_mismatch=4 immutable=true execution_paths=0");
+        System.out.println("PASS ToolCatalogTest descriptors=6 lookup=6 duplicate=3 unknown_version=3 missing=5 rollback=4 unknown_tool=5 risk_mismatch=4 immutable=true execution_paths=0");
     }
 
     private static void builtInDescriptorsAreComplete() {
         List<ToolCatalog.Descriptor> descriptors = ToolCatalog.all();
-        check(descriptors.size() == 5, "exact built-in count");
+        check(descriptors.size() == 6, "exact built-in count");
         for (String name : new String[] {
                 "android.open_settings", "android.open_gallery", "android.open_dialer",
-                "android.adjust_volume", "android.observe"
+                "android.adjust_volume", "android.observe", "android.media_test_collection"
         }) {
             ToolCatalog.Descriptor descriptor = ToolCatalog.lookup(name, 1);
             check(descriptor != null && descriptor.version == 1, "lookup " + name);
@@ -46,6 +46,9 @@ public final class ToolCatalogTest {
         expectDescriptor("android.observe", ToolCatalog.Risk.OBSERVE,
                 "xiaohei.tool.input.observe.v1", "xiaohei.tool.output.observation.v1",
                 ToolCatalog.RollbackMode.NONE, "", 3000);
+        expectDescriptor("android.media_test_collection", ToolCatalog.Risk.REVERSIBLE,
+                "xiaohei.tool.input.media_test_collection.v1", "xiaohei.tool.output.media_test_collection.v1",
+                ToolCatalog.RollbackMode.REVERSE_TOOL, "android.media_test_collection", 10000);
         boolean immutable = false;
         try { descriptors.clear(); } catch (UnsupportedOperationException expected) { immutable = true; }
         check(immutable, "catalog list mutable");

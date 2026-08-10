@@ -13,8 +13,9 @@ Status date: 2026-08-10. `TOOL-001` defines a reviewed, immutable metadata bound
 | `android.open_dialer@1` | `low` | `empty.v1` → `activity.v1` | `none` | Android gateway | 5 s |
 | `android.adjust_volume@1` | `reversible` | `volume.v1` → `volume.v1` | restore a captured snapshot through the same versioned tool | Android gateway | 3 s |
 | `android.observe@1` | `observe` | `observe.v1` → `observation.v1` | `none` | Android gateway | 3 s |
+| `android.media_test_collection@1` | `reversible` | `media_test_collection.v1` → `media_test_collection.v1` | same reviewed tool, exact rollback id | Android gateway | 10 s |
 
-The six referenced schemas are real files under `contracts/`. Empty-input launch tools accept no extra fields. Volume is a bounded non-zero relative change. Observation is restricted to foreground-package metadata and explicitly excludes screen text, accessibility trees, screenshots, and raw media. All outputs have `public_log_safe=false`; callers must not copy them into public logs or fixtures.
+The eight referenced schemas are real files under `contracts/`. Empty-input launch tools accept no extra fields. Volume is a bounded non-zero relative change. Observation is restricted to foreground-package metadata and explicitly excludes screen text, accessibility trees, screenshots, and raw media. The MediaStore tool accepts only `query`, one-item `copy`, one-item rename-style `move`, or an exact in-memory `rollback_id`, all restricted to `Pictures/XiaoheiTest/`. All outputs have `public_log_safe=false`; callers must not copy them into public logs or fixtures.
 
 ## Rollback semantics
 
@@ -37,4 +38,4 @@ python3 scripts/verify-tool-catalog-boundary.py
 bash scripts/verify.sh
 ```
 
-The public fixture set contains one exact five-descriptor catalog and four rejection cases for duplicate identity, unknown version, missing schema, and unresolved rollback. These are static synthetic records; they do not claim a device action or rollback run.
+The public fixture set contains one exact six-descriptor catalog and four rejection cases for duplicate identity, unknown version, missing schema, and unresolved rollback. These are static synthetic records; they do not claim a device action or rollback run.

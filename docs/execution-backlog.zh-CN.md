@@ -117,7 +117,7 @@ NEXT: 唯一下一任务 ID
 | TOOL-004 | DONE | — | 公开 Intent、Settings、相册、相机、浏览器、地图、拨号基础 | M2 确定性动作证据 |
 | TOOL-005 | DONE | — | 当前通知汇总和确认式消息草稿 | M4 隐私/撤权/零发送证据 |
 | TOOL-006 | DONE | — | 包绑定语义无障碍与一次内存视觉恢复 | M5 10 App 和恢复证据 |
-| TOOL-007 | BACKLOG | TOOL-001 | MediaStore 文件查询/复制/移动/回滚适配器 | 测试目录，不触碰私人相册原件 |
+| TOOL-007 | VERIFY | TOOL-001 | 封闭的 `Pictures/XiaoheiTest/` MediaStore 适配器已实现查询、单项复制、改名式移动和精确内存 rollback ID；目录/schema/policy 测试拒绝任意 URI/路径、批量和未知操作。真实权限、网关接线、系统确认和设备回滚证据仍必须补齐 | 测试目录，不触碰私人相册原件 |
 | TOOL-008 | BACKLOG | TOOL-001 | 日历/提醒公开 Provider 适配器 | 预览、确认、创建、删除回滚测试账号 |
 | TOOL-009 | BACKLOG | TOOL-001 | 媒体播放、暂停、音量与路由适配器 | 来电/耳机/锁屏矩阵 |
 | TOOL-010 | BACKLOG | TOOL-003 | 文本输入、滚动、返回、选择的语义工具 | 不点击通用“允许/确认/下一步” |

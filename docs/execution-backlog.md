@@ -110,7 +110,7 @@ ROLLBACK / REMAINS / NEXT
 | TOOL-004 | DONE | — | Public intent/settings/gallery/camera/browser/map/dialer actions |
 | TOOL-005 | DONE | — | Current-notification summary and confirmed volatile drafts |
 | TOOL-006 | DONE | — | Package-bound semantic Accessibility and one memory-only visual recovery |
-| TOOL-007 | BACKLOG | TOOL-001 | MediaStore query/copy/move/rollback in a test collection |
+| TOOL-007 | VERIFY | TOOL-001 | Closed `Pictures/XiaoheiTest/` MediaStore adapter implements query, one-item copy, rename-style move, and exact in-memory rollback IDs; catalog/schema/policy tests reject arbitrary URI/path, batch and unknown operations. Real permission, gateway wiring, system confirmation, and device rollback evidence remain required |
 | TOOL-008 | BACKLOG | TOOL-001 | Calendar/reminder preview, confirm, create, and rollback in a test account |
 | TOOL-009 | BACKLOG | TOOL-001 | Media play/pause/volume/routing matrix |
 | TOOL-010 | BACKLOG | TOOL-003 | Semantic input/scroll/back/select; never click generic approval controls |
