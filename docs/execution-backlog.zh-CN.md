@@ -63,7 +63,7 @@ NEXT: 唯一下一任务 ID
 | VOICE-001 | VERIFY | BASE-005 | 真机探测已安装中文 Android TTS、音色、离线能力和初始化失败 | 只读探针已实现并构建；OnePlus/AOSP 初始 package 探测均无引擎，待候选包上独立设备 UI 闭环 |
 | VOICE-002 | VERIFY | VOICE-001 | 系统 TTS 适配器与显式生命周期 | 10 个状态机转换与 APK 构建通过；无注册引擎设备上的真实播报/停止待验 |
 | VOICE-003 | DONE | VOICE-002 | 纯 TTS 生命周期建模 `SPEAKING`、`WAITING_FOLLOWUP` 和 `INTERRUPTED` 合法转换；适配器标注完成/中断且不自动恢复；真实音频仍受门禁 | 非法跳转拒绝；真实资源归零仍需设备证据 |
-| VOICE-004 | BACKLOG | VOICE-003 | 半双工音频生命周期：录音关闭后才播报 | audio_flinger 证明录音与 TTS 不重叠 |
+| VOICE-004 | VERIFY | VOICE-003 | 同步输入/输出所有权协调器拒绝重叠，并在终态中断时归零；仍需 Android 适配器接线和真实音频证据 | 真机证明录音与 TTS 不重叠 |
 | VOICE-005 | BACKLOG | VOICE-004 | 来电、闹钟、媒体和 Activity 中断处理 | 每种中断停止 TTS/ASR、状态可解释 |
 | VOICE-006 | DONE | BASE-005 | 30–50 条真人开放中文问句语料协议，原始音频不入 Git | 双语分层模板、脱敏结果格式和重复失败限制已发布 |
 | VOICE-007 | BACKLOG | VOICE-006 | 当前命令 ASR 与至少一个开放对话 ASR A/B | WER/语义成功率/延迟/内存，不能只报单句 |
