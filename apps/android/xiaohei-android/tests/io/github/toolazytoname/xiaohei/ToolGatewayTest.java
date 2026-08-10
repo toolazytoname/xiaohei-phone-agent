@@ -19,8 +19,9 @@ public final class ToolGatewayTest {
         fiveInvalidCallMetadataCasesFailClosed();
         fiveExpiryAndClockCasesFailClosed();
         fiveReplayRevocationAndForeignCasesFailClosed();
+        timeoutIsCatalogBoundAndCapabilityScoped();
         tokenAndCallMetadataAreImmutable();
-        System.out.println("PASS ToolGatewayTest allow_once=10 non_local=10 confirmation=5 scope_change=7 catalog_change=3 invalid_call=5 expiry=5 replay=5 token_ttl=1..30s secure_default=128bit model_calls=0 action_calls=0 execution_paths=0");
+        System.out.println("PASS ToolGatewayTest allow_once=10 non_local=10 confirmation=5 scope_change=7 catalog_change=3 invalid_call=5 expiry=5 replay=5 timeout=bound token_ttl=1..30s secure_default=128bit model_calls=0 action_calls=0 execution_paths=0");
     }
 
     private static void tenExactCapabilitiesAllowOnce() {
@@ -239,6 +240,21 @@ public final class ToolGatewayTest {
         check(immutable, "call arguments mutable");
     }
 
+    private static void timeoutIsCatalogBoundAndCapabilityScoped() {
+        ToolGateway.Call base = call(70);
+        expect(ToolGateway.Decision.INVALID_CALL, gateway(700).issue(
+                LOCAL, confirmationFor(withTimeout(base, 99)), withTimeout(base, 99), NOW, 10000L));
+        expect(ToolGateway.Decision.INVALID_CALL, gateway(701).issue(
+                LOCAL, confirmationFor(withTimeout(base, 5001)),
+                withTimeout(base, 5001), NOW, 10000L));
+
+        ToolGateway gateway = gateway(702);
+        ToolGateway.Result issued = gateway.issue(LOCAL, confirmationFor(base), base, NOW, 10000L);
+        expect(ToolGateway.Decision.ISSUED, issued);
+        expect(ToolGateway.Decision.TOKEN_SCOPE,
+                gateway.authorizeAndConsume(LOCAL, withTimeout(base, 999), issued.token, NOW + 1));
+    }
+
     private static ToolGateway gateway(final int seed) {
         return new ToolGateway(new ToolGateway.TokenIdSource() {
             int next = seed;
@@ -290,7 +306,7 @@ public final class ToolGatewayTest {
                 String.format("request-gateway-%04d", index),
                 String.format("plan-gateway-%04d", index),
                 String.format("call-gateway-%04d", index), tool, 1, risk, audience, arguments,
-                String.format("idempotency-gateway-%04d", index), NOW - 1000L, false);
+                String.format("idempotency-gateway-%04d", index), NOW - 1000L, 1000, false);
     }
 
     private static ToolGateway.Call copy(ToolGateway.Call original, String taskId, String requestId,
@@ -298,7 +314,7 @@ public final class ToolGatewayTest {
             ToolCatalog.Audience audience, Map<String, String> arguments, String idempotencyKey) {
         return new ToolGateway.Call(taskId, requestId, planId, callId, tool, version, risk,
                 audience, arguments, idempotencyKey, original.requestedAtElapsedMs,
-                original.publicLogSafe);
+                original.timeoutMs, original.publicLogSafe);
     }
 
     private static ToolGateway.Call withMetadata(ToolGateway.Call original,
@@ -306,7 +322,15 @@ public final class ToolGatewayTest {
             long requestedAtElapsedMs, boolean publicLogSafe) {
         return new ToolGateway.Call(original.taskId, original.requestId, original.planId,
                 original.callId, original.tool, original.toolVersion, original.risk,
-                original.audience, arguments, idempotencyKey, requestedAtElapsedMs, publicLogSafe);
+                original.audience, arguments, idempotencyKey, requestedAtElapsedMs,
+                original.timeoutMs, publicLogSafe);
+    }
+
+    private static ToolGateway.Call withTimeout(ToolGateway.Call original, int timeoutMs) {
+        return new ToolGateway.Call(original.taskId, original.requestId, original.planId,
+                original.callId, original.tool, original.toolVersion, original.risk,
+                original.audience, original.arguments, original.idempotencyKey,
+                original.requestedAtElapsedMs, timeoutMs, original.publicLogSafe);
     }
 
     private static void expect(ToolGateway.Decision expected, ToolGateway.Result actual) {

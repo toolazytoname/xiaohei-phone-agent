@@ -11,5 +11,6 @@
   "arguments": {},
   "idempotency_key": "idempotency-gateway-public-0001",
   "requested_at_elapsed_ms": 99000,
+  "timeout_ms": 1000,
   "public_log_safe": false
 }

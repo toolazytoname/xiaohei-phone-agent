@@ -17,20 +17,20 @@ ARGUMENT = re.compile(r"^[a-z][a-z0-9_]{0,63}$")
 CALL_KEYS = {
     "schema_version", "task_id", "request_id", "plan_id", "call_id", "tool",
     "tool_version", "risk", "audience", "arguments", "idempotency_key",
-    "requested_at_elapsed_ms", "public_log_safe",
+    "requested_at_elapsed_ms", "timeout_ms", "public_log_safe",
 }
 TOKEN_KEYS = {
     "schema_version", "token_id", "confirmation_id", "task_id", "request_id",
     "plan_id", "call_id", "tool", "tool_version", "risk", "audience",
-    "call_digest", "issued_at_elapsed_ms", "expires_at_elapsed_ms", "ttl_ms",
+    "call_digest", "call_timeout_ms", "issued_at_elapsed_ms", "expires_at_elapsed_ms", "ttl_ms",
     "single_use", "persistence", "public_log_safe",
 }
 TOOLS = {
-    "android.open_settings": ("low", "android_gateway"),
-    "android.open_gallery": ("low", "android_gateway"),
-    "android.open_dialer": ("low", "android_gateway"),
-    "android.adjust_volume": ("reversible", "android_gateway"),
-    "android.observe": ("observe", "android_gateway"),
+    "android.open_settings": ("low", "android_gateway", 5000),
+    "android.open_gallery": ("low", "android_gateway", 5000),
+    "android.open_dialer": ("low", "android_gateway", 5000),
+    "android.adjust_volume": ("reversible", "android_gateway", 3000),
+    "android.observe": ("observe", "android_gateway", 3000),
 }
 
 
@@ -50,7 +50,7 @@ def validate_call(call: object) -> list[str]:
     tool = call.get("tool")
     if tool not in TOOLS:
         errors.append("unknown_tool")
-    elif (call.get("risk"), call.get("audience")) != TOOLS[tool]:
+    elif (call.get("risk"), call.get("audience")) != TOOLS[tool][:2]:
         errors.append("catalog_scope")
     if call.get("tool_version") != 1:
         errors.append("tool_version")
@@ -67,6 +67,10 @@ def validate_call(call: object) -> list[str]:
     requested = call.get("requested_at_elapsed_ms")
     if not isinstance(requested, int) or isinstance(requested, bool) or requested < 0:
         errors.append("requested_at")
+    timeout = call.get("timeout_ms")
+    if not isinstance(timeout, int) or isinstance(timeout, bool) \
+            or tool not in TOOLS or not 100 <= timeout <= TOOLS[tool][2]:
+        errors.append("timeout")
     return errors
 
 
@@ -85,10 +89,14 @@ def validate_token(token: object) -> list[str]:
             errors.append(field)
     if token.get("tool") not in TOOLS or token.get("tool_version") != 1:
         errors.append("tool_version")
-    elif (token.get("risk"), token.get("audience")) != TOOLS[token["tool"]]:
+    elif (token.get("risk"), token.get("audience")) != TOOLS[token["tool"]][:2]:
         errors.append("catalog_scope")
     if not isinstance(token.get("call_digest"), str) or not DIGEST.fullmatch(token["call_digest"]):
         errors.append("call_digest")
+    timeout = token.get("call_timeout_ms")
+    if not isinstance(timeout, int) or isinstance(timeout, bool) \
+            or token.get("tool") not in TOOLS or not 100 <= timeout <= TOOLS[token["tool"]][2]:
+        errors.append("timeout")
     issued = token.get("issued_at_elapsed_ms")
     expires = token.get("expires_at_elapsed_ms")
     ttl = token.get("ttl_ms")
@@ -104,6 +112,7 @@ def call_digest(token_id: str, call: dict[str, object]) -> str:
         call["task_id"], call["request_id"], call["plan_id"], call["call_id"],
         call["tool"], str(call["tool_version"]), call["risk"], call["audience"],
         call["idempotency_key"], str(call["requested_at_elapsed_ms"]),
+        str(call["timeout_ms"]),
         str(call["public_log_safe"]).lower(),
     ]
     for key in sorted(call["arguments"]):
@@ -119,6 +128,8 @@ def validate_pair(call: dict[str, object], token: dict[str, object], now_ms: int
     for field in ("task_id", "request_id", "plan_id", "call_id", "tool", "tool_version", "risk", "audience"):
         if call[field] != token[field]:
             errors.append("scope")
+    if call["timeout_ms"] != token["call_timeout_ms"]:
+        errors.append("timeout_scope")
     if call_digest(token["token_id"], call) != token["call_digest"]:
         errors.append("digest")
     if now_ms < token["issued_at_elapsed_ms"]:
@@ -146,6 +157,14 @@ call = load("valid-call.json")
 token = load("valid-token.json")
 if validate_pair(call, token, 100001):
     raise AssertionError(f"valid pair rejected: {validate_pair(call, token, 100001)}")
+invalid_timeout = dict(call)
+invalid_timeout["timeout_ms"] = 3001
+if "timeout" not in validate_call(invalid_timeout):
+    raise AssertionError("catalog timeout exceeded without rejection")
+changed_timeout = dict(call)
+changed_timeout["timeout_ms"] = 999
+if "timeout_scope" not in validate_pair(changed_timeout, token, 100001):
+    raise AssertionError("capability accepted changed timeout")
 if "token_keys" not in validate_token(load("invalid-token-unknown.json")):
     raise AssertionError("unknown token field accepted")
 if "scope" not in validate_pair(call, load("invalid-token-cross-task.json"), 100001):
@@ -181,5 +200,5 @@ for case in peer_fixture["cases"]:
 print(
     "PASS tool-gateway.v1 fixtures=7 pair=1 invalid=4 peer=6 "
     f"peer_allow={peer_allowed} peer_deny={peer_denied} unknown=reject replay=reject "
-    "cross_task=reject exact_expiry=reject version=reject digest=bound"
+    "cross_task=reject exact_expiry=reject version=reject digest=bound timeout=bound"
 )

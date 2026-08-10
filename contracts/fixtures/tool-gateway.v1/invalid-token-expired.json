@@ -11,6 +11,7 @@
   "risk": "observe",
   "audience": "android_gateway",
   "call_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "call_timeout_ms": 1000,
   "issued_at_elapsed_ms": 100000,
   "expires_at_elapsed_ms": 101000,
   "ttl_ms": 1000,

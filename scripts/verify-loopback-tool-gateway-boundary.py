@@ -44,6 +44,10 @@ require("MessageDigest.getInstance(\"SHA-256\")" in GATEWAY
 require("call.requestedAtElapsedMs > nowMs" in GATEWAY
         and "nowMs - call.requestedAtElapsedMs > 60000L" in GATEWAY,
         "future and stale calls rejected before token issue")
+require("call.timeoutMs < 100 || call.timeoutMs > descriptor.timeoutMs" in GATEWAY
+        and "callTimeoutMs = call.timeoutMs" in GATEWAY
+        and "append(canonical, String.valueOf(call.timeoutMs))" in GATEWAY,
+        "catalog-capped timeout is token metadata and digest scope")
 require('this.persistence = "memory_only"' in GATEWAY and "this.publicLogSafe = false" in GATEWAY,
         "runtime token mirrors private memory-only contract")
 require("nowMs < token.issuedAtElapsedMs" in GATEWAY
@@ -67,18 +71,19 @@ for forbidden in (
 require("ToolGateway" not in UI, "TOOL-002 adds no UI/executor wiring")
 require("allow_once=10 non_local=10 confirmation=5 scope_change=7 catalog_change=3" in TEST,
         "deterministic authorization matrix")
-require("invalid_call=5 expiry=5 replay=5 token_ttl=1..30s secure_default=128bit" in TEST,
+require("invalid_call=5 expiry=5 replay=5 timeout=bound token_ttl=1..30s secure_default=128bit" in TEST,
         "time/replay/random-source matrix")
 require("model_calls=0 action_calls=0 execution_paths=0" in TEST,
         "declared zero-execution acceptance")
-for field in ("confirmation_id", "request_id", "plan_id", "call_id", "call_digest",
+for field in ("confirmation_id", "request_id", "plan_id", "call_id", "call_digest", "call_timeout_ms",
               "issued_at_elapsed_ms", "expires_at_elapsed_ms", "ttl_ms"):
     require(f'"{field}"' in TOKEN_SCHEMA, f"public token binding {field}")
 require('"persistence": {"const": "memory_only"}' in TOKEN_SCHEMA
         and '"public_log_safe": {"const": false}' in TOKEN_SCHEMA,
         "public token is memory-only and non-public")
 require('"request_id"' in CALL_SCHEMA and '"plan_id"' in CALL_SCHEMA
-        and '"audience"' in CALL_SCHEMA and '"public_log_safe": {"const": false}' in CALL_SCHEMA,
+        and '"audience"' in CALL_SCHEMA and '"timeout_ms"' in CALL_SCHEMA
+        and '"public_log_safe": {"const": false}' in CALL_SCHEMA,
         "public call carries full private scope")
 
 print("PASS loopback tool gateway cases=50 allow=10 non_local=10 confirmation=5 changed=10 invalid_call=5 expiry=5 replay=5 ttl=1..30s execution_paths=0 ui_wired=0")

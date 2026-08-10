@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task_id": "job-execution-public-0002",
+  "call_id": "call-execution-public-0002",
+  "tool": "android.observe",
+  "status": "timeout",
+  "error_code": "deadline_exceeded",
+  "output": {},
+  "started_at_elapsed_ms": 130000,
+  "finished_at_elapsed_ms": 130100,
+  "duration_ms": 100,
+  "adapter_calls": 1,
+  "public_log_safe": false
+}

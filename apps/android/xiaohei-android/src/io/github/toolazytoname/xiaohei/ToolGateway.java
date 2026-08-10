@@ -69,12 +69,13 @@ final class ToolGateway {
         final Map<String, String> arguments;
         final String idempotencyKey;
         final long requestedAtElapsedMs;
+        final int timeoutMs;
         final boolean publicLogSafe;
 
         Call(String taskId, String requestId, String planId, String callId, String tool,
                 int toolVersion, ToolCatalog.Risk risk, ToolCatalog.Audience audience,
                 Map<String, String> arguments, String idempotencyKey,
-                long requestedAtElapsedMs, boolean publicLogSafe) {
+                long requestedAtElapsedMs, int timeoutMs, boolean publicLogSafe) {
             this.taskId = taskId;
             this.requestId = requestId;
             this.planId = planId;
@@ -87,6 +88,7 @@ final class ToolGateway {
                     : Collections.unmodifiableMap(new HashMap<>(arguments));
             this.idempotencyKey = idempotencyKey;
             this.requestedAtElapsedMs = requestedAtElapsedMs;
+            this.timeoutMs = timeoutMs;
             this.publicLogSafe = publicLogSafe;
         }
     }
@@ -104,6 +106,7 @@ final class ToolGateway {
         final ToolCatalog.Risk risk;
         final ToolCatalog.Audience audience;
         final String callDigest;
+        final int callTimeoutMs;
         final long issuedAtElapsedMs;
         final long expiresAtElapsedMs;
         final long ttlMs;
@@ -125,6 +128,7 @@ final class ToolGateway {
             this.risk = call.risk;
             this.audience = call.audience;
             this.callDigest = callDigest;
+            this.callTimeoutMs = call.timeoutMs;
             this.issuedAtElapsedMs = issuedAtElapsedMs;
             this.expiresAtElapsedMs = expiresAtElapsedMs;
             this.ttlMs = expiresAtElapsedMs - issuedAtElapsedMs;
@@ -140,13 +144,41 @@ final class ToolGateway {
         final int modelCalls;
         final int actionCalls;
         final int executionCalls;
+        private ExecutionPermit executionPermit;
 
-        private Result(Decision decision, Token token) {
+        private Result(Decision decision, Token token, ExecutionPermit executionPermit) {
             this.decision = decision;
             this.token = token;
             this.modelCalls = 0;
             this.actionCalls = 0;
             this.executionCalls = 0;
+            this.executionPermit = executionPermit;
+        }
+
+        synchronized ExecutionPermit takeExecutionPermit() {
+            ExecutionPermit current = executionPermit;
+            executionPermit = null;
+            return current;
+        }
+    }
+
+    static final class ExecutionPermit {
+        final String taskId;
+        final String callId;
+        final String tool;
+        final String tokenId;
+        final String callDigest;
+
+        private ExecutionPermit(Token token) {
+            this.taskId = token.taskId;
+            this.callId = token.callId;
+            this.tool = token.tool;
+            this.tokenId = token.tokenId;
+            this.callDigest = token.callDigest;
+        }
+
+        boolean matches(Call call) {
+            return validateCall(call) == null && callDigest.equals(digest(tokenId, call));
         }
     }
 
@@ -218,7 +250,7 @@ final class ToolGateway {
         if (tokenId == null) return result(Decision.CAPACITY);
         Token token = new Token(tokenId, receipt, call, digest(tokenId, call), nowMs, nowMs + ttlMs);
         active.put(tokenId, new Grant(token));
-        return new Result(Decision.ISSUED, token);
+        return new Result(Decision.ISSUED, token, null);
     }
 
     synchronized Result authorizeAndConsume(Peer peer, Call call, Token presented, long nowMs) {
@@ -241,7 +273,7 @@ final class ToolGateway {
         active.remove(token.tokenId);
         spentTokens.add(token.tokenId);
         spentIdempotencyKeys.add(idempotencyIdentity);
-        return result(Decision.ALLOW);
+        return new Result(Decision.ALLOW, null, new ExecutionPermit(token));
     }
 
     synchronized int revokeAll() {
@@ -294,6 +326,8 @@ final class ToolGateway {
                 ? Decision.UNKNOWN_TOOL : Decision.VERSION_MISMATCH;
         if (descriptor.risk != call.risk) return Decision.RISK_MISMATCH;
         if (descriptor.audience != call.audience) return Decision.AUDIENCE_MISMATCH;
+        if (call.timeoutMs < 100 || call.timeoutMs > descriptor.timeoutMs)
+            return Decision.INVALID_CALL;
         return null;
     }
 
@@ -336,6 +370,7 @@ final class ToolGateway {
         append(canonical, call.audience.name().toLowerCase(Locale.ROOT));
         append(canonical, call.idempotencyKey);
         append(canonical, String.valueOf(call.requestedAtElapsedMs));
+        append(canonical, String.valueOf(call.timeoutMs));
         append(canonical, String.valueOf(call.publicLogSafe));
         for (Map.Entry<String, String> entry : new TreeMap<>(call.arguments).entrySet()) {
             append(canonical, entry.getKey()); append(canonical, entry.getValue());
@@ -361,6 +396,6 @@ final class ToolGateway {
     }
 
     private static Result result(Decision decision) {
-        return new Result(decision, null);
+        return new Result(decision, null, null);
     }
 }

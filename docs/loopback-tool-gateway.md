@@ -8,7 +8,8 @@ Status date: 2026-08-10. `TOOL-002` adds a pure in-process authorization core be
 
 1. `FreshConfirmationGate` accepts an eligible foreground/unlocked local user gesture and, after exact task/request/plan/target/content comparison, returns `ALLOW_ONCE` with a private capability receipt.
 2. Only the gateway can consume that receipt. It checks peer and call metadata first, then exchanges the receipt once for an opaque in-memory token. Reusing the same result returns `CONFIRMATION_REPLAY`.
-3. The token authorizes one call whose full canonical scope matches its salted SHA-256 call digest. Success, expiry, clock rollback, local scope/catalog failure, idempotency replay, or explicit global revocation removes the active token.
+3. The token authorizes one call whose full canonical scope, including the catalog-capped timeout, matches its salted SHA-256 call digest. Success, expiry, clock rollback, local scope/catalog failure, idempotency replay, or explicit global revocation removes the active token.
+4. Successful authorization exposes one private execution permit. `TOOL-003` consumes it once, rechecks the unchanged call digest, and may then submit at most one injected adapter; see the [bounded execution lifecycle](tool-execution-lifecycle.md).
 
 The receipt carries only confirmation/task/request/plan IDs. It contains no target, content, UI text, screenshot, accessibility tree, or digest. A confirmation whose task/request/plan differs from the call is consumed and rejected.
 
@@ -38,6 +39,6 @@ python3 scripts/verify-loopback-tool-gateway-boundary.py
 bash scripts/verify.sh
 ```
 
-## Remaining execution work
+## Execution boundary and remaining integration
 
-The current Android UI and activities do not reference `ToolGateway`; there is no socket listener or adapter invocation. `TOOL-003` must add structured timeout/cancel/idempotency execution results, while later integration must supply trusted transport-derived peer evidence and an accessible confirmation UI. OpenCode and root retain independent audiences and cannot use an Android capability.
+The current Android UI and activities still do not reference `ToolGateway`; there is no socket listener or real Android adapter invocation. `TOOL-003` now adds a pure injected-adapter coordinator with bound timeouts, cancellation, idempotency replay denial, and structured private results. Its process/network failures are synthetic mapping tests, not real resource teardown evidence. Later integration must supply trusted transport-derived peer evidence, accessible confirmation UI, and real adapter lifecycle tests. OpenCode and root retain independent audiences and cannot use an Android capability.
