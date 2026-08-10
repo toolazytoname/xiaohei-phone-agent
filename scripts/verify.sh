@@ -80,6 +80,8 @@ required_files=(
   docs/opencode-acceptance-matrix.zh-CN.md
   docs/root-capability-boundary.md
   docs/root-capability-boundary.zh-CN.md
+  docs/authorization-tiers.md
+  docs/authorization-tiers.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -163,6 +165,7 @@ python3 scripts/verify-opencode-stop-cleanup.py
 python3 scripts/verify-opencode-tool-policy.py
 python3 scripts/verify-opencode-acceptance-matrix.py
 python3 scripts/verify-root-capability-catalog.py
+python3 scripts/verify-authorization-tier-policy.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

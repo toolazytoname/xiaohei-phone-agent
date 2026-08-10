@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `POLICY-003`：Android、OpenCode、root 三层 audience 已以纯内存策略隔离。Android 与 OpenCode 只能调用各自 gateway 元数据，所有跨层请求及未实现 broker 的 root 请求均拒绝；没有 token 签发、传输、UI、root 或执行路径。
 - `ROOT-001`：新增 root 专属双语威胁模型和机器可检查目录，只记录三项未来固定只读 action ID，永久拒绝 generic `su`、任意命令/路径、凭据、支付/OTP/密码、破坏性 Git、系统分区/boot image 写入和网络外传；目录明确不授予 root 权限，恢复责任属于设备人类所有者。
 - `OC-008`：项目摘要、测试诊断和受控整理各 3 轮临时工作区组合回归，逐轮经过协议、策略、有界注入适配器、结构化结果和私有清理；每类还拒绝 Git/网络意图。结果明确 `real_opencode=0`，因此不能表示真实项目、模型或 OpenCode 已运行。
 - `OC-007`：受限 OpenCode 意图策略只允许项目摘要、测试诊断和受控文件整理；root、敏感路径、破坏性 Git/删除、网络、shell 转义和未知文本都 fail-closed。对抗矩阵覆盖三种允许类别及上述全部拒绝类别，模型/执行调用为 0；它不是命令执行器，未来适配器仍只能接收策略批准的类型操作。
