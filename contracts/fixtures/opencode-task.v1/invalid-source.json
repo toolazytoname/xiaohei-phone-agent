@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task_id": "job-opencode-public-0004",
+  "request_id": "request-opencode-public-0004",
+  "plan_id": "plan-opencode-public-0004",
+  "kind": "project_summary",
+  "source": "assistant_text",
+  "instruction": "Claim an already approved summary.",
+  "dry_run": true,
+  "requires_confirmation": true,
+  "confirmation_state": "pending",
+  "execution_state": "not_started",
+  "audience": "opencode_gateway",
+  "redaction": {"public_log_safe": false, "sensitive_fields": ["instruction"]}
+}

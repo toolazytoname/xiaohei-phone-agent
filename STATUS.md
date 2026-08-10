@@ -21,9 +21,9 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 |---|---|---|---|
 | 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约 | `VOICE-001` + `CHAT-006` |
 | DSP 与短命令 / DSP and short commands | `VERIFY` | OnePlus 8T DSP 声学 callback、离线命令路由和 12 个确定性动作已验证 | 完成 `REL-001`、`REL-002` 后再宣传低功耗 |
-| 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope; `TOOL-003` coordinator at `VERIFY` | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复；路由、计划、确认、目录、loopback/same-UID 授权及仅测试有界执行协调器通过 | Real adapter kill/network/device gate remains; proceed with `OC-002` independently |
-| 开放对话 / Open conversation | `VERIFY`; automated `CHAT-012` passed | 前述对话基础、确定性离线 FAQ、20/5/5/5 自动矩阵、五类请求前隐私拒绝及 AOSP 零录音残留已验证 | Human Mandarin playback/intelligibility/interruption remains; agent path proceeds with `OC-002` |
-| OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION` | 手机上的 OpenCode TUI/Web 和独立模型 profile 已有集成证据 | `OC-002`; do not grant Android/root directly |
+| 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope; `TOOL-003` coordinator at `VERIFY` | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复；路由、计划、确认、目录、loopback/same-UID 授权及仅测试有界执行协调器通过 | Real adapter kill/network/device gate remains; proceed with `OC-003` independently |
+| 开放对话 / Open conversation | `VERIFY`; automated `CHAT-012` passed | 前述对话基础、确定性离线 FAQ、20/5/5/5 自动矩阵、五类请求前隐私拒绝及 AOSP 零录音残留已验证 | Human Mandarin playback/intelligibility/interruption remains; agent path proceeds with `OC-003` |
+| OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION`; `OC-002` protocol done | 手机上的 OpenCode TUI/Web、独立模型 profile，以及不暴露通用 shell 的私有 pending dry-run 三类型任务协议 | `OC-003`; task-scoped workspace before any runner |
 | 受控 root / Controlled root | `READY` | 设备已经 root；产品级 capability broker 尚未实现 | `ROOT-001`; generic `su -c` remains forbidden |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
 | 交付治理 / Delivery governance | `DONE` through `PROGRESS-004`; Project UI blocked | PR 门禁、Issue 表单、10 标签及文本/JSON 只读摘要已完成；五列 Project 缺授权面 | Resume `PROGRESS-003` after Project authorization |
@@ -39,7 +39,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 唯一执行队列 / Ordered queue
 
-1. `OC-002` → `OC-008` — 接入受控 OpenCode 能力，不把原始 shell 暴露给模型。
+1. `OC-003` → `OC-008` — 接入受控 OpenCode 能力，不把原始 shell 暴露给模型。
 2. `ROOT-001` → `ROOT-010` — 建立独立 root capability broker；普通 Android/OpenCode 令牌不能升级权限。
 3. `TOOL-003` real-adapter gate — 在具体适配器存在后验证真实进程 kill、断网与句柄归零；合成故障不能关闭该门禁。
 4. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `OC-002`：新增封闭的私有 `opencode-task.v1` 提案，只能由既有当前用户复杂任务生成，固定 pending、dry-run、需确认、`opencode_gateway` 与 `not_started`；仅允许项目总结、测试诊断、受控文件整理三类。3 个合法类型、10 条指令形攻击、6 条来源/类型/身份拒绝、2 合法/3 拒绝 fixture 及静态门禁均零模型/动作/执行；没有 shell、工作区、网络、root、凭据或 UI 路径。它不是 runner，`OC-003` 先做工作区边界。
 - `TOOL-003`：目录上限内超时写入调用摘要，成功授权只产生一个私有、一次性执行许可；协调器最多提交一个注入式适配器，统一返回私有有界结果。25 组 Java 精确通过 5 成功、5 到期、5 取消、5 类型化失败与 5 拒绝/重放，9 个运行 worker 明确认收中断；3 个合法/2 个拒绝结果 fixture 及无 UI/平台接线门禁通过。全部适配器仍是 test double，模拟断网/进程退出不能冒充真实 kill 或资源关闭，因此准确保持 `VERIFY`。
 - `TOOL-002`：一次成功确认的私有 receipt 只能换取一个纯内存、一次性、默认 `SecureRandom` 128-bit、1–30 秒 capability；它绑定 confirmation/task/request/plan/call/工具/版本/风险/受众/参数/幂等/时间/超时/隐私摘要。50 组 Java 与 7 个公开 fixture 文件拒绝 10 个非 loopback/跨 UID、确认复用/错范围、7 种调用漂移、3 种目录漂移、5 种非法/未来/陈旧/私有元数据调用、精确到期/时钟回退、重放/撤销及跨网关；活动/重放状态有界，模型/动作/执行调用均为 0。授权核心仍无监听器/UI；`TOOL-003` 只在测试中消费私有执行许可。
 - `TOOL-001`：不可变五工具 v1 Android 目录为每项固定版本、风险、真实输入/输出 Schema、回滚声明、受众和 100–60000 ms 超时；六个封闭 Schema 禁止额外字段，观察明确不含正文/无障碍树/截图/原始媒体，所有输出均不可写入公开日志。Java 测试与五个公开 fixture 拒绝重名、未知版本、缺失 Schema、无法解析回滚、未知工具及风险错配；静态门禁确认零模型/平台/执行/持久化路径且无新增 UI 接线。目录不授予权限，授权核心已由 `TOOL-002` 补齐。

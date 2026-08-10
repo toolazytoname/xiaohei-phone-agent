@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task_id": "job-opencode-public-0002",
+  "request_id": "request-opencode-public-0002",
+  "plan_id": "plan-opencode-public-0002",
+  "kind": "test_diagnosis",
+  "source": "typed_user",
+  "instruction": "Diagnose a failing test without running it yet.",
+  "dry_run": true,
+  "requires_confirmation": true,
+  "confirmation_state": "pending",
+  "execution_state": "not_started",
+  "audience": "opencode_gateway",
+  "redaction": {"public_log_safe": false, "sensitive_fields": ["instruction"]}
+}

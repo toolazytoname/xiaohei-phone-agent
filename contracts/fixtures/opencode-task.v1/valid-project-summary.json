@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task_id": "job-opencode-public-0001",
+  "request_id": "request-opencode-public-0001",
+  "plan_id": "plan-opencode-public-0001",
+  "kind": "project_summary",
+  "source": "typed_user",
+  "instruction": "Summarize the project structure.",
+  "dry_run": true,
+  "requires_confirmation": true,
+  "confirmation_state": "pending",
+  "execution_state": "not_started",
+  "audience": "opencode_gateway",
+  "redaction": {"public_log_safe": false, "sensitive_fields": ["instruction"]}
+}
