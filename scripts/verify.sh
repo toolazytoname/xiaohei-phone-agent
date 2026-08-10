@@ -86,6 +86,8 @@ required_files=(
   docs/sensitive-action-denial.zh-CN.md
   docs/root-broker-core.md
   docs/root-broker-core.zh-CN.md
+  docs/root-audit-revocation.md
+  docs/root-audit-revocation.zh-CN.md
   docs/root-read-only-diagnostics.md
   docs/root-read-only-diagnostics.zh-CN.md
   docs/root-service-lifecycle.md
@@ -126,6 +128,7 @@ required_files=(
   contracts/opencode-run-budget.v1.schema.json
   contracts/root-capability-catalog.v1.json
   contracts/root-request.v1.schema.json
+  contracts/root-audit.v1.schema.json
   contracts/root-diagnostics.v1.schema.json
   contracts/root-service-lifecycle.v1.schema.json
   manifests/product.yaml
@@ -181,6 +184,7 @@ python3 scripts/verify-root-capability-catalog.py
 python3 scripts/verify-authorization-tier-policy.py
 python3 scripts/verify-sensitive-action-denial.py
 python3 scripts/verify-root-broker.py
+python3 scripts/verify-root-audit-revocation.py
 python3 scripts/verify-root-read-only-diagnostics.py
 python3 scripts/verify-root-service-lifecycle.py
 python3 scripts/verify-root-destructive-denial.py
