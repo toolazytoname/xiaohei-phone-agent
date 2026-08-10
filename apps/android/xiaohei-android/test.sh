@@ -35,7 +35,11 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/gi
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.FailureFingerprintTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/ToolCatalog.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/ToolCatalogTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.ToolCatalogTest
-javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/ToolCatalog.java" "$project_dir/src/io/github/toolazytoname/xiaohei/ToolGateway.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/ToolGatewayTest.java"
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/FreshConfirmationGate.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ToolCatalog.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ToolGateway.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/ToolGatewayTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.ToolGatewayTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/ToolCatalog.java" "$project_dir/src/io/github/toolazytoname/xiaohei/TaskPlanValidator.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/TaskPlanValidatorTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.TaskPlanValidatorTest

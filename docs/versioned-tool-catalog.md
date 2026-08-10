@@ -24,7 +24,7 @@ The catalog rejects duplicate name/version identities, any version other than v1
 
 ## Authority boundary
 
-The rules-first planner may use catalog risk metadata to reject unknown or mismatched steps. It still produces only a dry-run proposal. This task adds no activity/service wiring and no capability token. `TOOL-002` must separately establish a loopback-only gateway and one-use, short-lived, task-bound authorization before any catalog entry can reach an adapter.
+The rules-first planner may use catalog risk metadata to reject unknown or mismatched steps. It still produces only a dry-run proposal. `TOOL-002` now supplies the separate loopback/same-UID, one-use, short-lived authorization core, but it remains unwired and executes no adapter; catalog lookup itself still grants nothing.
 
 OpenCode and root tools are intentionally absent. They require independent audiences and policy tiers rather than inheriting Android authority by name. Adding a tool requires a new reviewed descriptor, concrete input/output schemas, public synthetic positive and rejection fixtures, semantic validation, and a version change for incompatible behavior.
 

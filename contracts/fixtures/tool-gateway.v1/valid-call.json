@@ -1,1 +1,15 @@
-{"schema_version":1,"task_id":"task-0001","call_id":"call-0001","tool":"android.observe","tool_version":1,"risk":"observe","arguments":{},"idempotency_key":"idempotency-key-0001","requested_at":"2026-08-10T00:00:00Z"}
+{
+  "schema_version": 1,
+  "task_id": "task-gateway-public-0001",
+  "request_id": "request-gateway-public-0001",
+  "plan_id": "plan-gateway-public-0001",
+  "call_id": "call-gateway-public-0001",
+  "tool": "android.observe",
+  "tool_version": 1,
+  "risk": "observe",
+  "audience": "android_gateway",
+  "arguments": {},
+  "idempotency_key": "idempotency-gateway-public-0001",
+  "requested_at_elapsed_ms": 99000,
+  "public_log_safe": false
+}

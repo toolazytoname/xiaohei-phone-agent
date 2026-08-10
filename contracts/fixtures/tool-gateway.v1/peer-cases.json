@@ -1,0 +1,10 @@
+{
+  "cases": [
+    {"local_address":"127.0.0.1","remote_address":"127.9.8.7","owner_uid":10234,"peer_uid":10234,"allow":true},
+    {"local_address":"[::1]","remote_address":"0:0:0:0:0:0:0:1","owner_uid":10234,"peer_uid":10234,"allow":true},
+    {"local_address":"127.0.0.1","remote_address":"192.168.1.2","owner_uid":10234,"peer_uid":10234,"allow":false},
+    {"local_address":"0.0.0.0","remote_address":"127.0.0.1","owner_uid":10234,"peer_uid":10234,"allow":false},
+    {"local_address":"localhost","remote_address":"127.0.0.1","owner_uid":10234,"peer_uid":10234,"allow":false},
+    {"local_address":"::1","remote_address":"::1","owner_uid":10234,"peer_uid":10235,"allow":false}
+  ]
+}

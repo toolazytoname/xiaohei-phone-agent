@@ -60,6 +60,8 @@ required_files=(
   docs/fresh-confirmation.zh-CN.md
   docs/versioned-tool-catalog.md
   docs/versioned-tool-catalog.zh-CN.md
+  docs/loopback-tool-gateway.md
+  docs/loopback-tool-gateway.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -125,6 +127,7 @@ python3 scripts/verify-unconfirmed-action-request.py
 python3 scripts/verify-task-plan-boundary.py
 python3 scripts/verify-fresh-confirmation-boundary.py
 python3 scripts/verify-tool-catalog-boundary.py
+python3 scripts/verify-loopback-tool-gateway-boundary.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

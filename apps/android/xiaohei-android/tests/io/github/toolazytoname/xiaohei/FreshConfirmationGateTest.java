@@ -168,6 +168,21 @@ public final class FreshConfirmationGateTest {
                 for (java.lang.reflect.Field field : nested.getDeclaredFields())
                     check(Modifier.isFinal(field.getModifiers()), "grant field not final");
             }
+            if (nested.getSimpleName().equals("CapabilityReceipt")) {
+                for (java.lang.reflect.Field field : nested.getDeclaredFields()) {
+                    String name = field.getName().toLowerCase();
+                    check(Modifier.isFinal(field.getModifiers()), "receipt field not final");
+                    check(!name.contains("target") && !name.contains("content")
+                            && !name.contains("digest"), "receipt leaks confirmed text");
+                }
+            }
+        }
+        try {
+            java.lang.reflect.Field receipt = FreshConfirmationGate.Result.class
+                    .getDeclaredField("capabilityReceipt");
+            check(Modifier.isPrivate(receipt.getModifiers()), "receipt handle visible");
+        } catch (NoSuchFieldException missing) {
+            throw new AssertionError("receipt handle missing", missing);
         }
     }
 
