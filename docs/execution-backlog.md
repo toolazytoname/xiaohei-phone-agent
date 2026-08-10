@@ -139,7 +139,7 @@ ROLLBACK / REMAINS / NEXT
 | ROOT-001 | DONE | BASE-006 | Bilingual root threat model, closed allow/deny catalog, and explicit human-device-owner recovery responsibility; catalog grants no capability and generic `su -c` remains denied |
 | ROOT-002 | DONE | ROOT-001,POLICY-003 | In-memory fixed-action root broker core binds exact signer, three read-only action IDs, empty parameter schema and one-use request IDs; no root adapter or device execution exists |
 | ROOT-003 | DONE | ROOT-002 | Bounded redacted read-only service/port/battery/audio/package/profile diagnostics; fixed category/state/label projection only, with no adapter or device execution |
-| ROOT-004 | BACKLOG | ROOT-002 | Service lifecycle with package/PID/port verification and no wrong-process kill |
+| ROOT-004 | DONE | ROOT-002 | Service-stop dry-run preflight with exact package/process/PID/port verification, fresh confirmation, and no process signal or device execution |
 | ROOT-005 | BACKLOG | ROOT-002 | Fixed encrypted backup/restore; no plaintext residue |
 | ROOT-006 | BACKLOG | ROOT-002 | Transactional device-profile install/uninstall with reboot checks |
 | ROOT-007 | BACKLOG | ROOT-002 | Dry-run, diff preview, and fresh confirmation for system changes |
