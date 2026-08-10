@@ -33,12 +33,14 @@ public final class ConversationActivity extends Activity {
     private Button clear;
     private Button continueChat;
     private Button end;
+    private Button stopSpeech;
     private PendingConversationCall pending;
     private long generation;
     private boolean destroyed;
     private boolean receiverRegistered;
     private final StringBuilder visibleTranscript = new StringBuilder();
     private String lastAssistantReply;
+    private SystemTtsAdapter systemTts;
     private final ConversationSessionCoordinator coordinator = new ConversationSessionCoordinator();
     private final ConversationControlPolicy.State controls = new ConversationControlPolicy.State();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -62,6 +64,7 @@ public final class ConversationActivity extends Activity {
         super.onCreate(savedState);
         setTitle("小黑对话 / Xiaohei conversation");
         setContentView(build());
+        initializeSystemTtsIfEnabled();
     }
 
     private View build() {
@@ -119,6 +122,13 @@ public final class ConversationActivity extends Activity {
         repeat.setEnabled(false);
         repeat.setOnClickListener(view -> applyControl(ConversationControlPolicy.Action.REPEAT));
         root.addView(repeat);
+
+        stopSpeech = new Button(this);
+        stopSpeech.setText("停止播报（保留聊天） / Stop speech (keep chat)");
+        stopSpeech.setContentDescription("conversation-stop-speech");
+        stopSpeech.setEnabled(false);
+        stopSpeech.setOnClickListener(view -> interruptSpeech("用户已停止播报 / User stopped speech"));
+        root.addView(stopSpeech);
 
         clear = new Button(this);
         clear.setText("清空内存上下文");
@@ -272,6 +282,7 @@ public final class ConversationActivity extends Activity {
             input.setText("");
             if (localFallback) showLocalFallbackStatus(now);
             else showReadyStatus(now);
+            speakReply(reply);
             setRunning(false);
         } else if (completion == ConversationSessionCoordinator.Code.TURN_LIMIT_CLEARED) {
             controls.markRequestFinished(true);
@@ -322,6 +333,7 @@ public final class ConversationActivity extends Activity {
         }
         switch (action) {
             case STOP:
+                interruptSpeech("聊天已停止，播报已中断 / Chat stopped; speech interrupted");
                 state.setText(outcome.changed
                         ? "状态：已停止并暂停；零模型调用 / Status: stopped and paused; zero model calls"
                         : "状态：已经是暂停状态 / Status: already paused");
@@ -331,6 +343,7 @@ public final class ConversationActivity extends Activity {
                 if (outcome.repeatLastReply) {
                     state.setText("状态：本地重说上一条；零模型调用 / Status: local repeat; zero model calls");
                     output.setText("重说上一条回复（本地）\n" + lastAssistantReply);
+                    speakReply(lastAssistantReply);
                 } else {
                     state.setText("状态：没有可重说的回复 / Status: nothing to repeat");
                 }
@@ -377,6 +390,7 @@ public final class ConversationActivity extends Activity {
     }
 
     private void clearVisible(String message) {
+        interruptSpeech("聊天已清空，播报已中断 / Chat cleared; speech interrupted");
         controls.apply(ConversationControlPolicy.Action.CLEAR);
         visibleTranscript.setLength(0);
         lastAssistantReply = null;
@@ -400,6 +414,33 @@ public final class ConversationActivity extends Activity {
         if (clear != null) clear.setEnabled(true);
         if (continueChat != null) continueChat.setEnabled(!running && !controls.canSend());
         if (end != null) end.setEnabled(true);
+        if (stopSpeech != null) stopSpeech.setEnabled(systemTts != null
+                && systemTts.state() == TtsLifecycle.State.SPEAKING);
+    }
+
+    private void initializeSystemTtsIfEnabled() {
+        android.content.SharedPreferences prefs =
+                getSharedPreferences("model_channels", Context.MODE_PRIVATE);
+        if (TtsChannelConfig.Provider.fromId(prefs.getString(TtsChannelConfig.PROVIDER, "off"))
+                != TtsChannelConfig.Provider.SYSTEM) return;
+        systemTts = new SystemTtsAdapter(this);
+        systemTts.initialize((ttsState, detail) -> runOnUiThread(() -> {
+            if (destroyed || state == null) return;
+            state.setText("状态：" + detail + " / TTS: " + ttsState.name());
+            setRunning(controls.requestInFlight());
+        }));
+    }
+
+    private void speakReply(String reply) {
+        if (systemTts == null || reply == null || reply.trim().isEmpty()) return;
+        systemTts.speak(reply);
+        setRunning(controls.requestInFlight());
+    }
+
+    private void interruptSpeech(String detail) {
+        if (systemTts == null) return;
+        systemTts.interrupt(detail);
+        setRunning(controls.requestInFlight());
     }
 
     private String currentProfileFingerprint() {
@@ -462,6 +503,10 @@ public final class ConversationActivity extends Activity {
         visibleTranscript.setLength(0);
         lastAssistantReply = null;
         cancelTimeout();
+        if (systemTts != null) {
+            systemTts.destroy();
+            systemTts = null;
+        }
         super.onDestroy();
     }
 }
