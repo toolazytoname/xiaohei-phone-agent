@@ -129,3 +129,4 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 4. 不把进程存在、HTTP 200、单张截图、一次模型回答或一次语音命中当作端到端完成。
 5. 相同失败指纹不连续重试；记录恢复条件，只有设备、配置、代码或外部状态改变后再试一次。
 6. GitHub 上建议使用 Project 表格，字段固定为 `Task ID`、`State`、`Owner`、`Dependency`、`Evidence`、`Gate`、`Next`；本页仍是仓库内可离线读取的权威摘要。
+- `UX-004`：Phone Agent 确认前固定展示 App、目标、内容、权限和停止/回滚；取消是默认安全路径，预览不申请权限、不签发能力、不调用模型/工具/root 或执行器。
