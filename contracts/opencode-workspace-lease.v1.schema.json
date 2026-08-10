@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/opencode-workspace-lease.v1.schema.json",
+  "title": "Xiaohei OpenCode Workspace Lease v1",
+  "description": "Inspectable metadata for a task-private OpenCode workspace lease. It intentionally exposes no filesystem path and grants no process or file authority.",
+  "type": "object",
+  "required": ["schema_version", "task_id", "allowed_areas", "persistence", "path_exposure", "public_log_safe"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "task_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "allowed_areas": {"const": ["input", "output"]},
+    "persistence": {"const": "private_app_storage"},
+    "path_exposure": {"const": "none"},
+    "public_log_safe": {"const": false}
+  },
+  "additionalProperties": false
+}

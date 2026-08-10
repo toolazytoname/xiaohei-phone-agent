@@ -130,8 +130,8 @@ NEXT: 唯一下一任务 ID
 |---|---|---|---|---|
 | OC-001 | DONE | — | 手机 OpenCode TUI/Web、独立模型 profile 与真实中转调用 | Android AI Stack 验收记录 |
 | OC-002 | DONE | TOOL-002 | 封闭的私有 pending dry-run 协议只接受来自既有当前用户复杂任务的三类审核任务 | Java/fixture/静态门禁拒绝伪造来源、live 状态、未知权限形字段和通用 shell/工作区/网络/root/凭据表面，零执行 |
-| OC-003 | READY | OC-002 | 每任务独立工作区、允许目录和清理策略 | 路径逃逸、符号链接和跨任务读取拒绝 |
-| OC-004 | BACKLOG | OC-003 | `oc run` 有界 runner：模型、agent、超时、token/步骤预算 | 卡死、退出、取消和输出上限测试 |
+| OC-003 | DONE | OC-002 | 在可信 App 私有根目录下为每任务分配 input/output 租约 | 真实临时文件系统矩阵拒绝绝对/穿越、符号链接、重复任务和跨任务路径，零内容/进程执行 |
+| OC-004 | READY | OC-003 | `oc run` 有界 runner：模型、agent、超时、token/步骤预算 | 卡死、退出、取消和输出上限测试 |
 | OC-005 | BACKLOG | OC-004 | 流式进度映射到小黑任务卡 | 不把 Prompt、Token 或完整终端日志展示给用户 |
 | OC-006 | BACKLOG | OC-004 | 用户停止同时终止 OpenCode 子进程和工具令牌 | 进程、端口、tmux、临时工作区无残留 |
 | OC-007 | BACKLOG | OC-004 | 允许工具集合；禁止任意 root、密钥目录和破坏性 Git | 对抗任务无法越过策略 |

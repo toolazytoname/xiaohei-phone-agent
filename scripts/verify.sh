@@ -66,6 +66,8 @@ required_files=(
   docs/tool-execution-lifecycle.zh-CN.md
   docs/opencode-task-protocol.md
   docs/opencode-task-protocol.zh-CN.md
+  docs/opencode-workspace-boundary.md
+  docs/opencode-workspace-boundary.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -96,6 +98,7 @@ required_files=(
   contracts/tool-result.v1.schema.json
   contracts/capability-token.v1.schema.json
   contracts/opencode-task.v1.schema.json
+  contracts/opencode-workspace-lease.v1.schema.json
   manifests/product.yaml
   manifests/github-progress.v1.json
 )
@@ -119,6 +122,7 @@ python3 scripts/verify-tool-catalog-contract.py
 python3 scripts/verify-tool-gateway-contract.py
 python3 scripts/verify-tool-execution-contract.py
 python3 scripts/verify-opencode-task-contract.py
+python3 scripts/verify-opencode-workspace-lease-contract.py
 python3 scripts/verify-github-templates.py
 python3 scripts/verify-github-progress-manifest.py
 python3 scripts/test-status-summary.py
@@ -137,6 +141,7 @@ python3 scripts/verify-tool-catalog-boundary.py
 python3 scripts/verify-loopback-tool-gateway-boundary.py
 python3 scripts/verify-tool-execution-boundary.py
 python3 scripts/verify-opencode-task-boundary.py
+python3 scripts/verify-opencode-workspace-boundary.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

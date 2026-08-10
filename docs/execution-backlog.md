@@ -123,8 +123,8 @@ ROLLBACK / REMAINS / NEXT
 |---|---|---|---|
 | OC-001 | DONE | — | Phone TUI/Web, independent profile, and real relay acceptance |
 | OC-002 | DONE | TOOL-002 | Closed private pending dry-run protocol accepts only three reviewed task kinds from an existing typed-user complex request; Java/fixture/static gates reject forged source, live state, unknown authority-shaped fields, and generic shell/workspace/network/root/credential surfaces with zero execution |
-| OC-003 | READY | OC-002 | Per-task workspace and allowed directories; reject traversal/symlink escape |
-| OC-004 | BACKLOG | OC-003 | Bounded `oc run`: model/agent/time/token/step/output limits |
+| OC-003 | DONE | OC-002 | Task-private input/output lease below a trusted app-private root; real temporary-filesystem matrix rejects absolute/traversal, symbolic-link, duplicate-task, and cross-task paths with zero content/process execution |
+| OC-004 | READY | OC-003 | Bounded `oc run`: model/agent/time/token/step/output limits |
 | OC-005 | BACKLOG | OC-004 | Redacted streaming progress mapped to the visible task card |
 | OC-006 | BACKLOG | OC-004 | Stop kills subprocess, tokens, listeners, tmux, and temp workspace |
 | OC-007 | BACKLOG | OC-004 | Restricted tools; deny root, key directories, and destructive Git |

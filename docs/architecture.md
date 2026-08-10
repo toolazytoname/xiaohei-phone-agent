@@ -47,6 +47,7 @@ Shows `OFF / ARMING / ARMED / LISTENING / THINKING / CONFIRMING / ACTING / ERROR
 - `tool-call.v1.schema.json` and `capability-token.v1.schema.json`: bind one call, including its catalog-capped timeout, to task/request/plan/call/catalog scope and a 1–30 second in-memory capability. Numeric-loopback/same-UID authorization is documented in the [gateway boundary](loopback-tool-gateway.md).
 - `tool-result.v1.schema.json`: represents one private, structured zero-or-one-adapter outcome with monotonic timing and bounded output. The pure coordinator, typed cancellation/errors, and explicit test-only adapter boundary are documented in the [execution lifecycle](tool-execution-lifecycle.md).
 - `opencode-task.v1.schema.json`: carries one typed-user, pending, dry-run proposal for one of three reviewed OpenCode task kinds. It has no generic shell, workspace, network, root, credential, or execution authority; see the [OpenCode task protocol](opencode-task-protocol.md).
+- `opencode-workspace-lease.v1.schema.json`: describes only a task-private `input`/`output` lease without serializing a filesystem path. The local path resolver rejects traversal, symbolic links, and cross-task references; see the [workspace boundary](opencode-workspace-boundary.md).
 
 Runtime payloads may contain private user data in memory, but fixtures and public acceptance reports must be redacted before storage or publication.
 
