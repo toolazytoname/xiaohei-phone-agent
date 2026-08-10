@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "task_id": "job-opencode-public-0003",
+  "request_id": "request-opencode-public-0003",
+  "plan_id": "plan-opencode-public-0003",
+  "kind": "controlled_file_organization",
+  "source": "typed_user",
+  "instruction": "Organize selected project reports.",
+  "dry_run": true,
+  "requires_confirmation": true,
+  "confirmation_state": "pending",
+  "execution_state": "not_started",
+  "audience": "opencode_gateway",
+  "redaction": {"public_log_safe": false, "sensitive_fields": ["instruction"]},
+  "command": "arbitrary"
+}

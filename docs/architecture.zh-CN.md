@@ -46,6 +46,7 @@
 - `tool-catalog.v1.schema.json`：描述不可变的受审工具元数据、真实封闭输入/输出 Schema、回滚声明、受众和超时。目录成员资格不等于执行权限，详见[版本化工具目录边界](versioned-tool-catalog.zh-CN.md)。
 - `tool-call.v1.schema.json` 与 `capability-token.v1.schema.json`：把一次调用（含目录上限内超时）绑定到 task/request/plan/call/目录范围和 1–30 秒内存 capability；数值 loopback/同 UID 授权见[网关边界](loopback-tool-gateway.zh-CN.md)。
 - `tool-result.v1.schema.json`：表示一次私有、结构化、零或一次适配器调用结果，包含单调时序与有界输出；纯协调器、类型化取消/错误和明确的仅测试适配器边界见[执行生命周期](tool-execution-lifecycle.zh-CN.md)。
+- `opencode-task.v1.schema.json`：承载一次当前用户、待确认、dry-run 的三类审核 OpenCode 任务提案；没有通用 shell、工作区、网络、root、凭据或执行权限，见[OpenCode 任务协议](opencode-task-protocol.zh-CN.md)。
 
 运行时 payload 可以在内存里含有用户私密信息，但 fixture 和公开验收报告在保存或发布前必须脱敏。
 

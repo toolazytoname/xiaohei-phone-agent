@@ -129,8 +129,8 @@ NEXT: 唯一下一任务 ID
 | ID | 状态 | 依赖 | 交付物 | 完成证据 |
 |---|---|---|---|---|
 | OC-001 | DONE | — | 手机 OpenCode TUI/Web、独立模型 profile 与真实中转调用 | Android AI Stack 验收记录 |
-| OC-002 | READY | TOOL-002 | 小黑到 OpenCode 的任务协议，不暴露通用 shell | 协议 fixture 与未知字段拒绝 |
-| OC-003 | BACKLOG | OC-002 | 每任务独立工作区、允许目录和清理策略 | 路径逃逸、符号链接和跨任务读取拒绝 |
+| OC-002 | DONE | TOOL-002 | 封闭的私有 pending dry-run 协议只接受来自既有当前用户复杂任务的三类审核任务 | Java/fixture/静态门禁拒绝伪造来源、live 状态、未知权限形字段和通用 shell/工作区/网络/root/凭据表面，零执行 |
+| OC-003 | READY | OC-002 | 每任务独立工作区、允许目录和清理策略 | 路径逃逸、符号链接和跨任务读取拒绝 |
 | OC-004 | BACKLOG | OC-003 | `oc run` 有界 runner：模型、agent、超时、token/步骤预算 | 卡死、退出、取消和输出上限测试 |
 | OC-005 | BACKLOG | OC-004 | 流式进度映射到小黑任务卡 | 不把 Prompt、Token 或完整终端日志展示给用户 |
 | OC-006 | BACKLOG | OC-004 | 用户停止同时终止 OpenCode 子进程和工具令牌 | 进程、端口、tmux、临时工作区无残留 |

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/opencode-task.v1.schema.json",
+  "title": "Xiaohei OpenCode Task Proposal v1",
+  "description": "A private pending dry-run proposal for a reviewed OpenCode task kind. It carries no shell, workspace, network, root, credential, or execution authority.",
+  "type": "object",
+  "required": [
+    "schema_version", "task_id", "request_id", "plan_id", "kind", "source",
+    "instruction", "dry_run", "requires_confirmation", "confirmation_state",
+    "execution_state", "audience", "redaction"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "task_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "request_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "plan_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"},
+    "kind": {"enum": ["project_summary", "test_diagnosis", "controlled_file_organization"]},
+    "source": {"const": "typed_user"},
+    "instruction": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "dry_run": {"const": true},
+    "requires_confirmation": {"const": true},
+    "confirmation_state": {"const": "pending"},
+    "execution_state": {"const": "not_started"},
+    "audience": {"const": "opencode_gateway"},
+    "redaction": {
+      "type": "object",
+      "required": ["public_log_safe", "sensitive_fields"],
+      "properties": {
+        "public_log_safe": {"const": false},
+        "sensitive_fields": {"const": ["instruction"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

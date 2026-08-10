@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "task_id": "job-opencode-public-0005",
+  "request_id": "request-opencode-public-0005",
+  "plan_id": "plan-opencode-public-0005",
+  "kind": "test_diagnosis",
+  "source": "typed_user",
+  "instruction": "Diagnose selected tests.",
+  "dry_run": false,
+  "requires_confirmation": false,
+  "confirmation_state": "confirmed",
+  "execution_state": "running",
+  "audience": "opencode_gateway",
+  "redaction": {"public_log_safe": false, "sensitive_fields": ["instruction"]}
+}
