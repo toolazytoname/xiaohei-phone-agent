@@ -12,5 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Verify public repository boundary
         run: ./scripts/verify.sh
+      - name: Verify pull request delivery metadata
+        if: github.event_name == 'pull_request'
+        env:
+          XIAOHEI_BASE_REF: ${{ github.event.pull_request.base.sha }}
+          XIAOHEI_HEAD_REF: ${{ github.event.pull_request.head.sha }}
+          XIAOHEI_PR_TITLE: ${{ github.event.pull_request.title }}
+          XIAOHEI_PR_BODY: ${{ github.event.pull_request.body }}
+        run: ./scripts/verify-pr-delivery-metadata.sh
