@@ -52,6 +52,8 @@ required_files=(
   docs/intent-routing-three-way.zh-CN.md
   docs/intent-routing-clarification.md
   docs/intent-routing-clarification.zh-CN.md
+  docs/unconfirmed-action-request.md
+  docs/unconfirmed-action-request.zh-CN.md
   docs/github-progress-board.md
   docs/github-progress-board.zh-CN.md
   docs/threat-model.md
@@ -88,6 +90,7 @@ for schema in contracts/*.json; do
 done
 
 python3 scripts/verify-conversation-session-contract.py
+python3 scripts/verify-action-request-contract.py
 python3 scripts/verify-tool-gateway-contract.py
 python3 scripts/verify-github-templates.py
 python3 scripts/verify-github-progress-manifest.py
@@ -100,6 +103,7 @@ python3 scripts/verify-offline-faq-boundary.py
 python3 scripts/verify-conversation-acceptance-boundary.py
 python3 scripts/verify-intent-route-classifier.py
 python3 scripts/verify-route-clarification-policy.py
+python3 scripts/verify-unconfirmed-action-request.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

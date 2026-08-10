@@ -29,4 +29,4 @@
 
 合成、非私人矩阵包含 50 条文本：10 条目标歧义、10 条动作意图歧义、10 条范围缺失和 20 条明确对照。30 条歧义全部追问、携带未知命令且零副作用；20 条明确输入保持可路由。静态门禁拒绝 Android API、动作分发、模型客户端、工具网关、shell 和网络。
 
-`RouteClarificationPolicy` 目前有意不被 `MainActivity` 引用。`ROUTE-004` 必须先生成版本化、未确认的 `ActionRequest`；之后的接入任务才能在不把模型文字变成权限的前提下，把澄清与路由接到可见用户流程。
+`RouteClarificationPolicy` 目前有意不被 `MainActivity` 引用。`ROUTE-004` 已提供版本化、未确认的 `ActionRequest`；后续接入仍必须等待有边界规划、策略与新鲜确认，才能在不把模型文字变成权限的前提下连接可见动作流程。

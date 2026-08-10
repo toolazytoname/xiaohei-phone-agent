@@ -90,8 +90,8 @@ ROLLBACK / REMAINS / NEXT
 | ROUTE-001 | DONE | — | Local deterministic `CommandRouter` with ambiguity tests |
 | ROUTE-002 | DONE | CHAT-004 | Inert three-way classifier; exact 100-case matrix passes 40 deterministic commands, 35 chats, and 25 complex tasks with zero model/action calls; conceptual keyword and ambiguous-action regressions remain non-actions |
 | ROUTE-003 | DONE | ROUTE-002 | Pure local clarification passes an exact 50-case matrix: 10 target, 10 intent, 10 scope asks and 20 clear controls; every ask carries chat/unknown with zero guessed actions, model calls, or action calls and remains unwired |
-| ROUTE-004 | READY | BASE-006,ROUTE-002 | “Help me do” becomes an unconfirmed `ActionRequest`, never direct execution |
-| PLAN-001 | BACKLOG | BASE-006 | Rules-first planner and versioned plan schema |
+| ROUTE-004 | DONE | BASE-006,ROUTE-002 | Typed user complex tasks become immutable schema-v1 high-risk pending dry-run requests; 39-case matrix rejects assistant confirmation forgeries, chats/commands, ambiguities, and invalid metadata with zero model/action calls; remains unwired |
+| PLAN-001 | READY | BASE-006 | Rules-first planner and versioned plan schema |
 | PLAN-002 | BACKLOG | PLAN-001 | Remote planner receives minimum snapshot only |
 | PLAN-003 | BACKLOG | PLAN-001 | Re-observe after every step; app-switch race causes zero out-of-scope actions |
 | PLAN-004 | BACKLOG | PLAN-003 | One evidence-changing recovery, no unchanged retry loop |

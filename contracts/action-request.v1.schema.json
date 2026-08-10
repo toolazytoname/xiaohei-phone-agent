@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/toolazytoname/xiaohei-phone-agent/contracts/action-request.v1.schema.json",
   "title": "Xiaohei Action Request v1",
+  "description": "A locally constructed action lifecycle record. New complex-task proposals enter as confirmation_state=pending and dry_run=true; this schema does not grant execution authority.",
   "type": "object",
   "required": [
     "schema_version",
@@ -21,8 +22,7 @@
     },
     "request_id": {
       "type": "string",
-      "minLength": 8,
-      "maxLength": 128
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$"
     },
     "target": {
       "enum": ["android_app", "android_notification", "android_accessibility", "local_service"]
@@ -87,6 +87,60 @@
         "properties": {
           "requires_confirmation": {
             "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "confirmation_state": {
+            "const": "pending"
+          }
+        },
+        "required": ["confirmation_state"]
+      },
+      "then": {
+        "properties": {
+          "requires_confirmation": {
+            "const": true
+          },
+          "dry_run": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "confirmation_state": {
+            "const": "not_required"
+          }
+        },
+        "required": ["confirmation_state"]
+      },
+      "then": {
+        "properties": {
+          "requires_confirmation": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "requires_confirmation": {
+            "const": false
+          }
+        },
+        "required": ["requires_confirmation"]
+      },
+      "then": {
+        "properties": {
+          "confirmation_state": {
+            "const": "not_required"
           }
         }
       }
