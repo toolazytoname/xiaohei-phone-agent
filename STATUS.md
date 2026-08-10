@@ -141,3 +141,4 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `UX-005` 接线：主页“全部停止”和已有状态通知 `global_stop` Intent 已通过该注册表停止主页持有的语音、DSP 与 CPU 唤醒；Phone Agent、Conversation、OpenCode、工具、root、语音/微件入口仍独立，未宣称全设备归零。
 - `VOICE-005`：新增来电/闹钟/媒体/Activity 的统一信号中断策略，固定停止输入/输出、释放所有权且不自动恢复；主页暂停已通过它停止 ASR。尚未将真实来源和 TTS 全部接线，保持 VERIFY。
 - `TOOL-012`：工具结果证据门要求适配器成功后出现更新且预期包名匹配的观察；旧快照、抢切包名、适配器失败和重复验证都拒绝。尚未接真实适配器/观察器，保持 VERIFY。
+- `OC-009`：新增本地/Web 接管所有权状态机，只在已验证 Web 会话间转移控制权；接管/归还不启动、恢复或复制任务，重复、错误和终态请求均拒绝。尚未接真实 Web，保持 VERIFY。
