@@ -142,7 +142,7 @@ ROLLBACK / REMAINS / NEXT
 | ROOT-004 | DONE | ROOT-002 | Service-stop dry-run preflight with exact package/process/PID/port verification, fresh confirmation, and no process signal or device execution |
 | ROOT-005 | DONE | ROOT-002 | Fixed-scope in-memory AES-256-GCM backup/restore envelope with fresh IV, wrong-key/tamper rejection, and no disk paths; real persistence/cleanup/offline recovery remains gated |
 | ROOT-006 | DONE | ROOT-002 | Fixed-profile in-memory transaction ledger with precheck, snapshot digest, rollback-drift rejection and post-reboot verification state; no installer/device execution exists |
-| ROOT-007 | BACKLOG | ROOT-002 | Dry-run, diff preview, and fresh confirmation for system changes |
+| ROOT-007 | DONE | ROOT-002 | Fixed profile dry-run/diff preview requires distinct exact digests, fresh confirmation and no expiry; result is fixed and no system apply exists |
 | ROOT-008 | DONE | ROOT-003 | In-memory redacted root decision audit and permanent broker-instance revocation; no tokens persist and post-revocation requests remain denied; global-stop wiring remains pending |
 | ROOT-009 | DONE | ROOT-004 | Fail-closed destructive-command, broad/system-path, and credential/payment/evasion denial corpus; all unmatched root-shaped input stays denied and no command executes |
 | ROOT-010 | BACKLOG | ROOT-009 | Install/upgrade/rollback/uninstall on an independent test device first |

@@ -24,7 +24,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 | 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope; `TOOL-003` coordinator at `VERIFY` | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复；路由、计划、确认、目录、loopback/same-UID 授权及仅测试有界执行协调器通过 | Real adapter kill/network/device gate remains; proceed with `OC-004` independently |
 | 开放对话 / Open conversation | `VERIFY`; automated `CHAT-012` passed | 前述对话基础、确定性离线 FAQ、20/5/5/5 自动矩阵、五类请求前隐私拒绝及 AOSP 零录音残留已验证 | Human Mandarin playback/intelligibility/interruption remains; agent path proceeds with `OC-004` |
 | OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION`; `OC-002–008` done | 手机上的 OpenCode TUI/Web、独立模型 profile、三类型私有任务协议、任务私有路径隔离、有界 runner、脱敏进度卡、停止/清理、受限工具策略与九轮组合回归 | Real OpenCode adapter/device acceptance remains required |
-| 受控 root / Controlled root | `FOUNDATION`; `ROOT-001–006,008–009` done | root 治理、固定只读 action 目录、内存 signer/一次性 broker、脱敏诊断投影、服务停止 dry-run 精确核验、加密备份信封、profile 事务账本、脱敏审计/撤销与破坏性请求拒绝库已完成；真实 root adapter 尚未实现 | `ROOT-007`; system-change preview before any mutable root action |
+| 受控 root / Controlled root | `FOUNDATION`; `ROOT-001–009` done | root 治理、固定只读 action 目录、内存 signer/一次性 broker、脱敏诊断投影、服务停止 dry-run 精确核验、加密备份、profile 事务、系统修改预览、脱敏审计/撤销与破坏性请求拒绝库已完成；真实 root adapter 尚未实现 | `ROOT-010`; independent-device lifecycle gate |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
 | 交付治理 / Delivery governance | `DONE` through `PROGRESS-004`; Project UI blocked | PR 门禁、Issue 表单、10 标签及文本/JSON 只读摘要已完成；五列 Project 缺授权面 | Resume `PROGRESS-003` after Project authorization |
 
@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `ROOT-007`：系统修改只允许固定 profile 的 dry-run 预览，前后摘要必须不同且精确匹配、新鲜确认且未过期；只返回固定差异摘要，apply/root/shell/文件/设备调用均为零。
 - `ROOT-005`：固定范围内存 AES-256-GCM 备份信封使用新 IV、32 字节密钥和 16 KiB 上限；错误密钥和篡改都拒绝，代码没有磁盘路径。真实加密持久化、清理和独立离线恢复尚未验证。
 - `ROOT-008`：root broker 的每个决定只留下序号、固定 action、固定决定；`revokeAll()` 后该实例永久关闭，后续请求为 `deny_revoked`。审计不含 request ID、签名、参数、路径、命令、Token、时间或内容，且没有全局停止/真实设备接线。
 - `ROOT-009`：破坏命令、宽泛/系统/穿越/通配路径与凭据、支付或规避材料均由本地 fail-closed 语料库拒绝；其余 root 形态输入同样未知拒绝，且不存在命令执行路径。
