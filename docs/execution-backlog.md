@@ -170,7 +170,7 @@ ROLLBACK / REMAINS / NEXT
 | REL-004 | BACKLOG | CHAT-012,TOOL-011 | 100 mixed chat/command/task stress; no crash, duplicate action, or recorder residue |
 | REL-005 | BACKLOG | OC-008,ROOT-010 | Weak network/offline/process-kill/reboot/model-timeout recovery |
 | REL-006 | BACKLOG | UX-005 | 8–24h service-combination idle regression |
-| SEC-001 | BACKLOG | ROOT-001 | Threat model for chat injection, tool poisoning, and root |
+| SEC-001 | DONE | ROOT-001 | Bilingual threat model covers chat/notification injection, tool/schema poisoning, OpenCode traversal, root escalation and destructive/exfiltration paths; device-level acceptance remains explicit |
 | SEC-002 | BACKLOG | SEC-001 | Audio/text/image/notification/location/file data-flow and retention table |
 | SEC-003 | BACKLOG | TOOL-002 | Capability-token/TLS/redirect/loopback/replay tests |
 | SEC-004 | BACKLOG | OC-007,ROOT-009 | Adversarial injection/traversal/escalation/exfiltration suite |

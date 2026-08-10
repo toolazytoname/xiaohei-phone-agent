@@ -195,6 +195,7 @@ python3 scripts/verify-root-profile-transaction.py
 python3 scripts/verify-root-read-only-diagnostics.py
 python3 scripts/verify-root-service-lifecycle.py
 python3 scripts/verify-root-destructive-denial.py
+python3 scripts/verify-threat-model.py
 bash scripts/test-pr-delivery-metadata.sh
 
 python3 - scripts/*.py <<'PY'

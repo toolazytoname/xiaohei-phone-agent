@@ -17,6 +17,16 @@ Xiaohei protects microphone audio, notification content, contacts and message ta
 
 Payment, banking, credential, password, and OTP surfaces are denied. Sending, deletion, installation, uninstallation, permission grants, calls, and security changes require a fresh, target-bound confirmation class and are not silently delegated. Private app protocols, security bypass, hidden UI automation, and background message sending are out of scope.
 
+## Injection, tool poisoning, and root escalation
+
+| Attack path | Local boundary | Evidence still required |
+|---|---|---|
+| Chat/notification prompt injection | Conversation text has no action authority; typed task protocol and clarification remain inert | Real-device multilingual adversarial corpus |
+| Tool/schema poisoning | Closed catalog, versioned schemas, same-tier gateway, one-use confirmation and bounded runner reject unknown/drifted calls | Real adapter interoperability and replay exercise |
+| OpenCode workspace traversal | Per-task lease rejects traversal, symlinks and cross-task paths; restricted intent policy denies shell/network/root | Real OpenCode adapter acceptance without user-project exposure |
+| Root escalation | Android/OpenCode/root tiers are isolated; fixed root broker accepts only three read-only actions and denies free-form shell/path | Independent-device signing, confirmation and root-adapter review |
+| Destructive/exfiltration request | Permanent sensitive and root destructive denial corpora fail closed; revocation closes broker instance | Device-level global-stop and audit retention exercise |
+
 ## Residual risks
 
 Accessibility semantics and app UI versions can change; local or remote ASR can misrecognize speech; notification text can be adversarial; rooted device profiles enlarge the trusted computing base; CPU KWS consumes more energy; and a compromised signing key defeats the Companion boundary. Public release therefore also requires real-device surface, long-idle, upgrade/rollback, dependency, signing-governance, and model-license evidence.
