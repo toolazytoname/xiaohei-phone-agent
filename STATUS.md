@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `SEC-001`：威胁模型现覆盖聊天/通知注入、工具/Schema 投毒、OpenCode 工作区穿越、root 提权以及破坏/外传请求；所有真实 adapter、独立设备和设备级停止验收仍是明确门禁。
 - `ROOT-007`：系统修改只允许固定 profile 的 dry-run 预览，前后摘要必须不同且精确匹配、新鲜确认且未过期；只返回固定差异摘要，apply/root/shell/文件/设备调用均为零。
 - `ROOT-005`：固定范围内存 AES-256-GCM 备份信封使用新 IV、32 字节密钥和 16 KiB 上限；错误密钥和篡改都拒绝，代码没有磁盘路径。真实加密持久化、清理和独立离线恢复尚未验证。
 - `ROOT-008`：root broker 的每个决定只留下序号、固定 action、固定决定；`revokeAll()` 后该实例永久关闭，后续请求为 `deny_revoked`。审计不含 request ID、签名、参数、路径、命令、Token、时间或内容，且没有全局停止/真实设备接线。

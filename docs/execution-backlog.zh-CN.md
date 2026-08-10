@@ -177,7 +177,7 @@ NEXT: 唯一下一任务 ID
 | REL-004 | BACKLOG | CHAT-012,TOOL-011 | 100 次混合聊天/命令/任务压力 | 0 Fatal/ANR、0 重复动作、0 录音残留 |
 | REL-005 | BACKLOG | OC-008,ROOT-010 | 弱网、断网、进程杀死、重启和模型超时恢复 | 每种故障回到可解释可停止状态 |
 | REL-006 | BACKLOG | UX-005 | 8–24h 服务组合待机回归 | 精确服务状态、功耗、wakelock、端口证据 |
-| SEC-001 | BACKLOG | ROOT-001 | 更新威胁模型覆盖聊天 Prompt 注入、工具投毒和 root | 双语 STRIDE/滥用用例 |
+| SEC-001 | DONE | ROOT-001 | 双语威胁模型覆盖聊天/通知注入、工具/Schema 投毒、OpenCode 穿越、root 提权与破坏/外传路径；设备级验收仍明确保留 | 双语 STRIDE/滥用用例 |
 | SEC-002 | BACKLOG | SEC-001 | 隐私数据流：音频、文本、截图、通知、位置、文件 | 每类保留期、存储、上传和删除规则 |
 | SEC-003 | BACKLOG | TOOL-002 | 能力令牌、网络 TLS、重定向、loopback 与证书策略 | MITM/跨 UID/重放测试 |
 | SEC-004 | BACKLOG | OC-007,ROOT-009 | 对抗测试集：Prompt 注入、路径逃逸、越权、隐私外传 | 所有高危尝试 fail closed |
