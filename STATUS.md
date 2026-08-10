@@ -155,3 +155,4 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `UX-006`：Agent 脱敏轨迹存储改为默认关闭；页面可显式启用、删除最新一条、清空，或关闭并立即清空。真实工具结果历史接线与独立设备行为仍为 VERIFY。
 - `TOOL-009`：新增低风险媒体边界，只能相对调节媒体音量一档并观察输出路由；没有播放/暂停或强制切路由能力。真实媒体会话和设备路由矩阵仍为 VERIFY。
 - `TOOL-010`：无障碍服务现支持受限的精确选择、单次返回和滚动；通用批准标签与自动文本填入被 fail-closed 拒绝。逐请求文本确认、网关接线、App/版本矩阵和真机证据仍为 VERIFY。
+- `TOOL-011`：新增 15 个受审包名的版本化语义适配器注册表，给出精确选择/一次滚动/一次返回的封闭能力及类型化失败说明；不把契约 revision 冒充 App UI 验证，真机矩阵仍为 VERIFY。
