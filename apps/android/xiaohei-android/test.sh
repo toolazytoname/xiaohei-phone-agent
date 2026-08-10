@@ -77,6 +77,8 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/PlanStepObservationGuard.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/PlanStepObservationGuardTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.PlanStepObservationGuardTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/ToolOutcomeEvidenceGate.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/ToolOutcomeEvidenceGateTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.ToolOutcomeEvidenceGateTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/TtsChannelConfig.java" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/ModelChannelBackup.java" \

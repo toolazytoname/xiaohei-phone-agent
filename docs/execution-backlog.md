@@ -115,7 +115,7 @@ ROLLBACK / REMAINS / NEXT
 | TOOL-009 | BACKLOG | TOOL-001 | Media play/pause/volume/routing matrix |
 | TOOL-010 | BACKLOG | TOOL-003 | Semantic input/scroll/back/select; never click generic approval controls |
 | TOOL-011 | BACKLOG | TOOL-010 | Versioned adapters and failure explanations for 15+ common apps |
-| TOOL-012 | BACKLOG | TOOL-003 | Before/after snapshots and rollback catalog; exit code alone is not success |
+| TOOL-012 | VERIFY | TOOL-003 | Metadata-only outcome gate requires a fresh expected foreground-package observation after adapter success; stale/mismatched evidence, failed adapter and repeat verification fail closed; real adapter/observer wiring and reversible catalog evidence remain required |
 
 ## OpenCode mobile executor
 

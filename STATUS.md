@@ -140,3 +140,4 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `UX-005`：新增八类别全局停止注册表；每个显式登记的资源所有者只收到一次停止请求，失败明确显示为未完全释放，停止后不允许再登记或重复停止。尚未接入所有入口或证明平台资源归零，保持 VERIFY。
 - `UX-005` 接线：主页“全部停止”和已有状态通知 `global_stop` Intent 已通过该注册表停止主页持有的语音、DSP 与 CPU 唤醒；Phone Agent、Conversation、OpenCode、工具、root、语音/微件入口仍独立，未宣称全设备归零。
 - `VOICE-005`：新增来电/闹钟/媒体/Activity 的统一信号中断策略，固定停止输入/输出、释放所有权且不自动恢复；主页暂停已通过它停止 ASR。尚未将真实来源和 TTS 全部接线，保持 VERIFY。
+- `TOOL-012`：工具结果证据门要求适配器成功后出现更新且预期包名匹配的观察；旧快照、抢切包名、适配器失败和重复验证都拒绝。尚未接真实适配器/观察器，保持 VERIFY。
