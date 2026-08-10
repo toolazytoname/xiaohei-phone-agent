@@ -41,6 +41,7 @@ Shows `OFF / ARMING / ARMED / LISTENING / THINKING / CONFIRMING / ACTING / ERROR
 
 - `wakeword-event.v1.schema.json`: no raw audio; describes the source, keyword alias, confidence, and capture boundary.
 - `action-request.v1.schema.json`: describes target, action, risk, confirmation, dry-run state, and redaction policy.
+- `task-plan.v1.schema.json`: describes a request-bound, 1–8-step dry-run DAG with tool/risk, dependency, idempotency, and timeout limits; it grants no execution authority.
 
 Runtime payloads may contain private user data in memory, but fixtures and public acceptance reports must be redacted before storage or publication.
 

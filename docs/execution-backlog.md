@@ -91,12 +91,12 @@ ROLLBACK / REMAINS / NEXT
 | ROUTE-002 | DONE | CHAT-004 | Inert three-way classifier; exact 100-case matrix passes 40 deterministic commands, 35 chats, and 25 complex tasks with zero model/action calls; conceptual keyword and ambiguous-action regressions remain non-actions |
 | ROUTE-003 | DONE | ROUTE-002 | Pure local clarification passes an exact 50-case matrix: 10 target, 10 intent, 10 scope asks and 20 clear controls; every ask carries chat/unknown with zero guessed actions, model calls, or action calls and remains unwired |
 | ROUTE-004 | DONE | BASE-006,ROUTE-002 | Typed user complex tasks become immutable schema-v1 high-risk pending dry-run requests; 39-case matrix rejects assistant confirmation forgeries, chats/commands, ambiguities, and invalid metadata with zero model/action calls; remains unwired |
-| PLAN-001 | READY | BASE-006 | Rules-first planner and versioned plan schema |
+| PLAN-001 | DONE | BASE-006 | Versioned dry-run DAG plus rules-first validator; 34 Java cases and five public fixtures cover valid forward/linear plans, exact eight-step/60-second bounds, unknown tools, risk/version/idempotency/dependency/argument failures, and five real cycles with zero model/action calls; remains unwired |
 | PLAN-002 | BACKLOG | PLAN-001 | Remote planner receives minimum snapshot only |
 | PLAN-003 | BACKLOG | PLAN-001 | Re-observe after every step; app-switch race causes zero out-of-scope actions |
 | PLAN-004 | BACKLOG | PLAN-003 | One evidence-changing recovery, no unchanged retry loop |
 | POLICY-001 | DONE | — | L0–L4 risk, sensitive-surface denial, and package allowlist foundation |
-| POLICY-002 | BACKLOG | ROUTE-004 | Fresh confirmation bound to task, target, content, and expiry |
+| POLICY-002 | READY | ROUTE-004 | Fresh confirmation bound to task, target, content, and expiry |
 | POLICY-003 | BACKLOG | POLICY-002 | Separate Android/OpenCode/root authorization tiers |
 | POLICY-004 | BACKLOG | POLICY-003 | Permanent payment/OTP/password/evasion denial corpus |
 
