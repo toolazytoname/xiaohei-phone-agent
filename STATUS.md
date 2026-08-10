@@ -1,6 +1,6 @@
 # 小黑状态 / Xiaohei Status
 
-更新于 / Updated: 2026-08-10  
+更新于 / Updated: 2026-08-11
 当前版本 / Current version: `0.2.0-alpha.3` public release candidate; `alpha.4` remains a private pre-power candidate.
 
 [中文总纲](docs/sovereign-mobile-agent-master-plan.zh-CN.md) · [English master plan](docs/sovereign-mobile-agent-master-plan.md) · [中文任务账本](docs/execution-backlog.zh-CN.md) · [English backlog](docs/execution-backlog.md) · [证据矩阵](docs/delivery-evidence-matrix.zh-CN.md)
@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `SEC-002`：新增双语、代码对应的数据流与保留规则，逐项说明音频、文本、截图、通知、位置、文件、轨迹和凭据的收集、内存、设备保留、外发和删除/撤权；静态验证检查六类及本地边界，远端、OEM 和独立设备证据没有被虚报。
 - `SEC-001`：威胁模型现覆盖聊天/通知注入、工具/Schema 投毒、OpenCode 工作区穿越、root 提权以及破坏/外传请求；所有真实 adapter、独立设备和设备级停止验收仍是明确门禁。
 - `ROOT-007`：系统修改只允许固定 profile 的 dry-run 预览，前后摘要必须不同且精确匹配、新鲜确认且未过期；只返回固定差异摘要，apply/root/shell/文件/设备调用均为零。
 - `ROOT-005`：固定范围内存 AES-256-GCM 备份信封使用新 IV、32 字节密钥和 16 KiB 上限；错误密钥和篡改都拒绝，代码没有磁盘路径。真实加密持久化、清理和独立离线恢复尚未验证。
