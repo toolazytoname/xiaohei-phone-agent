@@ -172,9 +172,12 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/OpenCodeProgressProjectionTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.OpenCodeProgressProjectionTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/FailureRecoveryProjection.java" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/TaskCardProjection.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/TaskCardProjectionTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.TaskCardProjectionTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" "$project_dir/src/io/github/toolazytoname/xiaohei/FailureRecoveryProjection.java" "$project_dir/tests/io/github/toolazytoname/xiaohei/FailureRecoveryProjectionTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.FailureRecoveryProjectionTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/ConfirmationPreview.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/ConfirmationPreviewTest.java"

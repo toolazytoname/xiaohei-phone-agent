@@ -23,6 +23,7 @@ final class TaskCardProjection {
                 + "\n预算 / Budget: 最多 " + timeoutMs + " ms；步骤 " + stepBudget
                 + "\n结果 / Result: " + result + " · " + status
                 + "\n人工接管 / Takeover: " + (stage == Stage.TAKEN_OVER ? "已接管；不自动重试" : "真实 runner 未接线；可停止并人工接管")
+                + (stage == Stage.FAILED ? "\n" + FailureRecoveryProjection.visibleText(FailureRecoveryProjection.Kind.UNKNOWN) : "")
                 + "\n不显示任务正文、路径、Token、模型回复或推理过程";
         }
     }
