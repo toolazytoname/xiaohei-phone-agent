@@ -144,7 +144,7 @@ NEXT: 唯一下一任务 ID
 | ID | 状态 | 依赖 | 交付物 | 完成证据 |
 |---|---|---|---|---|
 | ROOT-001 | DONE | BASE-006 | Root 威胁模型、封闭允许/拒绝目录与设备人类所有者恢复责任 | 双语审查；目录不授予能力，通用 `su -c` 继续拒绝 |
-| ROOT-002 | BACKLOG | ROOT-001,POLICY-003 | 签名绑定 broker、固定动作 ID 和精确参数 Schema | 普通 App、shell、重放、畸形参数拒绝 |
+| ROOT-002 | DONE | ROOT-001,POLICY-003 | 内存固定动作 root broker 核心绑定精确 signer、3 个只读 action ID、空参数 schema 和一次性 request ID；没有 root 适配器或设备执行 | 普通 App、shell、重放、畸形参数拒绝 |
 | ROOT-003 | BACKLOG | ROOT-002 | 只读诊断：服务、端口、电池、音频、包与 profile 状态 | 输出脱敏、有长度上限、不含用户内容 |
 | ROOT-004 | BACKLOG | ROOT-002 | 受控服务启停；PID/包/端口必须匹配 | 拒绝误杀，停止后无残留 |
 | ROOT-005 | BACKLOG | ROOT-002 | 备份/恢复固定目录与加密工件 | 明文临时文件删除、完整恢复演练 |
