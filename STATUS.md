@@ -154,3 +154,4 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `TOOL-003` bridge：现有一次性网关授权可进入有界协调器并解析封闭 Android 注册表；未增加 UI/模型调用入口，实际用户确认、权限和设备执行仍为 VERIFY。
 - `UX-006`：Agent 脱敏轨迹存储改为默认关闭；页面可显式启用、删除最新一条、清空，或关闭并立即清空。真实工具结果历史接线与独立设备行为仍为 VERIFY。
 - `TOOL-009`：新增低风险媒体边界，只能相对调节媒体音量一档并观察输出路由；没有播放/暂停或强制切路由能力。真实媒体会话和设备路由矩阵仍为 VERIFY。
+- `TOOL-010`：无障碍服务现支持受限的精确选择、单次返回和滚动；通用批准标签与自动文本填入被 fail-closed 拒绝。逐请求文本确认、网关接线、App/版本矩阵和真机证据仍为 VERIFY。
