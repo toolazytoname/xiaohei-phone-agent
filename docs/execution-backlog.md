@@ -153,7 +153,7 @@ ROLLBACK / REMAINS / NEXT
 |---|---|---|---|
 | UX-001 | DONE | CHAT-004 | Main page shows independent metadata-only wake/ASR/Conversation/Phone Agent/OpenCode/root states; it starts no runtime, reveals no credentials and keeps unavailable paths explicit |
 | UX-002 | BACKLOG | CHAT-005 | Bilingual accessible dialog screen with transcript, stop, clear, privacy state |
-| UX-003 | BACKLOG | PLAN-001 | Task card: target, plan, current step, budget, result, takeover; no chain-of-thought |
+| UX-003 | DONE | PLAN-001 | Read-only task card projects approved target summary, reviewed steps/current step, budget, fixed result and takeover; no task prose/paths/tokens/model output/reasoning or execution wiring |
 | UX-004 | BACKLOG | POLICY-002 | Confirmation shows app, target, content, permission, and rollback |
 | UX-005 | BACKLOG | TOOL-003 | App/notification/voice/widget global stop; all resources reach zero |
 | UX-006 | BACKLOG | TOOL-012 | Redacted history delete-one/clear-all/disable-storage |
