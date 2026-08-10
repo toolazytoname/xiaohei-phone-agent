@@ -22,7 +22,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 | 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约 | `VOICE-001` + `CHAT-006` |
 | DSP 与短命令 / DSP and short commands | `VERIFY` | OnePlus 8T DSP 声学 callback、离线命令路由和 12 个确定性动作已验证 | 完成 `REL-001`、`REL-002` 后再宣传低功耗 |
 | 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复 | `ROUTE-002`, then expand tools through `TOOL-*` |
-| 开放对话 / Open conversation | `FOUNDATION`; `CHAT-007` done | 独立配置/Keystore、有界传输、零动作 UI，以及 6 轮/2048 token/5 分钟纯内存半双工追问已验证 | `CHAT-008`; device credential/TTS gates remain separate |
+| 开放对话 / Open conversation | `FOUNDATION`; `CHAT-008` done | 独立配置/Keystore、有界传输、6 轮纯内存半双工，以及版本化最小 Prompt/注入/工具伪造零动作边界已验证 | `CHAT-009`; device credential/TTS gates remain separate |
 | OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION` | 手机上的 OpenCode TUI/Web 和独立模型 profile 已有集成证据 | `OC-002`; do not grant Android/root directly |
 | 受控 root / Controlled root | `READY` | 设备已经 root；产品级 capability broker 尚未实现 | `ROOT-001`; generic `su -c` remains forbidden |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据 | 物理、真人和离线介质门禁完成后从最终 revision 重建 |
@@ -34,11 +34,11 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - 固定短命令优先在本地解析，可执行打开 App/相册/设置等确定性低风险动作。
 - 通知只读汇总、确认式消息草稿和可见 Phone Agent 已有明确的停止与隐私边界。
 - 手机 AI Runtime 已把 OpenCode 与 Claude/Happy 的服务和模型配置拆开；小黑 Conversation 的多轮正文仍与这些 Agent 渠道隔离，且没有动作权限。
-- 当前未完成系统 TTS 对话、开放聊天 ASR、对抗性 Prompt 加固、模型规划 Schema、通用工具网关和 root capability broker。
+- 当前未完成系统 TTS 对话、开放聊天 ASR、对话控制幂等验收、模型规划 Schema、通用工具网关和 root capability broker。
 
 ## 唯一执行队列 / Ordered queue
 
-1. `CHAT-008` — 最小化系统 Prompt/隐私上下文，并用 Prompt 注入、工具伪造和敏感字段矩阵证明模型文本仍无动作权限。
+1. `CHAT-009` — 实现“停止、重说、清空、继续聊”的按钮/文字控制，并证明每条控制零模型调用且幂等。
 2. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
 3. `VOICE-001` — 候选包上验证只读 TTS 探针；当前两台测试设备均无注册引擎，绝不自动下载。
 4. `CHAT-005` — 在前述独立设备门禁后做“说一句、答一句”。
@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `CHAT-008`：Conversation 客户端只能序列化 `xiaohei-conversation-system.v1` 静态 Envelope；20 条 Prompt 注入、10 条助手工具伪造、5 类用户敏感形态及非法边界测试通过，静态门禁确认 Prompt 不采集动态设备隐私且回复路径没有动作解释器。零模型调用；不把 Prompt 测试冒充模型服从保证。
 - `CHAT-007`：6 轮/2048 token/5 分钟半双工页面已接入内存会话；11 条确定性用例覆盖指代、结束、超时、切模型、锁屏、后台、busy、失败回滚和无效回复。全新 AOSP 用户路径两轮流式 mock 中，服务端验证精确历史后返回 `REFERENCE_CONTEXT_OK`；点击结束后 UI 正文消失，无 Fatal/ANR，未访问实体 OnePlus。
 - `CHAT-006`：新增与 `conversation-session.v1` 六项上下限一致的纯 Java 内存会话；12 条用例覆盖 turn/token/总时长、并发、取消、失败回滚、新实例空状态与中文保守计数，静态门禁确认没有持久化、正文日志或进程全局正文集合。
 - `CHAT-004`：新增双语零动作权限单轮聊天页面、显式状态/取消、竞态安全生命周期及静态动作边界门禁；全新 AOSP 模拟器用户路径收到一次流式 mock 回复 `XIAOHEI_UI_MOCK_OK`，无崩溃/ANR，验收后测试环境已清理，未访问实体 OnePlus。

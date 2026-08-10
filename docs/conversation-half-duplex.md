@@ -61,4 +61,4 @@ The reverse mapping, test APK/data, and mock process were removed. The physical 
 
 ## Remaining scope
 
-`CHAT-008` still owns prompt minimization and adversarial prompt/tool-forgery tests. `CHAT-009` owns bounded context reduction. Speech input/TTS remains `CHAT-005` and final human conversation acceptance remains `CHAT-012`.
+Prompt minimization and adversarial prompt/tool-forgery tests are now covered by `CHAT-008`. `CHAT-009` still owns zero-model-call, idempotent stop/repeat/clear/continue controls. Speech input/TTS remains `CHAT-005` and final human conversation acceptance remains `CHAT-012`.
