@@ -226,6 +226,7 @@ python3 scripts/verify-opencode-stop-cleanup.py
 python3 scripts/verify-opencode-tool-policy.py
 python3 scripts/verify-opencode-acceptance-matrix.py
 python3 scripts/verify-rel005-lifecycle-harness.py
+python3 scripts/verify-rel004-mixed-stress.py
 python3 scripts/verify-root-capability-catalog.py
 python3 scripts/verify-authorization-tier-policy.py
 python3 scripts/verify-sensitive-action-denial.py
