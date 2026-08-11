@@ -229,12 +229,14 @@ stateDiagram-v2
 
 依赖：目标工作包代码完成。
 
-- [ ] 纯 Java：状态机、profile 隔离、代际取消、重复 final、预算、控制短语、隐私、音频 lease、失败指纹。
-- [ ] 静态门禁：Conversation 无动作路径；release 无正文日志；Conversation Token 只进其 Authorization header。
+- [x] 纯 Java：状态机、profile 隔离、代际取消、重复 final、预算、控制短语、隐私、音频 lease、失败指纹。
+- [x] 静态门禁：Conversation 无动作路径；release 无正文日志；Conversation Token 只进其 Authorization header。
 - [ ] AOSP：无模型公开构建可安装，系统 ASR/无 ASR 状态诚实，mock 两轮，停止后零录音/Fatal/ANR。
 - [ ] OnePlus：保留模型资产的候选完成 L2 两轮、取消、断网、全局停止和一次 DSP L3。
 - [ ] 网络故障只测最小可控集合；同一错误不重复烧 token。
 - [ ] 结束后恢复用户选择的 Conversation profile、CPU KWS OFF；不改变 DSP、OpenCode、Claude/Happy 或 Phone Agent。
+
+部分证据：[FVC-110 自动与静态验收](acceptance-fvc-110.zh-CN.md)。设备和真人门禁仍必须完成。
 
 Git 只保留脱敏结构化结果；APK、模型、原始音频、私有 URL/Token、UI dump 均不入库。
 
