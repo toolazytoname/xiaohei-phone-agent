@@ -186,7 +186,7 @@ Evidence: [FVC-100 safe chat-to-action handoff acceptance](acceptance-fvc-100.md
 
 - [x] Pure Java state/profile/generation/budget/control/privacy/lease/failure tests.
 - [x] Static no-action, no-release-transcript, and Conversation-Keystore-only transport gates.
-- [ ] AOSP source-only install, honest ASR availability, two mock turns, and zero recorder/Fatal/ANR after stop.
+- [x] AOSP source-only install, honest system-ASR availability, two mock turns, and zero recorder/Fatal/ANR after `am force-stop`; see [FVC-110 automated and static acceptance](acceptance-fvc-110.md).
 - [ ] OnePlus model-bearing build: L2 two turns, cancel, offline failure, global stop, and one L3 DSP path.
 - [ ] Exercise only the smallest controllable network-failure set; never repeat the same paid failure.
 - [ ] Restore the selected Conversation profile and CPU KWS OFF without altering other channels.
