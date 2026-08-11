@@ -31,6 +31,7 @@ public final class AgentActivity extends Activity {
     private TextView snapshot;
     private EditText taskInput;
     private Button confirmProposal;
+    private TaskCardProjection.Card visibleTaskCard;
     private PhoneAgentClient.Proposal pendingProposal;
     private UnconfirmedActionRequest.Request pendingPlanningRequest;
     private boolean routeDraftPending;
@@ -97,7 +98,8 @@ public final class AgentActivity extends Activity {
         taskCard = new TextView(this);
         taskCard.setContentDescription("只读任务卡");
         taskCard.setPadding(0, 0, 0, pad);
-        taskCard.setText(TaskCardProjection.unavailable().visibleText());
+        visibleTaskCard = TaskCardProjection.unavailable();
+        renderTaskCard();
         root.addView(taskCard);
 
         taskInput = new EditText(this);
@@ -228,6 +230,7 @@ public final class AgentActivity extends Activity {
     }
 
     private void refresh() {
+        refreshTaskCard();
         boolean notificationGranted = Build.VERSION.SDK_INT < 33
             || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
                 == PackageManager.PERMISSION_GRANTED;
@@ -262,6 +265,7 @@ public final class AgentActivity extends Activity {
             state.setText("无法启动：请先授权服务，或已有任务正在执行");
             return;
         }
+        beginTaskCard(1);
         state.setText("RUNNING：即将打开系统设置；目标=" + label + "；可从通知停止");
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
@@ -271,6 +275,7 @@ public final class AgentActivity extends Activity {
             state.setText("无法启动多步任务：请先授权服务，或已有任务正在执行");
             return;
         }
+        beginTaskCard(labels.length);
         state.setText("RUNNING：两步语义任务；每步后重新观察；可随时全局停止");
         startActivity(new Intent(Settings.ACTION_SETTINGS));
     }
@@ -280,6 +285,7 @@ public final class AgentActivity extends Activity {
             state.setText("无法启动跨 App 任务：请先授权服务，或已有任务正在执行");
             return;
         }
+        beginTaskCard(1);
         Intent launch = getPackageManager().getLaunchIntentForPackage(packageName);
         if (launch == null) {
             XiaoheiAccessibilityService.stopTask("验收目标未安装");
@@ -357,6 +363,7 @@ public final class AgentActivity extends Activity {
             state.setText("执行层未连接或已有任务；没有执行");
             return;
         }
+        beginTaskCard(1);
         if (proposal.packageName.equals("com.android.settings")) {
             startActivity(new Intent(Settings.ACTION_SETTINGS));
             return;
@@ -368,6 +375,36 @@ public final class AgentActivity extends Activity {
             return;
         }
         startActivity(launch);
+    }
+
+    /** Public card mirrors only bounded local lifecycle metadata, never task text or UI content. */
+    private void beginTaskCard(int stepBudget) {
+        visibleTaskCard = TaskCardProjection.preview("受限 Phone Agent 语义任务", stepBudget, 60_000);
+        visibleTaskCard = TaskCardProjection.apply(visibleTaskCard, TaskCardProjection.Stage.RUNNING,
+            0, TaskCardProjection.Result.NONE);
+        renderTaskCard();
+    }
+
+    private void refreshTaskCard() {
+        if (visibleTaskCard == null || visibleTaskCard.stage == TaskCardProjection.Stage.UNAVAILABLE
+                || XiaoheiAccessibilityService.isTaskRunning()) return;
+        String result = XiaoheiAccessibilityService.lastTaskResult();
+        if (result == null) return;
+        int completed = Math.min(visibleTaskCard.stepBudget,
+            Math.max(0, XiaoheiAccessibilityService.lastTaskSteps()));
+        if (result.startsWith("success:")) {
+            visibleTaskCard = TaskCardProjection.apply(visibleTaskCard,
+                TaskCardProjection.Stage.SUCCEEDED, completed, TaskCardProjection.Result.VERIFIED);
+        } else if (result.startsWith("stopped:")) {
+            visibleTaskCard = TaskCardProjection.apply(visibleTaskCard,
+                TaskCardProjection.Stage.FAILED, completed, TaskCardProjection.Result.FAILED);
+        }
+        renderTaskCard();
+    }
+
+    private void renderTaskCard() {
+        if (taskCard != null) taskCard.setText(visibleTaskCard == null
+            ? TaskCardProjection.unavailable().visibleText() : visibleTaskCard.visibleText());
     }
 
     @Override protected void onDestroy() {
