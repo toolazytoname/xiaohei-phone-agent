@@ -56,6 +56,11 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/AudioDuplexArbiterTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.AudioDuplexArbiterTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/AudioDuplexArbiter.java" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ProcessAudioDuplex.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/ProcessAudioDuplexTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.ProcessAudioDuplexTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/AudioInterruptionPolicy.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/AudioInterruptionPolicyTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.AudioInterruptionPolicyTest

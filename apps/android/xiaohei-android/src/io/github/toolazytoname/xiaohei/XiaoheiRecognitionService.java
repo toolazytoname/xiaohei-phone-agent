@@ -15,13 +15,21 @@ import java.util.ArrayList;
 /** App-owned, bounded offline Chinese ASR service. */
 public final class XiaoheiRecognitionService extends RecognitionService {
     private static final String TAG = "XiaoheiLocalAsr";
+    private final Object audioLock = new Object();
     private volatile boolean cancelled;
     private Thread worker;
+    private AudioRecord activeAudio;
 
     @Override protected void onStartListening(Intent recognizerIntent, Callback callback) {
         if (!LocalAsrEngine.isBundled() || worker != null) {
             error(callback, LocalAsrEngine.isBundled()
                 ? SpeechRecognizer.ERROR_RECOGNIZER_BUSY : SpeechRecognizer.ERROR_CLIENT);
+            return;
+        }
+        ProcessAudioDuplex.Lease inputLease = ProcessAudioDuplex.shared().acquireInput();
+        if (inputLease == null) {
+            Log.i(TAG, "capture_rejected output_owner_active=true");
+            error(callback, SpeechRecognizer.ERROR_RECOGNIZER_BUSY);
             return;
         }
         cancelled = false;
@@ -31,15 +39,29 @@ public final class XiaoheiRecognitionService extends RecognitionService {
                 recognizerIntent.getLongExtra(VoiceCommandSession.EXTRA_MAX_DURATION_MS, 8000)));
         }
         final long boundedMaximumMs = maximumMs;
-        worker = new Thread(() -> recognize(callback, boundedMaximumMs), "xiaohei-local-asr");
+        worker = new Thread(() -> recognize(callback, boundedMaximumMs, inputLease), "xiaohei-local-asr");
         worker.start();
     }
 
-    @Override protected void onStopListening(Callback callback) { cancelled = true; }
+    @Override protected void onStopListening(Callback callback) { cancelCapture(); }
 
-    @Override protected void onCancel(Callback callback) { cancelled = true; }
+    @Override protected void onCancel(Callback callback) { cancelCapture(); }
 
-    private void recognize(Callback callback, long maximumMs) {
+    @Override public void onDestroy() {
+        cancelCapture();
+        super.onDestroy();
+    }
+
+    private void cancelCapture() {
+        cancelled = true;
+        synchronized (audioLock) {
+            if (activeAudio != null) {
+                try { activeAudio.stop(); } catch (IllegalStateException ignored) { }
+            }
+        }
+    }
+
+    private void recognize(Callback callback, long maximumMs, ProcessAudioDuplex.Lease inputLease) {
         AudioRecord audio = null;
         long startedAt = System.currentTimeMillis();
         try (LocalAsrEngine engine = new LocalAsrEngine(this)) {
@@ -50,10 +72,18 @@ public final class XiaoheiRecognitionService extends RecognitionService {
                 error(callback, SpeechRecognizer.ERROR_AUDIO);
                 return;
             }
-            Log.i(TAG, "capture_started source=" + audio.getAudioSource()
-                + " maximum_ms=" + maximumMs);
+            synchronized (audioLock) {
+                if (cancelled) {
+                    Log.i(TAG, "capture_start_cancelled before_audio_start=true");
+                    return;
+                }
+                activeAudio = audio;
+                audio.startRecording();
+                Log.i(TAG, "capture_started source=" + audio.getAudioSource()
+                    + " maximum_ms=" + maximumMs);
+            }
+            if (cancelled) return;
             callback.readyForSpeech(new Bundle());
-            audio.startRecording();
             callback.beginningOfSpeech();
             short[] buffer = new short[1600];
             long deadline = System.currentTimeMillis() + maximumMs;
@@ -94,9 +124,13 @@ public final class XiaoheiRecognitionService extends RecognitionService {
             error(callback, SpeechRecognizer.ERROR_CLIENT);
         } finally {
             if (audio != null) {
+                synchronized (audioLock) {
+                    if (activeAudio == audio) activeAudio = null;
+                }
                 try { audio.stop(); } catch (IllegalStateException ignored) { }
                 audio.release();
             }
+            ProcessAudioDuplex.shared().release(inputLease);
             worker = null;
         }
     }
