@@ -10,9 +10,9 @@ This acceptance is deliberately limited to the generic, no-model APK on an indep
 
 1. Build a source-only generic debug APK; do not bundle ASR/KWS models or credentials.
 2. Start a disposable Android 14 ARM64 AOSP emulator.
-3. Run `scripts/test-rel005-emulator-lifecycle.sh emulator-5554 path/to/xiaohei-debug.apk`.
+3. Run `scripts/test-rel005-emulator-lifecycle.sh emulator-5554 path/to/xiaohei-debug.apk pre-reboot`, record its `boot_id`, request the guest reboot, then run `scripts/test-rel005-emulator-lifecycle.sh emulator-5554 path/to/xiaohei-debug.apk post-reboot <recorded-boot-id>`. The single-command `full` mode remains available where the host can survive an ADB reboot.
 
-The harness rejects every serial except `emulator-*`, installs the exact supplied APK, launches then force-stops it, cold-launches and force-stops it again, reboots the emulator, checks `sys.boot_completed`, and after every terminal event checks for a Xiaohei PID, `ServiceRecord`, or AudioFlinger package residue. It uninstalls the package on success and via its exit trap on failure.
+The harness rejects every serial except `emulator-*`, installs the exact supplied APK, launches then force-stops it, cold-launches and force-stops it again, reboots the emulator, requires the kernel `boot_id` to change, then checks `sys.boot_completed`. After every terminal event it checks for a Xiaohei PID, `ServiceRecord`, or AudioFlinger package residue. It uninstalls the package on success and via its exit trap on failure.
 
 ## Required result
 
@@ -22,4 +22,4 @@ The sole passing result is:
 PASS rel005-emulator-lifecycle force_stop=clean cold_start=clean reboot=clean uninstall=clean network_model=not_exercised
 ```
 
-This result has not yet been produced in the current delivery record, so `REL-005` remains `BACKLOG`. When it is produced, it advances only the generic lifecycle slice to `VERIFY`. A real relay/model request, a deliberately degraded network, device process-kill behavior, OnePlus DSP re-arm, and user-visible recovery still need separate, non-synthetic evidence. No automatic retry is allowed after an unchanged network/model failure.
+On 2026-08-11, an independent Android 14 ARM64 AOSP emulator produced the pre-reboot and post-reboot PASS results. The prior and later kernel boot IDs differed; the later boot completed; the final package path was empty and service/PID checks were zero. This advances only the generic lifecycle slice to `VERIFY`. A real relay/model request, a deliberately degraded network, device process-kill behavior, OnePlus DSP re-arm, and user-visible recovery still need separate, non-synthetic evidence. No automatic retry is allowed after an unchanged network/model failure.

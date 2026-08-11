@@ -175,7 +175,7 @@ NEXT: 唯一下一任务 ID
 | REL-002 | HUMAN | VOICE-002 | 提示音/TTS 真人听感 | 真人确认清晰、音量合适、不暗示已执行 |
 | REL-003 | HUMAN | VOICE-006,VOICE-007 | 真人多人/噪声/距离 ASR/KWS | 预注册样本与失败，不用 TTS 代替真人 |
 | REL-004 | BACKLOG | CHAT-012,TOOL-011 | 100 次混合聊天/命令/任务压力；支持性系统/App 启动矩阵仅在 Android 14 缺少 `topResumedActivity` 时读取 `mFocusedApp`，不替代混合负载或设备门禁 | 0 Fatal/ANR、0 重复动作、0 录音残留 |
-| REL-005 | BACKLOG | OC-008,ROOT-010 | 已准备带序列号保护的通用无模型 Android 14 AOSP 强制结束、冷启动、重启和卸载脚本，但尚未产生设备证据。弱网、真实中转/模型超时及 OnePlus DSP 恢复仍是设备门禁；见 `acceptance-rel-005.md`。 | 每种未验证故障仍需回到可解释、可停止状态 |
+| REL-005 | VERIFY | OC-008,ROOT-010 | 带序列号保护的通用无模型 Android 14 ARM64 AOSP 脚本已通过显式强制结束、冷启动、以 boot ID 确认的重启和卸载，且无小黑进程/服务/音频残留。弱网、真实中转/模型超时及 OnePlus DSP 恢复仍是设备门禁；见 `acceptance-rel-005.md`。 | 每种未验证故障仍需回到可解释、可停止状态 |
 | REL-006 | BACKLOG | UX-005 | 8–24h 服务组合待机回归 | 精确服务状态、功耗、wakelock、端口证据 |
 | SEC-001 | DONE | ROOT-001 | 双语威胁模型覆盖聊天/通知注入、工具/Schema 投毒、OpenCode 穿越、root 提权与破坏/外传路径；设备级验收仍明确保留 | 双语 STRIDE/滥用用例 |
 | SEC-002 | DONE | SEC-001 | 双语代码对应数据流/保留表覆盖音频、文本、截图、通知、位置、文件、轨迹与凭据；静态验证器检查六类和当前本地边界，第三方/设备证据仍明确保留 | 每类保留期、存储、上传和删除规则 |

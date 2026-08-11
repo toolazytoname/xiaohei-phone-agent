@@ -168,7 +168,7 @@ ROLLBACK / REMAINS / NEXT
 | REL-002 | HUMAN | VOICE-002 | Human prompt/TTS clarity and volume acceptance |
 | REL-003 | HUMAN | VOICE-006,VOICE-007 | Pre-registered real multi-speaker/noise/distance qualification |
 | REL-004 | BACKLOG | CHAT-012,TOOL-011 | 100 mixed chat/command/task stress; no crash, duplicate action, or recorder residue. The supporting system/app launch matrix reads `mFocusedApp` only when Android 14 omits `topResumedActivity`; this does not replace the mixed workload or device gates |
-| REL-005 | BACKLOG | OC-008,ROOT-010 | A serial-guarded generic no-model Android 14 AOSP force-stop/cold-start/reboot/uninstall harness is ready, but it has not produced device evidence yet. Weak-network, real relay/model timeout, and OnePlus DSP recovery remain device gates; see `acceptance-rel-005.md`. |
+| REL-005 | VERIFY | OC-008,ROOT-010 | A serial-guarded generic no-model Android 14 ARM64 AOSP harness passed explicit force-stop, cold-start, boot-ID-verified reboot, and uninstall with no Xiaohei process/service/audio residue. Weak-network, real relay/model timeout, and OnePlus DSP recovery remain device gates; see `acceptance-rel-005.md`. |
 | REL-006 | BACKLOG | UX-005 | 8–24h service-combination idle regression |
 | SEC-001 | DONE | ROOT-001 | Bilingual threat model covers chat/notification injection, tool/schema poisoning, OpenCode traversal, root escalation and destructive/exfiltration paths; device-level acceptance remains explicit |
 | SEC-002 | DONE | SEC-001 | Bilingual code-mapped data-flow/retention table covers audio, text, screenshots, notifications, location, files, trace and credentials; static verifier checks the six categories and current local boundaries, while third-party/device evidence remains explicit |

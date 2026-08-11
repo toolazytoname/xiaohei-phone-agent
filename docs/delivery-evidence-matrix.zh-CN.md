@@ -21,7 +21,7 @@
 | `CHAT-004` — 单轮 Conversation 界面 | 已完成任务范围 | 零动作权限双语界面、竞态安全的取消/销毁、六个稳定无障碍标识、动作边界静态门禁，以及一次全新 AOSP 模拟器用户路径流式 mock 回复；无崩溃或 ANR。 | 实体机凭据验收仍属于 `CHAT-002`；真人语音/TTS 和最终对话验收仍属于 `CHAT-005`/`CHAT-012`。 |
 | `CHAT-002` — Keystore 与无 Token 备份 | OnePlus 8T 已通过 | 随机 Conversation 测试 Token 仅以 IV/密文进入 Android Keystore 流程；v3 系统分享预览不暴露 Token 材料；正常恢复可见清除三个槽并关闭三个渠道且不启动服务；原有本地离线状态已恢复。 | 真实远端凭据/请求、外部接收方、卸载/重装 Keystore 生命周期及其他 OEM 行为不属于本项。 |
 | `ROOT-010` — 独立生命周期 | 独立 Android 14 AOSP ARM64 已通过 | 源码型调试包完成安装、升级、预期的普通降级拒绝、显式维护回退和事务卸载；无主包、Assistant role、DSP Companion 或 active recorder 残留。 | 这只是生命周期前置条件；没有执行 root adapter、root 命令、profile 事务或 root capability。 |
-| `REL-005` — 通用恢复生命周期 | `BACKLOG`；脚本已就绪 | 带序列号保护的 Android 14 ARM64 模拟器脚本准备安装源码型 APK，强制结束、冷启动/强制结束、重启并卸载。每个终态将要求无小黑 PID、Android `ServiceRecord` 或 AudioFlinger 包名残留。 | 尚未记录通过结果；也未覆盖网络降级、真实中转/模型超时、实体进程杀死、OnePlus DSP 重 arm 或人类可见恢复。 |
+| `REL-005` — 通用恢复生命周期 | 独立 AOSP 证据后为 `VERIFY` | 带序列号保护的 Android 14 ARM64 AOSP 脚本已通过显式安装、强制结束、冷启动/强制结束、以 boot ID 确认的重启和卸载。每个终态均要求无小黑 PID、Android `ServiceRecord` 或 AudioFlinger 包名残留。 | 未覆盖网络降级、真实中转/模型超时、实体进程杀死、OnePlus DSP 重 arm 或人类可见恢复。 |
 | `CHAT-006` — 有边界的纯内存会话 | 已完成任务范围 | 契约一致的 1–8 turn、64–8192 估算 token、1 秒–15 分钟边界；12 条确定性生命周期用例与无持久化/日志静态门禁通过。终止路径释放会话自身正文引用，新实例不恢复文字。 | 已由 `CHAT-007` 接入；本行仍只保证引用释放，不宣称 JVM 物理清零。 |
 | `CHAT-007` — 半双工追问 | 已完成任务范围 | 6 轮/2048 token/5 分钟 UI 接入；11 条指代/结束/超时/profile/锁屏/后台/半双工/无效回复确定性用例；全新 AOSP 用户路径发送两轮流式请求，服务端验证精确历史，点击结束后 UI 清空，且无 Fatal/ANR。 | 幂等零调用对话控制仍属 `CHAT-009`，语音/TTS 与真人验收属 `CHAT-005`/`CHAT-012`。 |
 | `CHAT-008` — 最小 Prompt 边界 | 已完成任务范围 | 唯一版本化静态 system Envelope；20 条 Prompt 注入、10 条助手工具伪造、5 种敏感形态、非法边界、不可变性及无动态上下文/无动作路径静态门禁均零模型调用通过。 | 这证明角色/上下文强制与零动作权限，不证明所有模型必然服从或回答质量。 |
