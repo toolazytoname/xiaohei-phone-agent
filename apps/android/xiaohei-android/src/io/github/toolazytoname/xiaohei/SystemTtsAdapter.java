@@ -20,7 +20,7 @@ final class SystemTtsAdapter {
     private final SentenceTtsQueue queue = new SentenceTtsQueue();
     private TextToSpeech engine;
     private Listener listener;
-    private String utteranceId;
+    private volatile String utteranceId;
     private long utteranceGeneration;
     private final Runnable timeout = () -> { if (lifecycle.state() == TtsLifecycle.State.SPEAKING) { stop("播报超时，已停止"); } };
 
@@ -41,7 +41,9 @@ final class SystemTtsAdapter {
                     if (next == null) { report("播报完成；等待后续输入"); return; }
                     speakNext(next);
                 }
-                @Override public void onError(String id) { if (id.equals(utteranceId)) { lifecycle.fail(); report("系统 TTS 播报失败"); } }
+                @Override public void onError(String id) {
+                    if (id.equals(utteranceId) && lifecycle.failSpeaking()) report("系统 TTS 播报失败");
+                }
             });
             lifecycle.initialized(true);
             report("系统 TTS 已就绪");
@@ -72,23 +74,28 @@ final class SystemTtsAdapter {
     void stop(String detail) {
         handler.removeCallbacks(timeout);
         queue.cancel();
+        boolean changed = lifecycle.stop();
+        utteranceId = null;
         if (engine != null) engine.stop();
-        if (lifecycle.stop()) report(detail);
+        if (changed) report(detail);
     }
 
     /** User/system interruption is distinct from a completed utterance and never resumes audio. */
     void interrupt(String detail) {
         handler.removeCallbacks(timeout);
         queue.cancel();
+        boolean changed = lifecycle.interrupt();
+        utteranceId = null;
         if (engine != null) engine.stop();
-        if (lifecycle.interrupt()) report(detail);
+        if (changed) report(detail);
     }
 
     void destroy() {
         handler.removeCallbacksAndMessages(null);
         queue.cancel();
-        if (engine != null) { engine.stop(); engine.shutdown(); engine = null; }
         lifecycle.destroy();
+        utteranceId = null;
+        if (engine != null) { engine.stop(); engine.shutdown(); engine = null; }
         report("系统 TTS 已释放");
     }
 
