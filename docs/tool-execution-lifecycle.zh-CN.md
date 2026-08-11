@@ -2,7 +2,7 @@
 
 [English](tool-execution-lifecycle.md) · [授权边界](loopback-tool-gateway.zh-CN.md) · [工具目录](versioned-tool-catalog.zh-CN.md) · [状态](../STATUS.md)
 
-状态日期：2026-08-10。`TOOL-003` 新增一个纯 Java 协调器，只负责一次已经授权的适配器调用。它强制目录审核过的逐工具超时、取消、一次性授权/幂等、受限结构化输出和私有错误收敛。它有意尚未接入 Android Activity、UI、socket 监听器、OpenCode、root、进程启动器或网络客户端。
+状态日期：2026-08-11。`TOOL-003` 提供一次已经授权的适配器调用协调器，强制目录审核过的逐工具超时、取消、一次性授权/幂等、受限结构化输出和私有错误收敛。应用现有一个可见、默认取消的本地调用方：仅在设备解锁、亮屏且前台由用户点击确认后，查询 `Pictures/XiaoheiTest/` 的项目数量。它不能读取图片内容、复制、改名、删除、选择任意路径、运行 shell/root、打开网络客户端或接受远端调用方。
 
 ## 权限与生命周期
 
@@ -62,8 +62,14 @@ python3 scripts/verify-tool-execution-boundary.py
 bash scripts/verify.sh
 ```
 
+## 可见本地查询路径
+
+主页链接到“受控工具验收：只读查询小黑测试相册”。独立页面先显示精确范围，默认不执行。本机前台确认会生成新的 confirmation receipt，换取一个 loopback/同 UID capability，再消费为受权 Android bridge 的一次调用；唯一允许的调用是 `android.media_test_collection` 加 `{ "operation": "query" }`。结果只显示项目数量；取消、授权失败或适配器失败都会显示，并且不会自动重试。离开页面会取消待确认和在途信号。
+
+这是一条可丢弃的验收路径，不是相册功能。复制/移动/回滚以及日历测试适配器均未从 UI 暴露；它们必须先各自经过可见确认和可逆的真机证据审查。
+
 ## 证据边界与剩余工作
 
 `TOOL-003` 测试里的适配器全部是内存注入的 test double。`network_unavailable` 和 `process_exit_nonzero` 只证明错误码映射；它们**不能**证明真实 socket、子进程、Android 组件、麦克风或 root 资源已经打开或被杀掉。worker 中断测试证明协调器会请求中断并关闭自己的 executor；未来真实适配器还必须协作关闭自身的进程/网络/平台句柄，并另做真实 kill、断网和设备验收。
 
-Android 工具、OpenCode 工具和 root 工具继续使用相互独立的审核目录与 audience。后续任务必须补真实适配器、传输层自行产生的可信 peer 证据、可见确认、前后观察、回滚与全局停止接线，不能把本协调器扩张成通用 shell 或自动点击批准按钮的路径。
+Android 工具、OpenCode 工具和 root 工具继续使用相互独立的审核目录与 audience。这个本地页面不是 socket 监听器，也不能证明可信外部传输。后续任务仍须补只读查询的设备证据、每个可变测试适配器的显式权限/回滚证据和独立的可信 peer 证据，不能把本协调器扩张成通用 shell 或自动点击批准按钮的路径。
