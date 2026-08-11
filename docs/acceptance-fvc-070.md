@@ -4,6 +4,8 @@
 
 Date: 2026-08-11. Scope is source/JVM/static gates only and does not replace real calls, alarms, media, or Bluetooth-route tests.
 
+The private OnePlus candidate was upgraded on 2026-08-11 to `0.2.0-alpha.5-private (6)` through a successful Android incremental install. This proves only that the matching package can upgrade; no model or voice call was started during this install and it does not prove interruption behavior.
+
 ## Verified code contract
 
 - On user stop, failure, destroy, and system audio-focus loss, TTS cancels its queue, releases output lease, and abandons audio focus; it never resumes speech or recording automatically.
