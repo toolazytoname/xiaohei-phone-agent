@@ -25,6 +25,7 @@
 | `CHAT-009` — 零调用本地控制 | 已完成任务范围 | 23 条精确短语解析、五控制幂等状态、9 组确定性用例、11 个稳定 UI 标识及全新 AOSP 按钮路径：一次基线 mock 后依次重说/停止/继续/清空，服务端计数仍为 1 且 UI 正文清空。 | 真人声学识别和朗读式重说仍属 `VOICE-*`/`CHAT-005`；本行只证明控制文字/按钮、状态和零模型调用。 |
 | `CHAT-010` — 独立 TTS 选择器 | 已完成任务范围 | Off/System/Relay 配置隔离、独立 Keystore 槽、v3 无 Token 备份与 v2 恢复兼容、单元/静态/构建门禁；全新 AOSP Relay → System 用户路径保持 Conversation/Phone Agent 六字段不变，零 TTS 初始化、服务启动、Fatal/ANR。 | 本任务未实现 Relay 播放；小黑适配器播报/停止、真人可懂度、打断和完整语音轮次仍属 `VOICE-002/011`、`CHAT-005`、`CHAT-012`。 |
 | `VOICE-001` — 离线中文系统 TTS 资格 | OnePlus 8T 已通过 | 所有者授权的 `ChineseTtsTflite 0.5.0` APK 与 F-Droid 签名索引 SHA-256 一致，注册 Android TTS 服务并被选为默认。小黑独立只读探针返回 `READY`、4 个中文音色全部离线、简体可用；内置 FastSpeech2 示例交付 81,600 帧，且没有引擎唤醒锁引用。 | 这证明安装、注册、离线元数据、初始化和本地示例输出；真人可懂度、小黑适配器停止时延和完整语音轮次仍属于 `VOICE-002/011`、`CHAT-005`、`CHAT-012`。 |
+| `VOICE-002` — 离线系统 TTS 适配器 | OnePlus 8T 已通过 | 小黑 Conversation 初始化所选离线引擎，播报零模型调用的确定性 FAQ；点击停止播报后可见状态从 `SPEAKING` 变为 `INTERRUPTED`。Android 在 6,976 帧后停止音轨，Active Record Client 与小黑/引擎唤醒锁引用均为 0。原子生命周期和 utterance 失效拒绝迟到完成/错误回调，单测与签名构建通过。 | 证明真实适配器初始化、输出、显式中断及停止后资源状态；不证明真人听感、小于等于 300 ms 可听中断、完整语音轮次、长期功耗或 DSP ARMED 状态。 |
 | `CHAT-011` — 确定性离线 FAQ | 已完成任务范围 | 五类/25 条精确短语，10 条未知/动作/注入及超长拒绝；固定双语非模型标签；零新增模型/动作/上下文使用；远端失败后接入及未启用渠道零网络线程静态门禁；全新 AOSP 命中与动作型未知拒绝均留在 Conversation，零 Fatal/ANR。 | 未内置 0.6B 权重或生成式本地模型；更广离线推理、语音与动作属于独立后续门禁。 |
 | `CHAT-012` — 最终 Conversation 验收 | 自动范围通过；真人门禁未完成 | 精确 20 问、5 中断、5 超时、5 本地隐私拒绝；五类/15 短语请求前隐私策略；静态零录音 API 路径、签名 APK；全新 AOSP 拒绝保持在 Conversation，零 Fatal/ANR、零 Active Record Client。 | `VERIFY`：尚无已实现 Relay 播放或真人中文可懂度/自然打断验收，自动化不能关闭该门禁。 |
 | `ROUTE-002` — 惰性三路分类器 | 已完成任务范围 | 纯聊天/确定性命令/复杂任务结果；已审核 `CommandRouter` 加祈使线索；精确 100 条合成矩阵（40/35/25）；零模型/动作调用；概念关键词、双目标歧义、多步骤和高风险回归；签名 APK/静态门禁通过。 | 尚未接入 `MainActivity`；规划、策略、确认和用户路径接入仍属后续门禁。 |
@@ -60,4 +61,5 @@
 - [M6 加固](acceptance-m6.zh-CN.md)
 - [M7 唤醒词](acceptance-m7.zh-CN.md)
 - [VOICE-001 离线中文 TTS](acceptance-voice-001.zh-CN.md)
+- [VOICE-002 离线系统 TTS 适配器](acceptance-voice-002.zh-CN.md)
 - [公开发布清单](release-checklist.zh-CN.md)
