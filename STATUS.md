@@ -22,7 +22,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 | 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约；OnePlus 离线中文 TTS、适配器停止、真实 ASR/TTS 半双工、有序队列和引擎可见中断已通过 | 真人 `VOICE-011` audible/echo gate |
 | DSP 与短命令 / DSP and short commands | `VERIFY` | OnePlus 8T DSP 声学 callback、离线命令路由和 12 个确定性动作已验证 | 完成 `REL-001`、`REL-002` 后再宣传低功耗 |
 | 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope; `TOOL-003` coordinator at `VERIFY` | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复；路由、计划、确认、目录、loopback/same-UID 授权及仅测试有界执行协调器通过 | Real adapter kill/network/device gate remains; proceed with `OC-004` independently |
-| 开放对话 / Open conversation | `VERIFY`; `FVC-000/010/020/030` complete, `FVC-040A` static/JVM gate complete, `FVC-040B` human pending | [脱敏基线](docs/acceptance-fvc-000.zh-CN.md)、[配置隔离](docs/acceptance-fvc-010.zh-CN.md)、[L1 真实闭环](docs/acceptance-fvc-020.zh-CN.md)、[ASR profile 隔离](docs/acceptance-fvc-030.zh-CN.md)及 [单轮语音代码门禁](docs/acceptance-fvc-040.zh-CN.md)证明独立 Keystore/profile、两轮中文上下文、离线 TTS、命令/对话 ASR 分流与单轮语音接线；私有含模型 `alpha.4` 已安装并显示对话“说话”入口，CPU KWS OFF、DSP ACTIVE | 完成 `FVC-040B` 真人单轮 ASR → 模型 → TTS 闭环与取消/资源门禁；同时可继续 `FVC-050A` 代码门禁 |
+| 开放对话 / Open conversation | `VERIFY`; `FVC-000/010/020/030` complete; `FVC-040A/050A/060A/070A` code gates complete; physical gates pending | [脱敏基线](docs/acceptance-fvc-000.zh-CN.md)、[配置隔离](docs/acceptance-fvc-010.zh-CN.md)、[L1 真实闭环](docs/acceptance-fvc-020.zh-CN.md)、[ASR profile](docs/acceptance-fvc-030.zh-CN.md)、[单轮](docs/acceptance-fvc-040.zh-CN.md)、[多轮](docs/acceptance-fvc-050.zh-CN.md)、[DSP 入口](docs/acceptance-fvc-060.zh-CN.md)及[中断资源](docs/acceptance-fvc-070.zh-CN.md)证明隔离/状态机/半双工/DSP 入口/释放接线；私有含模型 `alpha.4` 曾显示对话说话入口，CPU KWS OFF、DSP ACTIVE | 需要独立 AOSP 执行 `FVC-110A`；OnePlus 仍需 `FVC-040B/050B/060B/070B` 的真人声学、电话、route 与资源门禁 |
 | OpenCode 复杂任务 / OpenCode complex tasks | `FOUNDATION`; `OC-002–008` done | 手机上的 OpenCode TUI/Web、独立模型 profile、三类型私有任务协议、任务私有路径隔离、有界 runner、脱敏进度卡、停止/清理、受限工具策略与九轮组合回归 | Real OpenCode adapter/device acceptance remains required |
 | 受控 root / Controlled root | `FOUNDATION`; `ROOT-001–010` done | root 治理、固定只读 action 目录、内存 signer/一次性 broker、脱敏诊断投影、服务停止 dry-run 精确核验、加密备份、profile 事务、系统修改预览、脱敏审计/撤销与破坏性请求拒绝库已完成；独立 AOSP 已通过安装/升级/回退/卸载生命周期；真实 root adapter 尚未实现 | Real root adapter and separate device evidence |
 | 公开 Release / Public release | `VERIFY` | 可复现构建、SBOM、provenance 和扫描流水线已有候选证据；通用 APK 已在独立 AOSP 通过强制结束/冷启动/boot-ID 重启/卸载恢复 | 物理、真人、真实中转恢复和离线介质门禁完成后从最终 revision 重建 |
@@ -39,9 +39,9 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 唯一执行队列 / Ordered queue
 
-1. `CHAT-005 / FVC-040 → FVC-050` — 完成按键单轮与多轮语音聊天的真人/资源门禁。
-2. `FVC-060 → FVC-080` — 接入低功耗 DSP 逐轮聊天，完成中断门禁与真人开放中文 ASR A/B；没有合法实测的自定义 DSP 资产前不得宣称息屏“小黑小黑”可用。
-3. `VOICE-011 / CHAT-012 / FVC-090 → FVC-130` — 真人听感、路由矩阵、双语发布与最终合并；自动结果不能关闭 HUMAN 门禁。
+1. `FVC-110A` — 在独立 AOSP 模拟器运行无模型安装、mock 两轮、停止后零 Recorder/Fatal/ANR、卸载；当前没有在线模拟器，不能用 OnePlus 替代。
+2. `FVC-040B/050B/060B/070B` — OnePlus 上完成单轮、两轮、DSP、电话/route 的真人和资源门禁；自动结果不能替代。
+3. `FVC-080/090/120 → FVC-130` — 真人开放中文 ASR A/B、路由矩阵、产品验收、双语发布与最终合并；没有合法实测的自定义 DSP 资产前不得宣称息屏“小黑小黑”可用。
 4. `TOOL-003` real-adapter gate — 语音聊天稳定后继续真实 Phone Agent adapter；聊天模型仍不得直接持有工具或 root 权限。
 
 完整的 102 个稳定任务、依赖和证据要求见[执行任务账本](docs/execution-backlog.zh-CN.md)。执行模型一次只能领取一个 `READY` 任务。
