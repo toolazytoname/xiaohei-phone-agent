@@ -71,7 +71,7 @@ ROLLBACK / REMAINS / NEXT
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
 | CHAT-001 | DONE | BASE-005 | Independent Conversation profile; configuration-isolation regression and AOSP user-path visibility pass; credentials/calls remain CHAT-002/003 |
-| CHAT-002 | VERIFY | CHAT-001 | Keystore credentials and token-free backup/restore; build/config/backup regression passes, pending independent-device Keystore save-clear-restore path |
+| CHAT-002 | DONE | CHAT-001 | Keystore credentials and token-free backup/restore; OnePlus 8T completed a random test-token save, visible token-free v3 export, normal restore that clears all three slots, and restoration of the offline local state; see `acceptance-chat-002.md` |
 | CHAT-003 | DONE | CHAT-002 | Eleven deterministic transport cases plus unit, APK build, and repository gates pass with zero model calls |
 | CHAT-004 | DONE | CHAT-003 | Single-turn text chat with zero action authority; lifecycle/static gates and a fresh AOSP-emulator user-path SSE reply pass |
 | CHAT-005 | BACKLOG | CHAT-004,VOICE-002 | Human single-turn speech → text → model → TTS; global stop works |
