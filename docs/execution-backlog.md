@@ -167,7 +167,7 @@ ROLLBACK / REMAINS / NEXT
 | REL-001 | VERIFY | — | Three comparable physically unplugged DSP OFF/ARMED A/B runs plus complete 8–24h TSV |
 | REL-002 | HUMAN | VOICE-002 | Human prompt/TTS clarity and volume acceptance |
 | REL-003 | HUMAN | VOICE-006,VOICE-007 | Pre-registered real multi-speaker/noise/distance qualification |
-| REL-004 | BACKLOG | CHAT-012,TOOL-011 | 100 mixed chat/command/task stress; no crash, duplicate action, or recorder residue |
+| REL-004 | BACKLOG | CHAT-012,TOOL-011 | 100 mixed chat/command/task stress; no crash, duplicate action, or recorder residue. The supporting system/app launch matrix reads `mFocusedApp` only when Android 14 omits `topResumedActivity`; this does not replace the mixed workload or device gates |
 | REL-005 | BACKLOG | OC-008,ROOT-010 | Weak network/offline/process-kill/reboot/model-timeout recovery |
 | REL-006 | BACKLOG | UX-005 | 8–24h service-combination idle regression |
 | SEC-001 | DONE | ROOT-001 | Bilingual threat model covers chat/notification injection, tool/schema poisoning, OpenCode traversal, root escalation and destructive/exfiltration paths; device-level acceptance remains explicit |
