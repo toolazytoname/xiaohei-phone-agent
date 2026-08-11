@@ -10,4 +10,4 @@ The conversation page exposes **Stop speech (keep chat)**. It interrupts the act
 
 ## Evidence boundary
 
-This is an Android runtime wiring change, but it is not evidence that a particular device has an installed engine or that its audible stop latency is below 300 ms. `VOICE-011` remains `VERIFY` until a device run records that evidence. Voice barge-in stays out of scope until echo-loop qualification.
+This is an Android runtime wiring change, but it is not evidence that a particular device has an installed engine or that its audible stop latency is below 300 ms. `VOICE-011` records the OnePlus engine-visible stop boundary separately, while audible latency remains a `HUMAN` gate. Voice barge-in stays out of scope until echo-loop qualification.

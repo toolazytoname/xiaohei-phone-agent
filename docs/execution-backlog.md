@@ -63,7 +63,7 @@ ROLLBACK / REMAINS / NEXT
 | VOICE-008 | BACKLOG | VOICE-007 | Independent command/conversation ASR profiles; command correction cannot rewrite chat |
 | VOICE-009 | BACKLOG | VOICE-008 | Ordered partial/final streaming transcript UI with cancel/timeout tests |
 | VOICE-010 | DONE | VOICE-004 | Generation-bound sentence queue is wired to the system-TTS adapter: it exposes a first sentence immediately, advances only after current completion, and invalidates queued/late completions on replacement, stop, interruption or destroy. OnePlus evidence records ordered 24 kHz cross-sentence output and a mid-queue stop that drops the remaining three sentences; see `acceptance-voice-010.md` |
-| VOICE-011 | VERIFY | VOICE-010 | Conversation UI has a separate visible stop-speech control; accepted/repeated replies use the selected system TTS only, and stop/clear/lifecycle paths interrupt it without auto-resume. Audible ≤300ms interruption and echo-loop qualification remain device gates |
+| VOICE-011 | HUMAN | VOICE-010 | Conversation UI has a separate visible stop-speech control; accepted/repeated replies use the selected system TTS only, and stop/clear/lifecycle paths interrupt it without auto-resume. OnePlus engine-visible output stopped 227 ms after the control event and the queued remainder was cancelled; human audible ≤300ms interruption and echo-loop qualification remain required; see `acceptance-voice-011.md` |
 | VOICE-012 | BACKLOG | VOICE-011 | Bluetooth/headset/speaker focus and route matrix |
 
 ## Conversation engine
