@@ -170,13 +170,13 @@ This may follow a speaker-only preview, but public support claims must remain ex
 
 ### FVC-100 — Safe chat-to-action handoff
 
-- [ ] Assistant JSON/tool-like text remains display/speech-only and never enters command routing.
-- [ ] Only the original user transcript may use deterministic local commands.
-- [ ] Complex work stops at an editable Phone Agent draft pending visible risk/rollback review and fresh confirmation.
-- [ ] Voice “confirm” does not replace visible L2/L3 confirmation without a separate anti-replay/content-binding gate.
-- [ ] Payment, transfer, OTP, password, and protection-bypass requests remain denied.
+- [x] Assistant JSON/tool-like text remains display/speech-only and never enters command routing.
+- [x] Only the original user transcript may use deterministic local commands.
+- [x] Complex work stops at an editable Phone Agent draft pending visible risk/rollback review and fresh confirmation.
+- [x] Voice “confirm” does not replace visible L2/L3 confirmation without a separate anti-replay/content-binding gate.
+- [x] Payment, transfer, OTP, password, and protection-bypass requests remain denied.
 
-Prove 20 forged-tool cases with zero actions, one exact local command, one draft-only complex task, and zero plan/action after cancel.
+Evidence: [FVC-100 safe chat-to-action handoff acceptance](acceptance-fvc-100.md). Future real tools still need separate adapter acceptance.
 
 ### FVC-110 — Automated, AOSP, and OnePlus acceptance
 
