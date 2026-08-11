@@ -22,6 +22,7 @@ final class SystemTtsAdapter {
     private Listener listener;
     private volatile String utteranceId;
     private long utteranceGeneration;
+    private ProcessAudioDuplex.Lease outputLease;
     private final Runnable timeout = () -> { if (lifecycle.state() == TtsLifecycle.State.SPEAKING) { stop("播报超时，已停止"); } };
 
     SystemTtsAdapter(Context context) { this.context = context.getApplicationContext(); }
@@ -37,12 +38,21 @@ final class SystemTtsAdapter {
                 @Override public void onStart(String id) { }
                 @Override public void onDone(String id) {
                     if (!id.equals(utteranceId) || !lifecycle.finished()) return;
+                    handler.removeCallbacks(timeout);
                     SentenceTtsQueue.Next next = queue.complete(utteranceGeneration);
-                    if (next == null) { report("播报完成；等待后续输入"); return; }
+                    if (next == null) {
+                        releaseOutput();
+                        report("播报完成；等待后续输入");
+                        return;
+                    }
                     speakNext(next);
                 }
                 @Override public void onError(String id) {
-                    if (id.equals(utteranceId) && lifecycle.failSpeaking()) report("系统 TTS 播报失败");
+                    if (id.equals(utteranceId) && lifecycle.failSpeaking()) {
+                        handler.removeCallbacks(timeout);
+                        releaseOutput();
+                        report("系统 TTS 播报失败");
+                    }
                 }
             });
             lifecycle.initialized(true);
@@ -53,20 +63,31 @@ final class SystemTtsAdapter {
     void speak(String text) {
         if (text == null || text.trim().isEmpty() || text.length() > MAX_CHARS) { lifecycle.fail(); report("播报文本为空或超过限制"); return; }
         if (engine == null) { report("系统 TTS 未就绪"); return; }
+        if (!acquireOutput()) { report("麦克风正在使用；已拒绝同时播报"); return; }
         SentenceTtsQueue.Next first = queue.replace(text);
-        if (first == null || !lifecycle.speak()) { report("系统 TTS 未就绪"); return; }
+        if (first == null || !lifecycle.speak()) {
+            releaseOutput();
+            report("系统 TTS 未就绪");
+            return;
+        }
         speakNext(first);
     }
 
     private void speakNext(SentenceTtsQueue.Next next) {
         if (lifecycle.state() == TtsLifecycle.State.WAITING_FOLLOWUP && !lifecycle.speak()) {
+            releaseOutput();
             report("系统 TTS 未就绪");
             return;
         }
         utteranceGeneration = next.generation;
         utteranceId = UUID.randomUUID().toString();
         int result = engine.speak(next.sentence, TextToSpeech.QUEUE_FLUSH, new Bundle(), utteranceId);
-        if (result != TextToSpeech.SUCCESS) { lifecycle.fail(); report("系统拒绝播报请求"); return; }
+        if (result != TextToSpeech.SUCCESS) {
+            lifecycle.fail();
+            releaseOutput();
+            report("系统拒绝播报请求");
+            return;
+        }
         handler.postDelayed(timeout, TIMEOUT_MS);
         report("正在播报");
     }
@@ -77,6 +98,7 @@ final class SystemTtsAdapter {
         boolean changed = lifecycle.stop();
         utteranceId = null;
         if (engine != null) engine.stop();
+        releaseOutput();
         if (changed) report(detail);
     }
 
@@ -87,6 +109,7 @@ final class SystemTtsAdapter {
         boolean changed = lifecycle.interrupt();
         utteranceId = null;
         if (engine != null) engine.stop();
+        releaseOutput();
         if (changed) report(detail);
     }
 
@@ -96,7 +119,20 @@ final class SystemTtsAdapter {
         lifecycle.destroy();
         utteranceId = null;
         if (engine != null) { engine.stop(); engine.shutdown(); engine = null; }
+        releaseOutput();
         report("系统 TTS 已释放");
+    }
+
+    private synchronized boolean acquireOutput() {
+        if (outputLease != null) return true;
+        outputLease = ProcessAudioDuplex.shared().acquireOutput();
+        return outputLease != null;
+    }
+
+    private synchronized void releaseOutput() {
+        ProcessAudioDuplex.Lease lease = outputLease;
+        outputLease = null;
+        ProcessAudioDuplex.shared().release(lease);
     }
 
     private void report(String detail) { if (listener != null) listener.onState(lifecycle.state(), detail); }

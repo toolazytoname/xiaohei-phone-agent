@@ -33,6 +33,7 @@ final class VoiceCommandSession implements RecognitionListener {
     private SpeechRecognizer recognizer;
     private boolean active;
     private boolean focusHeld;
+    private ProcessAudioDuplex.Lease systemInputLease;
 
     VoiceCommandSession(Context context, Listener listener) {
         this.context = context.getApplicationContext();
@@ -80,29 +81,50 @@ final class VoiceCommandSession implements RecognitionListener {
             return;
         }
         stop();
+        if (usesLocalAsr() && ProcessAudioDuplex.shared().snapshot().owner
+                == AudioDuplexArbiter.Owner.OUTPUT) {
+            Log.i(TAG, "session_start_rejected tts_output_active");
+            listener.onSpeechError("小黑正在播报；请先停止播报再说话");
+            return;
+        }
+        if (!usesLocalAsr()) {
+            systemInputLease = ProcessAudioDuplex.shared().acquireInput();
+            if (systemInputLease == null) {
+                Log.i(TAG, "session_start_rejected tts_output_active");
+                listener.onSpeechError("小黑正在播报；请先停止播报再说话");
+                return;
+            }
+        }
         if (audioManager == null || audioManager.requestAudioFocus(focusRequest)
                 != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            releaseSystemInput();
             Log.i(TAG, "session_start_rejected audio_focus_unavailable");
             listener.onSpeechError("音频焦点不可用；请结束通话或其他独占音频后重试");
             return;
         }
         focusHeld = true;
         Log.i(TAG, "session_started audio_focus=exclusive local_asr=" + usesLocalAsr());
-        recognizer = usesLocalAsr()
-            ? SpeechRecognizer.createSpeechRecognizer(context,
-                new ComponentName(context, XiaoheiRecognitionService.class))
-            : SpeechRecognizer.createSpeechRecognizer(context);
-        recognizer.setRecognitionListener(this);
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN");
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "zh-CN");
-        intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
-        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 1200);
-        intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 900);
-        if (maxDurationMs > 0) intent.putExtra(EXTRA_MAX_DURATION_MS, maxDurationMs);
-        active = true;
-        recognizer.startListening(intent);
+        try {
+            recognizer = usesLocalAsr()
+                ? SpeechRecognizer.createSpeechRecognizer(context,
+                    new ComponentName(context, XiaoheiRecognitionService.class))
+                : SpeechRecognizer.createSpeechRecognizer(context);
+            recognizer.setRecognitionListener(this);
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh-CN");
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "zh-CN");
+            intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+            intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+            intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 1200);
+            intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 900);
+            if (maxDurationMs > 0) intent.putExtra(EXTRA_MAX_DURATION_MS, maxDurationMs);
+            active = true;
+            recognizer.startListening(intent);
+        } catch (RuntimeException unavailable) {
+            Log.e(TAG, "session_start_failed " + unavailable.getClass().getSimpleName());
+            stop();
+            listener.onSpeechError("语音识别启动失败；麦克风已释放");
+        }
     }
 
     void stop() {
@@ -117,7 +139,14 @@ final class VoiceCommandSession implements RecognitionListener {
             audioManager.abandonAudioFocusRequest(focusRequest);
             focusHeld = false;
         }
+        releaseSystemInput();
         if (hadSession) Log.i(TAG, "session_stopped microphone_released=true");
+    }
+
+    private synchronized void releaseSystemInput() {
+        ProcessAudioDuplex.Lease lease = systemInputLease;
+        systemInputLease = null;
+        ProcessAudioDuplex.shared().release(lease);
     }
 
     private void onAudioFocusChange(int change) {

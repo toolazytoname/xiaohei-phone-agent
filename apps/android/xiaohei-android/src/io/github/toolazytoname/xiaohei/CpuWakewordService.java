@@ -23,6 +23,7 @@ public final class CpuWakewordService extends Service {
     private volatile boolean running;
     private Thread worker;
     private AudioRecord recorder;
+    private ProcessAudioDuplex.Lease inputLease;
 
     @Override public void onCreate() {
         super.onCreate();
@@ -40,6 +41,12 @@ public final class CpuWakewordService extends Service {
 
     private synchronized void startListening() {
         if (running) return;
+        inputLease = ProcessAudioDuplex.shared().acquireInput();
+        if (inputLease == null) {
+            publish("ERROR", "音频输出正在使用；CPU 唤醒未启动");
+            stopSelf();
+            return;
+        }
         running = true;
         worker = new Thread(this::listenLoop, "xiaohei-cpu-kws");
         worker.start();
@@ -49,9 +56,17 @@ public final class CpuWakewordService extends Service {
         int min = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO,
             AudioFormat.ENCODING_PCM_16BIT);
         try (LocalKwsEngine engine = new LocalKwsEngine(this)) {
-            recorder = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION, 16000,
+            AudioRecord candidate = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION, 16000,
                 AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, Math.max(min, 8192));
-            recorder.startRecording();
+            synchronized (this) {
+                if (!running) {
+                    candidate.release();
+                    Log.i("XiaoheiCpuKws", "capture_start_cancelled before_audio_start=true");
+                    return;
+                }
+                recorder = candidate;
+                recorder.startRecording();
+            }
             publish("LISTENING", "CPU 实验模式正在监听“小黑小黑”（非 DSP，耗电较高）");
             short[] pcm = new short[1600];
             while (running) {
@@ -71,6 +86,7 @@ public final class CpuWakewordService extends Service {
                 }
             }
         } catch (Exception error) {
+            if (!running) return;
             Log.e("XiaoheiCpuKws", "listener failed", error);
             stopListening("ERROR", "启动失败：" + error.getClass().getSimpleName());
             stopSelf();
@@ -82,6 +98,9 @@ public final class CpuWakewordService extends Service {
         AudioRecord active = recorder;
         recorder = null;
         if (active != null) { try { active.stop(); } catch (Exception ignored) { } active.release(); }
+        ProcessAudioDuplex.Lease lease = inputLease;
+        inputLease = null;
+        ProcessAudioDuplex.shared().release(lease);
         publish(state, detail);
     }
 

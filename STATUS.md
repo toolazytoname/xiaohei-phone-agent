@@ -19,7 +19,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 | 工作流 / Workstream | 状态 / State | 已有证据 / Evidence now | 下一任务 / Next task |
 |---|---|---|---|
-| 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约；OnePlus 离线中文 TTS 资格与小黑适配器播报/停止已通过 | `VOICE-004/010/011` audio gates |
+| 通用产品基线 / Generic baseline | `DONE` in stated scope | 通用 Android 入口、能力探测、源码发布边界、卸载回滚、长期文档集成和会话边界契约；OnePlus 离线中文 TTS、适配器停止及真实 ASR/TTS 半双工已通过 | `VOICE-010/011` queue/latency gates |
 | DSP 与短命令 / DSP and short commands | `VERIFY` | OnePlus 8T DSP 声学 callback、离线命令路由和 12 个确定性动作已验证 | 完成 `REL-001`、`REL-002` 后再宣传低功耗 |
 | 可见 Phone Agent / Visible Phone Agent | `DONE` in M5 scope; `TOOL-003` coordinator at `VERIFY` | AOSP 十 App 10/10、全局停止、包绑定、内存视觉恢复；路由、计划、确认、目录、loopback/same-UID 授权及仅测试有界执行协调器通过 | Real adapter kill/network/device gate remains; proceed with `OC-004` independently |
 | 开放对话 / Open conversation | `VERIFY`; automated `CHAT-012` passed | 前述对话基础、确定性离线 FAQ、20/5/5/5 自动矩阵、五类请求前隐私拒绝及 AOSP 零录音残留已验证 | Human Mandarin playback/intelligibility/interruption remains; agent path proceeds with `OC-004` |
@@ -43,7 +43,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 2. `ROOT-001` → `ROOT-010` — 建立独立 root capability broker；普通 Android/OpenCode 令牌不能升级权限。
 3. `TOOL-003` real-adapter gate — 在具体适配器存在后验证真实进程 kill、断网与句柄归零；合成故障不能关闭该门禁。
 4. `CHAT-002` — 在独立设备验证 Conversation Keystore 保存/清除/恢复（实现已完成，待验）。
-5. `VOICE-004/010/011` → `CHAT-005` → `CHAT-012` — 在已通过的离线 TTS 适配器上完成半双工、队列/可听时延及最终真人听感/打断门禁。
+5. `VOICE-010/011` → `CHAT-005` → `CHAT-012` — 在已通过的离线 TTS 与 ASR/TTS 半双工基础上完成队列/可听时延及最终真人听感/打断门禁。
 
 完整的 102 个稳定任务、依赖和证据要求见[执行任务账本](docs/execution-backlog.zh-CN.md)。执行模型一次只能领取一个 `READY` 任务。
 
@@ -67,6 +67,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 
 ## 最近证据 / Recent evidence
 
+- `VOICE-004`：进程级身份 lease 已接入 TTS、本地/系统 ASR 和可选 CPU KWS。OnePlus 8T 真机分别证明离线 TTS 为 Active Output/零 Recorder、离线 ASR 为单条 16 kHz Active Input/零 TTS，停止后双方归零；同时复现并修复“全局停止后 worker 才开麦”的竞态，重跑为 `capture_start_cancelled` 且未打开录音器。模型输入保持私有且不入 Git/公开 Release。
 - `VOICE-002`：OnePlus 8T 小黑 Conversation 已用默认离线引擎进入 `SPEAKING`；点击可见停止播报后变为 `INTERRUPTED`，音轨在 6,976 帧后停止，Active Record Client 与两应用唤醒锁引用均为 0。停止/完成竞态已改为先原子切状态并使 utterance 失效，再停引擎；真人听感、≤300 ms 可听时延与 DSP ARMED 仍未虚报。
 - `VOICE-001`：OnePlus 8T 已按所有者授权安装并选择离线 `ChineseTtsTflite 0.5.0`。安装 APK 与 F-Droid 签名索引 SHA-256 `bdc8a50c…acbc76e` 一致；小黑 `alpha.3` 只读探针返回 `READY`、4/4 中文音色离线、简体可用。FastSpeech2 内置示例交付 81,600 帧音频，探测与播报后均无引擎唤醒锁引用。真人听感仍属于 `CHAT-012`，不是 `VOICE-001`。
 - `文档勘误（TOOL-001/003）`：当前目录是七项/十个 Schema，不再是早期五项/六个 Schema；`TOOL-003` 已有封闭 Android 注册表、受权 bridge 和全局停止取消信号，但没有可见确认调用方或设备权限/结果证据，故仍为 `VERIFY`。
