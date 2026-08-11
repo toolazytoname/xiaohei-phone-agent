@@ -53,8 +53,8 @@ ROLLBACK / REMAINS / NEXT
 
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
-| VOICE-001 | HUMAN | BASE-005 | Read-only Chinese TTS probe is implemented and built. The current OnePlus 8T has no registered system TTS engine, so an owner must install/select an engine before the independent-device UI probe can run; no automatic download or engine change is allowed |
-| VOICE-002 | VERIFY | VOICE-001 | System TTS adapter with explicit lifecycle; 10 transitions/build pass, real speech/stop awaits a device with a registered engine |
+| VOICE-001 | DONE | BASE-005 | On the OnePlus 8T, the owner-authorized offline engine was installed from an APK whose SHA-256 matches the signed F-Droid index, selected as the Android default, and independently reported by Xiaohei's read-only UI probe as `READY`: 4 Chinese voices, all 4 offline, Simplified Chinese available. The engine's built-in FastSpeech2 sample delivered 81,600 audio frames with no engine wake-lock reference; exact hashes and limits are recorded in `acceptance-voice-001.md` |
+| VOICE-002 | VERIFY | VOICE-001 | System TTS adapter with explicit lifecycle; 10 transitions/build pass, and a registered offline engine is now available. Xiaohei Conversation speech/stop through this adapter still needs independent device evidence |
 | VOICE-003 | DONE | VOICE-002 | Pure TTS lifecycle models `SPEAKING`, `WAITING_FOLLOWUP`, and `INTERRUPTED` transitions; adapter labels completion/interruption without auto-resume; real audio remains gated |
 | VOICE-004 | VERIFY | VOICE-003 | Synchronized input/output ownership arbiter rejects overlap and returns to none on terminal interruption; Android adapter wiring and real audio evidence remain required |
 | VOICE-005 | VERIFY | VOICE-004 | Signal-only policy maps call, alarm, media and Activity interruption to stop input/output and release ownership with no auto-resume; home Activity pause uses it for ASR, while shared Android source/TTS wiring and device audio evidence remain required |
