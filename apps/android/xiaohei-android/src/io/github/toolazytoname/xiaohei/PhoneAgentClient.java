@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 /** OpenAI-compatible planner. It returns a proposal and never performs an Android action. */
 final class PhoneAgentClient {
@@ -17,12 +18,17 @@ final class PhoneAgentClient {
         final String packageName;
         final String label;
         final String explanation;
-        Proposal(boolean ok, String packageName, String label, String explanation) {
-            this.ok = ok; this.packageName = packageName; this.label = label; this.explanation = explanation;
+        final String requestId;
+        Proposal(boolean ok, String packageName, String label, String explanation, String requestId) {
+            this.ok = ok; this.packageName = packageName; this.label = label;
+            this.explanation = explanation; this.requestId = requestId;
         }
     }
 
-    static Proposal plan(Context context, String task) {
+    /** Sends private text only from a current-user, pending dry-run request created by the local UI. */
+    static Proposal plan(Context context, UnconfirmedActionRequest.Request pending) {
+        if (!validPendingRequest(pending)) return fail("待规划请求无效或已失效");
+        String task = pending.userTextForPlanner();
         if (task == null || task.trim().isEmpty() || task.length() > 1024)
             return fail("任务为空或超过 1024 个字符");
         android.content.SharedPreferences prefs =
@@ -74,7 +80,8 @@ final class PhoneAgentClient {
             if (!AgentPolicy.packageAllowed(pkg)
                     || AgentPolicy.assess(pkg, "", label) != AgentPolicy.Decision.ALLOW)
                 return fail("模型提议被本地安全策略拒绝");
-            return new Proposal(true, pkg, label, plan.optString("explanation", "低风险单步动作"));
+            return new Proposal(true, pkg, label, plan.optString("explanation", "低风险单步动作"),
+                pending.requestId);
         } catch (Exception error) {
             return fail("规划失败：" + error.getClass().getSimpleName());
         }
@@ -102,5 +109,19 @@ final class PhoneAgentClient {
         } catch (Exception error) { return "健康检查失败：" + error.getClass().getSimpleName(); }
     }
 
-    private static Proposal fail(String detail) { return new Proposal(false, "", "", detail); }
+    private static boolean validPendingRequest(UnconfirmedActionRequest.Request request) {
+        String task = request == null ? null : request.userTextForPlanner();
+        return request != null && request.schemaVersion == UnconfirmedActionRequest.SCHEMA_VERSION
+            && request.requestId != null && request.requestId.matches("[A-Za-z0-9][A-Za-z0-9._:-]{7,127}")
+            && UnconfirmedActionRequest.TARGET.equals(request.target)
+            && UnconfirmedActionRequest.ACTION.equals(request.action)
+            && UnconfirmedActionRequest.RISK.equals(request.risk)
+            && request.requiresConfirmation
+            && UnconfirmedActionRequest.CONFIRMATION_STATE.equals(request.confirmationState)
+            && request.dryRun && !request.publicLogSafe
+            && request.sensitiveFields.equals(Collections.singletonList(UnconfirmedActionRequest.SENSITIVE_FIELD))
+            && task != null && !task.trim().isEmpty() && task.codePointCount(0, task.length()) <= 1024;
+    }
+
+    private static Proposal fail(String detail) { return new Proposal(false, "", "", detail, ""); }
 }

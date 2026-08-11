@@ -18,7 +18,9 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.UUID;
 
 /** Visible control surface for bounded semantic Phone Agent tasks. */
 public final class AgentActivity extends Activity {
@@ -30,6 +32,7 @@ public final class AgentActivity extends Activity {
     private EditText taskInput;
     private Button confirmProposal;
     private PhoneAgentClient.Proposal pendingProposal;
+    private UnconfirmedActionRequest.Request pendingPlanningRequest;
     private boolean routeDraftPending;
     private final TaskCard[] safeCards = new TaskCard[] {
         new TaskCard("系统设置：网络和互联网", "com.android.settings", "网络和互联网"),
@@ -299,20 +302,35 @@ public final class AgentActivity extends Activity {
         String task = taskInput.getText().toString().trim();
         if (task.isEmpty()) { state.setText("请先描述任务"); return; }
         routeDraftPending = false;
+        UnconfirmedActionRequest.Result request = UnconfirmedActionRequest.fromConversationMessage(
+            new MemoryConversationSession.Message(MemoryConversationSession.Role.USER, task),
+            "agent-request-" + UUID.randomUUID(), Instant.now().toString());
+        if (request.outcome != UnconfirmedActionRequest.Outcome.CREATED) {
+            state.setText(request.prompt);
+            return;
+        }
+        pendingPlanningRequest = request.request;
         pendingProposal = null;
         confirmProposal.setVisibility(View.GONE);
-        state.setText("PLANNING：仅请求一个低风险步骤；此时不会操作手机");
+        state.setText("PLANNING：当前用户待确认干运行请求；仅请求一个低风险步骤；此时不会操作手机");
         new Thread(() -> {
-            PhoneAgentClient.Proposal proposal = PhoneAgentClient.plan(this, task);
+            PhoneAgentClient.Proposal proposal = PhoneAgentClient.plan(this, request.request);
             runOnUiThread(() -> {
                 if (!proposal.ok) {
+                    if (pendingPlanningRequest == request.request) pendingPlanningRequest = null;
                     state.setText(proposal.explanation);
                     return;
                 }
                 ConfirmationPreview.Card preview = ConfirmationPreview.phoneAgent(
                     proposal.packageName, proposal.label);
                 if (preview == null) {
+                    if (pendingPlanningRequest == request.request) pendingPlanningRequest = null;
                     state.setText("计划未形成可安全确认的单步预览；没有执行");
+                    return;
+                }
+                if (pendingPlanningRequest != request.request
+                        || !proposal.requestId.equals(request.request.requestId)) {
+                    state.setText("规划请求已失效；没有执行");
                     return;
                 }
                 pendingProposal = proposal;
@@ -325,9 +343,12 @@ public final class AgentActivity extends Activity {
 
     private void confirmPlan() {
         PhoneAgentClient.Proposal proposal = pendingProposal;
+        UnconfirmedActionRequest.Request request = pendingPlanningRequest;
         pendingProposal = null;
+        pendingPlanningRequest = null;
         confirmProposal.setVisibility(View.GONE);
-        if (proposal == null || AgentPolicy.assess(proposal.packageName, "", proposal.label)
+        if (proposal == null || request == null || !proposal.requestId.equals(request.requestId)
+                || AgentPolicy.assess(proposal.packageName, "", proposal.label)
                 != AgentPolicy.Decision.ALLOW || !AgentPolicy.packageAllowed(proposal.packageName)) {
             state.setText("计划已过期或被本地策略拒绝");
             return;
@@ -347,6 +368,12 @@ public final class AgentActivity extends Activity {
             return;
         }
         startActivity(launch);
+    }
+
+    @Override protected void onDestroy() {
+        pendingProposal = null;
+        pendingPlanningRequest = null;
+        super.onDestroy();
     }
 
     private static String truncate(String value, int max) {
