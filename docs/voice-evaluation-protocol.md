@@ -33,7 +33,7 @@ Never collect phone numbers, real contacts, addresses, OTPs, passwords, chat tex
 
 ## Redacted result sheet
 
-Keep this table privately or in a restricted issue attachment; public reports contain aggregates only.
+Start from the [transcript-free CSV template](voice-evaluation-summary.template.csv), keep the completed copy privately or in a restricted issue attachment, and run `python3 scripts/summarize-voice-evaluation.py /private/results.csv`. The script outputs aggregates only; public reports contain aggregates only.
 
 | Case | Speaker | Distance | Environment | Category | Expected intent | ASR exact? | Routed safely? | Latency ms | Result | Notes |
 |---|---|---|---|---|---|---:|---:|---:|---|---|
@@ -47,4 +47,3 @@ Keep this table privately or in a restricted issue attachment; public reports co
 - A high-risk misaction, recorder residue, crash, or failed global stop fails the candidate build.
 - Missing a predeclared threshold stays `VERIFY`; do not tune and publish only the passing cases.
 - Public reports include device class, version, bucket counts, aggregate metrics, limits, and deletion confirmation only.
-

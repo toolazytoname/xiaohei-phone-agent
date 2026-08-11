@@ -1,0 +1,4 @@
+case_id,speaker,distance_cm,environment,category,expected_outcome,asr_exact,routed_safely,latency_ms,result
+C01,S1,30,quiet,command,OPEN_GALLERY,yes,yes,0,pending
+C02,S2,100,ordinary_indoor,open_question,UNDERSTOOD,yes,yes,0,pending
+C03,S3,200,mild_outdoor,negative,SAFE_REJECT,no,yes,0,pending

@@ -33,7 +33,7 @@
 
 ## 脱敏结果表
 
-把下表复制到本地私有表格或 issue 附件；公开报告仅提供聚合数值。
+从[无转写 CSV 模板](voice-evaluation-summary.template.csv)开始，完成后的副本只放本地私有表格或受限 issue 附件，并执行 `python3 scripts/summarize-voice-evaluation.py /private/results.csv`。脚本只输出聚合数值；公开报告也只能提供聚合数值。
 
 | Case | Speaker | Distance | Environment | Category | Expected intent | ASR exact? | Routed safely? | Latency ms | Result | Notes |
 |---|---|---|---|---|---|---:|---:|---:|---|---|
@@ -47,4 +47,3 @@
 - 任何错误执行高风险动作、录音服务残留、崩溃或无法停止均为该 build 失败。
 - 未达到预先声明的门槛可标为 `VERIFY`，不能通过调阈值后只重新报告成功案例。
 - 公开报告仅包含设备类别、版本、分桶样本数、汇总指标、已知限制和删除确认；原始数据保持私有或删除。
-
