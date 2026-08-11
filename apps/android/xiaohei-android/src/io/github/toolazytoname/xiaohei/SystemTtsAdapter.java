@@ -184,7 +184,6 @@ final class SystemTtsAdapter {
             current = engine;
             releaseOutput();
             abandonAudioFocus();
-            abandonAudioFocus();
         }
         if (current != null) current.stop();
         if (changed) report(detail);
@@ -201,6 +200,7 @@ final class SystemTtsAdapter {
             utteranceId = null;
             current = engine;
             releaseOutput();
+            abandonAudioFocus();
         }
         if (current != null) current.stop();
         if (changed) report(detail);

@@ -64,6 +64,7 @@ public final class ConversationActivity extends Activity {
     private final BroadcastReceiver screenOff = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
             if (!Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) return;
+            stopVoiceListening();
             coordinator.onLocked();
             closePending();
             clearVisible("设备已锁定，内存上下文已清空 / Device locked; session cleared");
