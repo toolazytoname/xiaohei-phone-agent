@@ -43,6 +43,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private String lastActionKey;
     private long lastActionAt;
     private boolean executing;
+    private ApplicationStopHub.Registration globalStopRegistration;
 
     static boolean isConnected() { return active != null; }
     static boolean isTaskRunning() {
@@ -114,6 +115,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     @Override public void onInterrupt() { stopInternal("系统中断"); }
     @Override public void onDestroy() {
         stopInternal("服务关闭");
+        releaseGlobalStopRegistration();
         if (active == this) active = null;
         super.onDestroy();
     }
@@ -137,6 +139,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         recoveries = 0;
         recoveryScheduled = false;
         lastActionKey = null;
+        armGlobalStopRegistration();
         showNotification("等待目标页面：" + pendingLabel);
         Log.i(TAG, "task=start id=" + taskId + " max_steps=8 timeout_ms=60000 labels=" + pendingLabels.size());
         return true;
@@ -157,6 +160,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         recoveries = 0;
         recoveryScheduled = false;
         lastActionKey = null;
+        armGlobalStopRegistration();
         showNotification("等待目标页面：" + pendingLabel);
         Log.i(TAG, "task=start navigation=" + pendingOperation + " timeout_ms=60000");
         return true;
@@ -385,6 +389,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         pendingOperation = null;
         pendingLabels = null;
         recoveryScheduled = false;
+        releaseGlobalStopRegistration();
         showNotification(detail);
     }
 
@@ -400,7 +405,20 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         recoveryScheduled = false;
         executing = false;
         handler.removeCallbacksAndMessages(null);
+        releaseGlobalStopRegistration();
         showNotification("已停止：" + reason);
+    }
+
+    private void armGlobalStopRegistration() {
+        if (globalStopRegistration != null) return;
+        globalStopRegistration = ApplicationStopHub.register(GlobalStopRegistry.Resource.PHONE_AGENT,
+                () -> { stopInternal("全局停止"); return true; });
+    }
+
+    private void releaseGlobalStopRegistration() {
+        if (globalStopRegistration == null) return;
+        globalStopRegistration.close();
+        globalStopRegistration = null;
     }
 
     private void showNotification(String detail) {

@@ -148,7 +148,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `PLAN-004`：失败指纹现包含内存恢复门：相同证据拒绝，只有证据变化才可精确放行一次恢复，之后持续拒绝；不持久化、不公开指纹，也不执行或重试工具。尚未接入真实规划器/执行器和用户恢复页面，保持 VERIFY。
 - `UX-005`：新增八类别全局停止注册表；每个显式登记的资源所有者只收到一次停止请求，失败明确显示为未完全释放，停止后不允许再登记或重复停止。尚未接入所有入口或证明平台资源归零，保持 VERIFY。
 - `UX-005` 接线：主页“全部停止”和已有状态通知 `global_stop` Intent 已通过该注册表停止主页持有的语音、DSP 与 CPU 唤醒；Phone Agent、Conversation、OpenCode、工具、root、语音/微件入口仍独立，未宣称全设备归零。
-- `UX-005` 应用级接线：停止中心现跨页面保存显式所有者并支持注销；Conversation 已登记在途请求与 TTS，主页/通知触发时会一起停止。Phone Agent、工具、OpenCode、root 与真机资源归零仍为 VERIFY。
+- `UX-005` 应用级接线：停止中心现跨页面保存显式所有者并支持注销；Conversation 已登记在途请求与 TTS，活跃 Phone Agent 任务也在开始后登记、终态或服务销毁时释放，主页/通知触发时会调用既有停止路径。工具已登记；OpenCode、root 与真机资源归零仍为 VERIFY。
 - `UX-005` 工具接线：已受权工具执行会登记同一取消信号；全局停止会请求 `GLOBAL_STOP` 并由有界协调器中断 worker。Phone Agent、OpenCode、root 与真机资源归零仍为 VERIFY。
 - `VOICE-005`：新增来电/闹钟/媒体/Activity 的统一信号中断策略，固定停止输入/输出、释放所有权且不自动恢复；主页暂停已通过它停止 ASR。尚未将真实来源和 TTS 全部接线，保持 VERIFY。
 - `TOOL-012`：工具结果证据门要求适配器成功后出现更新且预期包名匹配的观察；旧快照、抢切包名、适配器失败和重复验证都拒绝。尚未接真实适配器/观察器，保持 VERIFY。
