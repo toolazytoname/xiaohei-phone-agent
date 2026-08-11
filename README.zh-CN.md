@@ -1,6 +1,6 @@
 # 小黑 AI 手机助手
 
-[English](README.md) · [长期总纲](docs/sovereign-mobile-agent-master-plan.zh-CN.md) · [执行任务账本](docs/execution-backlog.zh-CN.md) · [当前状态](STATUS.md) · [GitHub 交付看板](docs/github-progress-board.zh-CN.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [手机离线操作卡](docs/phone-operation-card.zh-CN.md) · [交付证据矩阵](docs/delivery-evidence-matrix.zh-CN.md) · [Root Broker 威胁模型](docs/root-capability-broker-threat-model.zh-CN.md) · [发布范围](docs/release-scope-0.2.0-alpha.3.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [数据流与保留规则](docs/privacy-data-flow.zh-CN.md) · [安全策略](SECURITY.md)
+[English](README.md) · [长期总纲](docs/sovereign-mobile-agent-master-plan.zh-CN.md) · [自由语音聊天交付计划](docs/free-voice-chat-delivery-plan.zh-CN.md) · [执行任务账本](docs/execution-backlog.zh-CN.md) · [当前状态](STATUS.md) · [GitHub 交付看板](docs/github-progress-board.zh-CN.md) · [架构](docs/architecture.zh-CN.md) · [兼容性](docs/compatibility.zh-CN.md) · [手机离线操作卡](docs/phone-operation-card.zh-CN.md) · [交付证据矩阵](docs/delivery-evidence-matrix.zh-CN.md) · [Root Broker 威胁模型](docs/root-capability-broker-threat-model.zh-CN.md) · [发布范围](docs/release-scope-0.2.0-alpha.3.zh-CN.md) · [威胁模型](docs/threat-model.zh-CN.md) · [数据流与保留规则](docs/privacy-data-flow.zh-CN.md) · [安全策略](SECURITY.md)
 
 ![小黑 AI 手机助手产品图：唤醒、短语音、意图与策略、用户确认、Android 动作和兼容性分层](docs/assets/xiaohei-phone-agent-overview.png)
 
@@ -8,7 +8,7 @@
 
 小黑是一款面向 Android 的开源、本地优先 AI 手机助手。它把用户主动入口或常驻唤醒、短语音命令、与模型无关的意图路由、明确的安全策略和可观察的手机操作组合成一个独立产品。
 
-**当前状态：**可安装的 `0.2.0-alpha.3` 发布候选，尚未上传公开二进制 Release。计划公开的通用包不内嵌模型权重；私有本地构建增加离线中文 ASR 与实验性 CPU KWS，OnePlus profile 则提供独立控制、使用原厂词的低功耗 DSP 路径。
+**当前状态：**可安装的 `0.2.0-alpha.3` 公开发布候选，尚未上传公开二进制 Release。私有 `0.2.0-alpha.4` OnePlus 候选增加了有界、按键启动的中文语音聊天。计划公开的通用包不内嵌模型权重；私有本地构建增加离线中文 ASR 与实验性 CPU KWS，OnePlus profile 则提供独立控制、使用原厂词的低功耗 DSP 路径。
 
 **兼容性承诺：**基础版小黑不要求 OnePlus 手机或 Qualcomm DSP。不兼容的唤醒后端必须隐藏或明确显示“不支持”，不能乐观安装后再报错。详见[兼容性分层](docs/compatibility.zh-CN.md)。
 
@@ -25,6 +25,12 @@
 - “小黑小黑，微信有没有未读消息？”——优先从通知层汇总未读状态，不遍历聊天页面。
 - “小黑小黑，帮我回复未读消息。”——先生成草稿并展示目标和内容；确认只打开目标 App，最终发送由用户亲自完成。
 - “小黑小黑，切到本地模型。”——使用本地或远端模型配置，但模型切换不连带启停其他服务。
+
+## 有界自由语音聊天预览
+
+在私有、含模型的构建上，**小黑对话**提供可见的**说话**按钮。一轮明确交互为：说话 → 有界中文 ASR → 本地隐私/控制检查 → 已配置的 Conversation 模型 → 离线系统 TTS。partial 转写绝不发送；下一轮必须再点击“继续说”，应用不会为了等待追问而常驻 CPU 麦克风。
+
+Conversation 输出只可显示/播报，不拥有 Android 动作、工具、通知、文件、OpenCode 或 root 权限。OEM DSP 可识别“开始聊天”等精确本地短语并打开一次可见聊天听取；这只是 OnePlus 私有预览，绝不表示自定义息屏“小黑小黑”DSP 已可用。自然 ASR、电话/闹钟、音频路由和待机功耗仍是[交付计划](docs/free-voice-chat-delivery-plan.zh-CN.md)中的真人/实体设备门禁。
 
 ## 产品原则
 
@@ -71,6 +77,7 @@ flowchart LR
 | 通知与确认式草稿 | M4 已完成 | 绑定精确当前通知、草稿易失、确认只开 App；不自动发送 |
 | 可见 Phone Agent | M5 已完成 | AOSP 十 App 10/10、包绑定、全局停止与内存视觉恢复 |
 | 自定义“小黑小黑” | 实验性 CPU 兜底 | 单一已验证环境可用，但真人多人准确率和功耗门禁仍缺；不宣称自定义 DSP |
+| 有界按键语音聊天 | OnePlus 私有预览 | 命令与聊天 ASR 已分流；“说话 → 本地检查 → 模型 → 离线 TTS”已安装。真人声学、中断和功耗门禁仍未关闭。 |
 
 ## 目录结构
 

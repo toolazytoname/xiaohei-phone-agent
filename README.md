@@ -1,6 +1,6 @@
 # Xiaohei Phone Agent
 
-[简体中文](README.zh-CN.md) · [Long-term master plan](docs/sovereign-mobile-agent-master-plan.md) · [Execution backlog](docs/execution-backlog.md) · [Current status](STATUS.md) · [GitHub delivery board](docs/github-progress-board.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [On-phone operation card](docs/phone-operation-card.md) · [Evidence matrix](docs/delivery-evidence-matrix.md) · [Root broker threat model](docs/root-capability-broker-threat-model.md) · [Release scope](docs/release-scope-0.2.0-alpha.3.md) · [Threat model](docs/threat-model.md) · [Data flow & retention](docs/privacy-data-flow.md) · [Security](SECURITY.md)
+[简体中文](README.zh-CN.md) · [Long-term master plan](docs/sovereign-mobile-agent-master-plan.md) · [Free-voice delivery plan](docs/free-voice-chat-delivery-plan.md) · [Execution backlog](docs/execution-backlog.md) · [Current status](STATUS.md) · [GitHub delivery board](docs/github-progress-board.md) · [Architecture](docs/architecture.md) · [Compatibility](docs/compatibility.md) · [On-phone operation card](docs/phone-operation-card.md) · [Evidence matrix](docs/delivery-evidence-matrix.md) · [Root broker threat model](docs/root-capability-broker-threat-model.md) · [Release scope](docs/release-scope-0.2.0-alpha.3.md) · [Threat model](docs/threat-model.md) · [Data flow & retention](docs/privacy-data-flow.md) · [Security](SECURITY.md)
 
 ![Xiaohei Phone Agent product map: wake, short voice, intent and policy, confirmation, Android action, and compatibility tiers](docs/assets/xiaohei-phone-agent-overview.png)
 
@@ -8,7 +8,7 @@
 
 Xiaohei is an open, local-first AI phone assistant for Android. It connects a user-invoked or always-on entry point, a short voice command, model-independent intent routing, explicit safety policy, and observable Android actions into one product.
 
-**Status:** installable `0.2.0-alpha.3` release candidate; no public binary Release has been uploaded. The intended public generic package embeds no model weights. A private local build adds offline Chinese ASR and experimental CPU KWS; the OnePlus profile provides a separately controlled low-power OEM-phrase DSP path.
+**Status:** installable `0.2.0-alpha.3` public release candidate; no public binary Release has been uploaded. A private `0.2.0-alpha.4` OnePlus candidate adds bounded button-initiated Chinese voice conversation. The intended public generic package embeds no model weights. A private local build adds offline Chinese ASR and experimental CPU KWS; the OnePlus profile provides a separately controlled low-power OEM-phrase DSP path.
 
 **Compatibility promise:** users do not need a OnePlus phone or Qualcomm DSP for Xiaohei's base product. Unsupported wake backends are hidden or marked unavailable instead of being installed optimistically. See the [compatibility tiers](docs/compatibility.md).
 
@@ -26,6 +26,12 @@ OnePlus DSP or real-acoustic acceptance result.
 - “Xiaohei, do I have unread WeChat messages?” — summarize notification-level unread state without crawling chats.
 - “Xiaohei, draft a reply to the unread message.” — prepare a preview; confirmation opens the target app, and the user performs the final send.
 - “Xiaohei, use my local model.” — route the task through a selected local or remote model profile without coupling model choice to service lifecycle.
+
+## Bounded voice conversation preview
+
+On a private model-bearing build, **Xiaohei Conversation** has a visible **Talk** button. One explicit turn is: speak → bounded Chinese ASR → local privacy/control check → configured Conversation model → offline system TTS. Partial text is never sent. The next turn requires another explicit **Continue talking** tap; the app never keeps a CPU microphone open waiting for follow-up.
+
+Conversation output is display/speech only: it has no Android action, tool, notification, file, OpenCode, or root authority. The OEM DSP path may recognize an exact local phrase such as “开始聊天” and open one visible Conversation listening turn, but this is a private OnePlus preview—not a claim that a custom screen-off “Xiaohei Xiaohei” DSP keyword is available. Natural-ASR accuracy, calls/alarms, route coverage, and idle-power qualification remain human/device gates in the [delivery plan](docs/free-voice-chat-delivery-plan.md).
 
 ## Product principles
 
@@ -72,6 +78,7 @@ Xiaohei owns the product shell and orchestration. It does not duplicate the devi
 | Notifications and confirmed drafts | M4 complete | Exact current notification, volatile preview, confirm opens app only; no automatic send |
 | Visible Phone Agent | M5 complete | 10/10 AOSP app matrix, package binding, global stop, and memory-only visual recovery |
 | Custom “Xiaohei” keyword | Experimental CPU fallback | One verified setup works, but real multi-speaker accuracy and power gates remain; no custom DSP claim |
+| Bounded button voice conversation | Private OnePlus preview | ASR profiles are separated from commands; Talk → local checks → model → offline TTS is installed. Human acoustic, interruption, and power gates remain open. |
 
 ## Repository layout
 
