@@ -27,6 +27,7 @@
 | `VOICE-001` — 离线中文系统 TTS 资格 | OnePlus 8T 已通过 | 所有者授权的 `ChineseTtsTflite 0.5.0` APK 与 F-Droid 签名索引 SHA-256 一致，注册 Android TTS 服务并被选为默认。小黑独立只读探针返回 `READY`、4 个中文音色全部离线、简体可用；内置 FastSpeech2 示例交付 81,600 帧，且没有引擎唤醒锁引用。 | 这证明安装、注册、离线元数据、初始化和本地示例输出；真人可懂度、小黑适配器停止时延和完整语音轮次仍属于 `VOICE-002/011`、`CHAT-005`、`CHAT-012`。 |
 | `VOICE-002` — 离线系统 TTS 适配器 | OnePlus 8T 已通过 | 小黑 Conversation 初始化所选离线引擎，播报零模型调用的确定性 FAQ；点击停止播报后可见状态从 `SPEAKING` 变为 `INTERRUPTED`。Android 在 6,976 帧后停止音轨，Active Record Client 与小黑/引擎唤醒锁引用均为 0。原子生命周期和 utterance 失效拒绝迟到完成/错误回调，单测与签名构建通过。 | 证明真实适配器初始化、输出、显式中断及停止后资源状态；不证明真人听感、小于等于 300 ms 可听中断、完整语音轮次、长期功耗或 DSP ARMED 状态。 |
 | `VOICE-004` — Android 音频半双工 | OnePlus 8T 已通过 | 绑定身份的进程 lease 接入 TTS、本地/系统 ASR 及可选 CPU KWS。真机 TTS 有一条 24 kHz Active Output、无 Recorder；离线 ASR 有一条 16 kHz Active Input、无 TTS；停止后双方归零。启动前取消竞态已复现、修复并重跑为 `capture_start_cancelled` 且不打开录音器。 | 证明小黑已接线路径的进程内排他与终态释放；跨 App 排他、真人音频、可听时延、路由、功耗和公开模型权利仍未完成。 |
+| `VOICE-010` — 句子 TTS 队列 | OnePlus 8T 已通过 | 带代际的有序队列、显式迟到回调失效、仅元数据的队列日志、单测/静态/签名构建门禁均通过；真实固定 FAQ 运行依序创建第 1–4 句的 24 kHz 音轨，第二次在第 2 句时停止，记录 `dropped=3`，之后无后续序号提交。 | 真人可懂度/自然度、≤300 ms 可听打断、抢话/回声、路由和长时间功耗仍属于 `VOICE-011/012` 与真人/物理门禁。 |
 | `CHAT-011` — 确定性离线 FAQ | 已完成任务范围 | 五类/25 条精确短语，10 条未知/动作/注入及超长拒绝；固定双语非模型标签；零新增模型/动作/上下文使用；远端失败后接入及未启用渠道零网络线程静态门禁；全新 AOSP 命中与动作型未知拒绝均留在 Conversation，零 Fatal/ANR。 | 未内置 0.6B 权重或生成式本地模型；更广离线推理、语音与动作属于独立后续门禁。 |
 | `CHAT-012` — 最终 Conversation 验收 | 自动范围通过；真人门禁未完成 | 精确 20 问、5 中断、5 超时、5 本地隐私拒绝；五类/15 短语请求前隐私策略；静态零录音 API 路径、签名 APK；全新 AOSP 拒绝保持在 Conversation，零 Fatal/ANR、零 Active Record Client。 | `VERIFY`：尚无已实现 Relay 播放或真人中文可懂度/自然打断验收，自动化不能关闭该门禁。 |
 | `ROUTE-002` — 惰性三路分类器 | 已完成任务范围 | 纯聊天/确定性命令/复杂任务结果；已审核 `CommandRouter` 加祈使线索；精确 100 条合成矩阵（40/35/25）；零模型/动作调用；概念关键词、双目标歧义、多步骤和高风险回归；签名 APK/静态门禁通过。 | 尚未接入 `MainActivity`；规划、策略、确认和用户路径接入仍属后续门禁。 |
@@ -64,4 +65,5 @@
 - [VOICE-001 离线中文 TTS](acceptance-voice-001.zh-CN.md)
 - [VOICE-002 离线系统 TTS 适配器](acceptance-voice-002.zh-CN.md)
 - [VOICE-004 Android 音频半双工](acceptance-voice-004.zh-CN.md)
+- [VOICE-010 句子 TTS 队列](acceptance-voice-010.zh-CN.md)
 - [公开发布清单](release-checklist.zh-CN.md)
