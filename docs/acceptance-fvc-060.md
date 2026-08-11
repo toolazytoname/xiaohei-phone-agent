@@ -1,9 +1,22 @@
-# FVC-060: partial DSP-to-chat acceptance
+# FVC-060: DSP-to-Conversation code-gate acceptance
 
-Date: 2026-08-11 · Result: code and foreground debug route passed; screen-off, human, and power gates remain open.
+[中文](acceptance-fvc-060.zh-CN.md) · [Delivery plan](free-voice-chat-delivery-plan.md) · [Executor runbook](free-voice-chat-executor-runbook.md)
 
-- Only four exact phrases may enter a chat listening turn from a completed wake-command turn: `开始聊天`, `陪我聊会儿`, `陪我聊聊天`, and `进入聊天`. Questions, compound text, and phone commands reject that automatic entry with zero model/action calls.
-- The model-bearing private `0.2.0-alpha.4-private (5)` build completed one token-free debug route: `开始聊天` opened the non-exported Conversation page and displayed listening. No second utterance was provided, so no model call occurred.
-- After returning home, DSP was `ACTIVE(handle=5)`, CPU wake was `OFF`, and AudioFlinger reported `No active record clients`. This proves no persistent CPU KWS or recorder residue for the foreground route.
+Date: 2026-08-11. This evidence verifies source-level entry, boundary, and Companion re-arm wiring only; it is not a screen-off human L3 pass.
 
-Not verified: screen-off OEM-DSP acoustic hit, a real open question, DSP re-arm after remote reply/offline speech, call/alarm interruption, and power A/B. Those remain physical FVC-060/070/080 gates.
+## Verified code contract
+
+- Only exact local start-chat phrases can turn one completed wake command into one Conversation listen turn; questions, commands, and multi-step text cannot use this entry.
+- The entry precedes general routing, launches one non-exported Conversation Intent, and returns the command broker to `ARMED` without retaining command recording.
+- This path never starts `CpuWakewordService`. CPU “Xiaohei Xiaohei” remains visible, opt-in, default-off, high-power, and explicitly non-DSP.
+- The OnePlus Companion callback sends a package-bound wake event and independently re-arms after a bounded delay; its source has no `AudioRecord` or Android command-recording path.
+
+## Reproducible commands
+
+```bash
+python3 scripts/verify-dsp-conversation-entry.py
+bash apps/android/xiaohei-android/test.sh
+bash scripts/verify.sh
+```
+
+Passing status is exactly `FVC-060A = VERIFY`. `FVC-060B` still needs a valid unplugged screen-off human sample: OEM word → start chat → open question → one reply/TTS → DSP re-arm, CPU KWS OFF, and zero recorder at the end.

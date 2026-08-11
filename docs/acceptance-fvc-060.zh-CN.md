@@ -1,9 +1,22 @@
-# FVC-060：DSP 进入聊天的部分验收
+# FVC-060：DSP 进入对话的代码门禁验收
 
-日期：2026-08-11 · 结论：代码与前台调试路径通过；息屏/真人/功耗门禁仍未完成。
+[English](acceptance-fvc-060.md) · [执行计划](free-voice-chat-delivery-plan.zh-CN.md) · [运行手册](free-voice-chat-executor-runbook.zh-CN.md)
 
-- 仅四条精确短语可从已完成的唤醒短命令轮次进入聊天听取：`开始聊天`、`陪我聊会儿`、`陪我聊聊天`、`进入聊天`。问句、复合句和手机命令均拒绝该自动入口，且模型/动作调用为零。
-- 手机上的私有含模型 `0.2.0-alpha.4-private (5)` 已通过一次无 Token 调试路径：`开始聊天` 进入非导出的 Conversation 页，显示“正在听；本轮结束后才会发送”。未说第二句话，因此没有模型调用。
-- 返回主页后读取到 DSP `ACTIVE(handle=5)`、CPU 唤醒 `OFF`、AudioFlinger `No active record clients`。这证明该前台路径没有让 CPU KWS 常驻，也没有遗留录音。
+日期：2026-08-11。此证据只验证源码中的入口、边界和 Companion re-arm 接线；不将其写成息屏真人 L3 通过。
 
-未验证：息屏厂商 DSP 声学命中、真实开放问句、远端回复/离线播报后的 DSP re-arm、电话/闹钟中断及功耗 A/B。它们仍是 FVC-060/070/080 的实体机门禁。
+## 已验证的代码合同
+
+- 只有精确的“开始聊天”等本地短语可以从一条已完成的唤醒短命令进入一次 Conversation 听取；问句、命令和多步骤文本均拒绝该入口。
+- 入口先于一般聊天/命令分类，启动的是非导出的 `ConversationActivity` 的单轮 Intent；短命令 broker 随即回到 `ARMED`，不保留命令录音。
+- 该路径不启动 `CpuWakewordService`。CPU “小黑小黑”仍是可见、默认关闭、明确标注非 DSP 的独立高功耗实验功能。
+- OnePlus Companion 回调只向目标包发送唤醒事件，并以有界延迟独立 re-arm；Companion 源码没有 `AudioRecord` 或 Android command-recording 路径。
+
+## 可复跑命令
+
+```bash
+python3 scripts/verify-dsp-conversation-entry.py
+bash apps/android/xiaohei-android/test.sh
+bash scripts/verify.sh
+```
+
+通过后的准确状态：`FVC-060A = VERIFY`。`FVC-060B` 仍需要合格的拔线、息屏真人样本：厂商词 → 开始聊天 → 开放问句 → 一次回复/TTS → DSP re-arm，CPU KWS OFF、终态零 Recorder。
