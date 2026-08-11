@@ -2,7 +2,7 @@
 
 [简体中文](tool-execution-lifecycle.zh-CN.md) · [Authorization](loopback-tool-gateway.md) · [Catalog](versioned-tool-catalog.md) · [Status](../STATUS.md)
 
-Status date: 2026-08-10. `TOOL-003` adds a pure-Java coordinator for exactly one already-authorized adapter call. It enforces the reviewed per-tool deadline, cancellation, one-use authorization/idempotency, bounded structured output, and private error reduction. It is intentionally not wired to an Android activity, UI, socket listener, OpenCode, root, process launcher, or network client.
+Status date: 2026-08-11. `TOOL-003` adds a coordinator for exactly one already-authorized adapter call. It enforces the reviewed per-tool deadline, cancellation, one-use authorization/idempotency, bounded structured output, and private error reduction. The app now has one visible, cancel-first local caller: after an unlocked foreground tap it can query only the item count in `Pictures/XiaoheiTest/`. It cannot read image content, copy, rename, delete, select arbitrary paths, run a shell/root command, open a network client, or accept a remote caller.
 
 ## Authority and lifecycle
 
@@ -62,8 +62,14 @@ python3 scripts/verify-tool-execution-boundary.py
 bash scripts/verify.sh
 ```
 
+## Visible local query path
+
+The main page links to **Controlled tool acceptance: read-only query Xiaohei test gallery**. The separate screen first shows the exact scope and defaults to no execution. A foreground local confirmation creates a fresh confirmation receipt, exchanges it for one loopback/same-UID capability, consumes that capability into the authorized Android bridge, and runs only `android.media_test_collection` with `{ "operation": "query" }`. The result exposes only the collection count; a cancellation, authorization failure, or adapter failure is displayed without automatic retry. Closing the page cancels the pending confirmation and the running signal.
+
+This is deliberately a disposable acceptance path, not a gallery feature. Copy/move/rollback and the calendar test adapter remain unavailable from the UI until separately reviewed with their own visible confirmations and reversible device evidence.
+
 ## Evidence boundary and remaining work
 
 All adapters in `TOOL-003` tests are injected in-memory test doubles. `network_unavailable` and `process_exit_nonzero` prove typed error mapping only; they do **not** prove that a real socket, child process, Android component, microphone, or root resource was opened or killed. The worker-interruption tests prove the coordinator requests interruption and closes its executor; a future real adapter must also close its own process/network/platform handles cooperatively and receive separate kill/disconnect/device acceptance.
 
-Android tools, OpenCode tools, and root tools keep separate reviewed catalogs and audiences. Later tasks must provide real adapters, trusted transport-owned peer evidence, visible confirmation, before/after observation, rollback, and global-stop integration without widening this coordinator into a generic shell or approval-clicking path.
+Android tools, OpenCode tools, and root tools keep separate reviewed catalogs and audiences. This local screen is not a socket listener or a trusted external transport proof. Later tasks must add device evidence for the read-only query, explicit permission/rollback evidence for each mutating test adapter, and separate trusted peer evidence without widening this coordinator into a generic shell or approval-clicking path.

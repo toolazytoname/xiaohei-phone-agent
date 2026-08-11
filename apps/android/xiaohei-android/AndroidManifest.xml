@@ -42,6 +42,7 @@
         <activity android:name=".OnboardingActivity" android:exported="false" />
         <activity android:name=".ModelConfigActivity" android:exported="false" />
         <activity android:name=".ConversationActivity" android:exported="false" />
+        <activity android:name=".TestCollectionActivity" android:exported="false" />
         <activity android:name=".AgentActivity" android:exported="false" android:launchMode="singleTask" />
         <activity android:name=".AgentMatrixActivity" android:exported="false" />
         <receiver

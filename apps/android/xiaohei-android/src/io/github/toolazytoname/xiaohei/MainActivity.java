@@ -298,6 +298,11 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         agentButton.setOnClickListener(v -> startActivity(new Intent(this, AgentActivity.class)));
         root.addView(agentButton);
 
+        Button testCollectionButton = new Button(this);
+        testCollectionButton.setText("受控工具验收：只读查询小黑测试相册");
+        testCollectionButton.setOnClickListener(v -> startActivity(new Intent(this, TestCollectionActivity.class)));
+        root.addView(testCollectionButton);
+
         Button diagnosticsButton = new Button(this);
         diagnosticsButton.setText("导出脱敏诊断");
         diagnosticsButton.setOnClickListener(v -> shareDiagnostics());
