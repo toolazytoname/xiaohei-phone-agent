@@ -89,6 +89,10 @@ require("CommandRouter" not in activity and "ActionDispatcher" not in activity,
         "Talk cannot route transcript into commands or actions")
 require("ConversationVoiceTurnCoordinator" in activity,
         "Talk has an explicit bounded voice-turn lifecycle")
+require("registerAudioDeviceCallback" in activity and "unregisterAudioDeviceCallback" in activity
+        and "onAudioRouteChanged" in activity
+        and "ConversationControlPolicy.Action.STOP" in activity,
+        "audio route changes stop rather than continue an active turn")
 require("6 轮半双工（无动作权限）" in main, "public main-screen label matches behavior")
 
 tree = ET.parse(MANIFEST)
@@ -98,4 +102,4 @@ matches = [node for node in activities if node.get(namespace + "name") == ".Conv
 require(len(matches) == 1, "one ConversationActivity manifest declaration")
 require(matches[0].get(namespace + "exported") == "false", "ConversationActivity must not be exported")
 
-print("PASS Conversation UI boundary ids=12 exported=false action_paths=0 authority=none half_duplex=6 talk=conversation_profile partial=zero-call")
+print("PASS Conversation UI boundary ids=12 exported=false action_paths=0 authority=none half_duplex=6 talk=conversation_profile route_change=stop partial=zero-call")

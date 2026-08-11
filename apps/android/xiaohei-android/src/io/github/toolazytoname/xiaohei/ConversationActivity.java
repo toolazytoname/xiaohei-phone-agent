@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioDeviceCallback;
+import android.media.AudioDeviceInfo;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +44,7 @@ public final class ConversationActivity extends Activity {
     private long generation;
     private boolean destroyed;
     private boolean receiverRegistered;
+    private boolean audioRouteCallbackRegistered;
     private final StringBuilder visibleTranscript = new StringBuilder();
     private String lastAssistantReply;
     private SystemTtsAdapter systemTts;
@@ -63,6 +67,14 @@ public final class ConversationActivity extends Activity {
             coordinator.onLocked();
             closePending();
             clearVisible("设备已锁定，内存上下文已清空 / Device locked; session cleared");
+        }
+    };
+    private final AudioDeviceCallback audioRouteCallback = new AudioDeviceCallback() {
+        @Override public void onAudioDevicesAdded(AudioDeviceInfo[] addedDevices) {
+            onAudioRouteChanged();
+        }
+        @Override public void onAudioDevicesRemoved(AudioDeviceInfo[] removedDevices) {
+            onAudioRouteChanged();
         }
     };
 
@@ -601,6 +613,11 @@ public final class ConversationActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 33) registerReceiver(screenOff, filter, Context.RECEIVER_NOT_EXPORTED);
         else registerReceiver(screenOff, filter);
         receiverRegistered = true;
+        AudioManager audio = getSystemService(AudioManager.class);
+        if (!audioRouteCallbackRegistered && audio != null) {
+            audio.registerAudioDeviceCallback(audioRouteCallback, mainHandler);
+            audioRouteCallbackRegistered = true;
+        }
     }
 
     @Override protected void onResume() {
@@ -613,6 +630,7 @@ public final class ConversationActivity extends Activity {
     }
 
     @Override protected void onStop() {
+        unregisterAudioRouteCallback();
         if (receiverRegistered) {
             unregisterReceiver(screenOff);
             receiverRegistered = false;
@@ -632,6 +650,7 @@ public final class ConversationActivity extends Activity {
 
     @Override protected void onDestroy() {
         destroyed = true;
+        unregisterAudioRouteCallback();
         if (receiverRegistered) {
             unregisterReceiver(screenOff);
             receiverRegistered = false;
@@ -663,5 +682,20 @@ public final class ConversationActivity extends Activity {
                 || voiceTurn.state() == ConversationVoiceTurnCoordinator.State.THINKING) {
             voiceTurn.stop();
         }
+    }
+
+    /** A new output/input device requires a deliberate fresh turn; old audio never follows it. */
+    private void onAudioRouteChanged() {
+        if (destroyed || (voiceSession == null && pending == null
+                && (systemTts == null || systemTts.state() != TtsLifecycle.State.SPEAKING))) return;
+        applyControl(ConversationControlPolicy.Action.STOP);
+        state.setText("状态：音频设备已变化；已停止当前轮次，请手动继续 / Status: audio route changed; start a new turn");
+    }
+
+    private void unregisterAudioRouteCallback() {
+        if (!audioRouteCallbackRegistered) return;
+        AudioManager audio = getSystemService(AudioManager.class);
+        if (audio != null) audio.unregisterAudioDeviceCallback(audioRouteCallback);
+        audioRouteCallbackRegistered = false;
     }
 }
