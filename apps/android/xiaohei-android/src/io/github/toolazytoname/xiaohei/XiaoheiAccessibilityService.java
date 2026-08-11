@@ -187,9 +187,14 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
                     ? AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
                     : AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);
         }
-        trace(before, 0, "allow", ok, ok ? "success" : "not_available");
-        if (ok) complete("完成受限语义导航；已停止，未继续执行");
-        else stopInternal("当前页面没有可执行的受限导航动作");
+        if (!ok) {
+            trace(before, 0, "allow", false, "not_available");
+            stopInternal("当前页面没有可执行的受限导航动作");
+            return;
+        }
+        ToolOutcomeEvidenceGate gate = outcomeGate(before);
+        handler.postDelayed(() -> finishVerifiedStep(before, gate,
+            "完成受限语义导航；已验证并停止，未继续执行", true), 650);
     }
 
     private void executePendingStep() {
@@ -241,27 +246,43 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         Log.i(TAG, "step=" + steps + " before=" + before.version + " action=click label="
             + pendingLabel + " ok=" + clicked);
         if (!clicked) { trace(before, 0, "allow", false, "error"); executing = false; stopInternal("系统拒绝语义点击"); return; }
-        handler.postDelayed(() -> {
-            AgentSnapshot after = AgentSnapshot.capture(getRootInActiveWindow());
-            Log.i(TAG, "step=" + steps + " after=" + after.version + " package=" + after.packageName);
-            if (!pendingPackage.equals(after.packageName)) {
-                AgentTraceStore.append(this, taskId, steps, before.version, after.version,
-                    before.packageName, pendingLabel, "allow", true, "package_changed");
-                executing = false;
-                stopInternal("动作后离开目标 App；已停止，未继续执行");
-                return;
-            }
-            AgentTraceStore.append(this, taskId, steps, before.version, after.version,
-                before.packageName, pendingLabel, "allow", true, "success");
+        ToolOutcomeEvidenceGate gate = outcomeGate(before);
+        handler.postDelayed(() -> finishVerifiedStep(before, gate, null, false), 650);
+    }
+
+    /** A successful accessibility call is only an adapter acknowledgement, never completion proof. */
+    private ToolOutcomeEvidenceGate outcomeGate(AgentSnapshot before) {
+        return new ToolOutcomeEvidenceGate(pendingPackage,
+            new ToolOutcomeEvidenceGate.Observation(before.packageName, before.version));
+    }
+
+    private void finishVerifiedStep(AgentSnapshot before, ToolOutcomeEvidenceGate gate,
+            String navigationSuccess, boolean terminalNavigation) {
+        AgentSnapshot after = AgentSnapshot.capture(getRootInActiveWindow());
+        ToolOutcomeEvidenceGate.Decision evidence = gate.verify(true,
+            new ToolOutcomeEvidenceGate.Observation(after.packageName, after.version));
+        Log.i(TAG, "step=" + steps + " after=" + after.version + " package=" + after.packageName
+            + " evidence=" + evidence);
+        if (evidence != ToolOutcomeEvidenceGate.Decision.VERIFIED) {
+            trace(before, after.version, "allow", true, "unverified_" + evidence.name().toLowerCase());
             executing = false;
-            pendingIndex++;
-            if (pendingLabels != null && pendingIndex < pendingLabels.size()) {
-                pendingLabel = pendingLabels.get(pendingIndex);
-                recoveries = 0;
-                showNotification("步骤 " + (pendingIndex + 1) + "/" + pendingLabels.size() + "：" + pendingLabel);
-                handler.postDelayed(this::executePendingStep, 650);
-            } else complete("完成 " + steps + " 个语义动作；已重新观察 snapshot " + after.version);
-        }, 650);
+            stopInternal("动作已发出但结果未验证（" + evidence + "）；已停止，未继续执行");
+            return;
+        }
+        AgentTraceStore.append(this, taskId, steps, before.version, after.version,
+            before.packageName, pendingLabel, "allow", true, "verified");
+        executing = false;
+        if (terminalNavigation) {
+            complete(navigationSuccess + "；snapshot " + after.version);
+            return;
+        }
+        pendingIndex++;
+        if (pendingLabels != null && pendingIndex < pendingLabels.size()) {
+            pendingLabel = pendingLabels.get(pendingIndex);
+            recoveries = 0;
+            showNotification("步骤 " + (pendingIndex + 1) + "/" + pendingLabels.size() + "：" + pendingLabel);
+            handler.postDelayed(this::executePendingStep, 650);
+        } else complete("完成 " + steps + " 个语义动作；每步均已重新观察验证，snapshot " + after.version);
     }
 
     /**
