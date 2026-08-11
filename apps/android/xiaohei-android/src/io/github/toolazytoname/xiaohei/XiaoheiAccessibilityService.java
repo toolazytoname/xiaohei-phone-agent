@@ -27,6 +27,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         "io.github.toolazytoname.xiaohei.action.CAPTURE_VISUAL_RECOVERY";
     private static volatile XiaoheiAccessibilityService active;
     private static volatile String lastTaskResult;
+    private static volatile int lastTaskSteps;
     /** One-shot local preview. Never persisted, traced, or sent to a model. */
     private static volatile Bitmap visualRecoveryPreview;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -51,6 +52,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         return service != null && service.pendingLabel != null;
     }
     static String lastTaskResult() { return lastTaskResult; }
+    static int lastTaskSteps() { return lastTaskSteps; }
     static AgentSnapshot observeNow() {
         XiaoheiAccessibilityService service = active;
         return service == null ? null : AgentSnapshot.capture(service.getRootInActiveWindow());
@@ -129,10 +131,13 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
                 != SemanticAccessibilityOperationPolicy.Decision.ALLOW) return false;
         pendingLabels = new java.util.ArrayList<>();
         lastTaskResult = null;
+        lastTaskSteps = 0;
         for (String label : labels) pendingLabels.add(label.trim());
         pendingIndex = 0;
         pendingLabel = pendingLabels.get(0);
         pendingPackage = packageName;
+        lastTaskResult = null;
+        lastTaskSteps = 0;
         taskId = UUID.randomUUID().toString();
         deadline = System.currentTimeMillis() + 60_000;
         steps = 0;
@@ -405,6 +410,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
     private void complete(String detail) {
         Log.i(TAG, "task=complete steps=" + steps + " detail=" + detail);
         lastTaskResult = "success:" + steps;
+        lastTaskSteps = steps;
         pendingLabel = null;
         pendingPackage = null;
         pendingOperation = null;
@@ -418,6 +424,7 @@ public final class XiaoheiAccessibilityService extends AccessibilityService {
         if (pendingLabel != null) {
             Log.i(TAG, "task=stopped steps=" + steps + " reason=" + reason);
             lastTaskResult = "stopped:" + reason;
+            lastTaskSteps = steps;
         }
         pendingLabel = null;
         pendingPackage = null;

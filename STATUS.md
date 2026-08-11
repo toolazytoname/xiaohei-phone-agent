@@ -75,7 +75,7 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `VOICE-002`：OnePlus 8T 小黑 Conversation 已用默认离线引擎进入 `SPEAKING`；点击可见停止播报后变为 `INTERRUPTED`，音轨在 6,976 帧后停止，Active Record Client 与两应用唤醒锁引用均为 0。停止/完成竞态已改为先原子切状态并使 utterance 失效，再停引擎；真人听感、≤300 ms 可听时延与 DSP ARMED 仍未虚报。
 - `VOICE-001`：OnePlus 8T 已按所有者授权安装并选择离线 `ChineseTtsTflite 0.5.0`。安装 APK 与 F-Droid 签名索引 SHA-256 `bdc8a50c…acbc76e` 一致；小黑 `alpha.3` 只读探针返回 `READY`、4/4 中文音色离线、简体可用。FastSpeech2 内置示例交付 81,600 帧音频，探测与播报后均无引擎唤醒锁引用。真人听感仍属于 `CHAT-012`，不是 `VOICE-001`。
 - `文档勘误（TOOL-001/003）`：当前目录是七项/十个 Schema，不再是早期五项/六个 Schema；`TOOL-003` 已有封闭 Android 注册表、受权 bridge 和全局停止取消信号，但没有可见确认调用方或设备权限/结果证据，故仍为 `VERIFY`。
-- `UX-003`：只读任务卡可显示经批准目标摘要、审核步骤/当前步骤、时间/步骤预算、固定结果和人工接管；默认没有已审核任务，且不接受任务正文、路径、Token、模型回复或推理过程，更不产生执行接线。
+- `UX-003`：只读任务卡现在镜像受限本地 Phone Agent 的生命周期：经批准目标摘要、审核步骤/当前步骤、时间/步骤预算、已验证或失败结果及人工接管。它不接受或展示任务正文、路径、Token、模型回复或推理过程，更不授予执行权限。
 - `UX-001`：主页的独立能力状态卡只显示唤醒、ASR、Conversation、Phone Agent、OpenCode 和 root 的非敏感元数据；它不启动运行时、不读取 Token，并明确 OpenCode/root 未接线。
 - `OC-010`：模型渠道页现明确展示本地小模型建议边界；公开 APK 不内置生成式权重，未来小模型不得自动启用/切换、规划或调用工具，真实运行时和设备资源验收仍独立保留。
 - `SEC-004`：注入、工作区穿越、越权和隐私外传的既有 fail-closed 语料现由双语聚合测试集持续校验；它证明本地边界而非真实 adapter、远端模型或设备行为。
