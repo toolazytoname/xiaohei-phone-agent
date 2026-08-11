@@ -1,6 +1,6 @@
 # Xiaohei free-voice conversation: executable delivery plan
 
-[简体中文](free-voice-chat-delivery-plan.zh-CN.md) · [Master plan](sovereign-mobile-agent-master-plan.md) · [Execution backlog](execution-backlog.md) · [Status](../STATUS.md)
+[简体中文](free-voice-chat-delivery-plan.zh-CN.md) · [Executor runbook](free-voice-chat-executor-runbook.md) · [Master plan](sovereign-mobile-agent-master-plan.md) · [Execution backlog](execution-backlog.md) · [Status](../STATUS.md)
 
 Status date: 2026-08-11. This is the implementation checklist for `CHAT-005` and related `VOICE-007/008/009/011/012` gates. It is not a completion claim. The Chinese page is the detailed execution source; this mirror preserves the public product contract and ordered work packages.
 
@@ -108,6 +108,8 @@ Evidence: [FVC-020 minimal real text-model and offline-TTS loop](acceptance-fvc-
 Evidence: [FVC-030 open-conversation ASR profile acceptance](acceptance-fvc-030.md). This is `VOICE-008` engineering evidence, not human accuracy.
 
 ### FVC-040 — One spoken question and answer
+
+Code sub-gate `FVC-040A` has passed: see [one-turn voice code-gate acceptance](acceptance-fvc-040.md). It proves wiring, state, and release ordering only; the OnePlus human loop in `FVC-040B` remains required.
 
 - [x] Add an accessible Talk control to Conversation and a pure bounded voice-turn coordinator.
 - [ ] Stop TTS before acquiring input; never queue hidden recording after a lease failure.

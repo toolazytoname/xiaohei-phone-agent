@@ -1,6 +1,6 @@
 # 小黑自由语音聊天：可执行交付计划
 
-[English](free-voice-chat-delivery-plan.md) · [长期总纲](sovereign-mobile-agent-master-plan.zh-CN.md) · [执行账本](execution-backlog.zh-CN.md) · [当前状态](../STATUS.md)
+[English](free-voice-chat-delivery-plan.md) · [执行者运行手册](free-voice-chat-executor-runbook.zh-CN.md) · [长期总纲](sovereign-mobile-agent-master-plan.zh-CN.md) · [执行账本](execution-backlog.zh-CN.md) · [当前状态](../STATUS.md)
 
 状态日期：2026-08-11。本文是 `CHAT-005` 以及关联 `VOICE-007/008/009/011/012` 的实施清单，不是能力完成声明。执行者只能把通过了对应证据门禁的项目勾为完成。
 
@@ -139,6 +139,8 @@ stateDiagram-v2
 ### FVC-040 — Conversation 单轮“说一句、答一句”
 
 依赖：`FVC-020`、`FVC-030`；映射 `CHAT-005`。
+
+代码级子门禁 `FVC-040A` 已通过：见 [单轮语音代码门禁验收](acceptance-fvc-040.zh-CN.md)。它只证明顺序、状态和资源释放接线；`FVC-040B` 的 OnePlus 真人闭环仍是必需门禁。
 
 - [x] 在 Conversation 添加独立“说话”按钮和可读状态，不复用主页命令按钮的路由副作用。
 - [x] 新建纯 Java `ConversationVoiceTurnCoordinator`，只允许 `IDLE/LISTENING/REVIEWING/THINKING/SPEAKING/WAITING_FOLLOWUP/STOPPED/FAILED` 合法转换。
