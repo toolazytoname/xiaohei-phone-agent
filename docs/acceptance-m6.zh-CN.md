@@ -28,6 +28,7 @@
 - 仓库外已生成 `age`/X25519 签名恢复归档，identity 存于本机 Keychain；完整解密/哈希演练与 release keystore 及证书 `1c0cf5bf518c3b63037dae70388974551bb1f0f851084328a48af13ebcc12c07` 一致。它目前仍是签名 Mac 上权限收紧的**待移出暂存**；没有独立控制的离线介质，不能关闭离线恢复门禁。
 - 完整本地 ASR/KWS debug alpha.3 已通过 TLS 无线 ADB 覆盖升级到 OnePlus 8T。当前为 `versionCode=4`，精确静态扫描通过，通知/无障碍访问保持关闭，也没有启动录音服务。模型权重仍为私有本地输入，不进入 Git 或公开 Release。
 - v2 设备端待机监控已在干净 Android 14 ARM64 模拟器完成一次零时长、息屏独立演练。完成的原始 TSV 含有 `requested_at`、`sampling_started_at` 与 `preflight_wait_s`；采集结果为 1 个非交互、未供电、无通话、无录音、无小黑 wakelock 样本并通过。它只验证监控的证据格式，不是 OnePlus 的物理功耗证据。
+- 2026-08-11：由 `33cdeea` 构建的 debug APK（SHA-256 `e8a447b1ce459d6ec68d733507c74123b23dea25313c84fb690afe1cc6435167`）在 OnePlus 8T 上原地升级，Assistant 角色和麦克风权限均保留。确定性压力脚本再次完成 100/100 个安全动作，dispatcher 失败、小黑 Fatal/ANR 和活跃录音客户端均为 0。该 Android 14/Lineage 表面在熄屏/通知栏前景时省略 `topResumedActivity`；启动矩阵仅以只读 `mFocusedApp` 作为回退，随后 14 个 Settings 和 11 个系统 App 目标均通过（25/25），小黑 Fatal/ANR 为 0。这只是短时交互证据，不代表语音、隐私、待机功耗或混合工作负载验收。
 
 ## 尚未满足的 M6 门禁
 

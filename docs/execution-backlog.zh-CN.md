@@ -174,7 +174,7 @@ NEXT: 唯一下一任务 ID
 | REL-001 | VERIFY | — | OnePlus DSP OFF/ARMED 物理拔线功耗 A/B | 三轮可比 A/B + 8–24h 完整 TSV；亮屏/供电/通话样本作废 |
 | REL-002 | HUMAN | VOICE-002 | 提示音/TTS 真人听感 | 真人确认清晰、音量合适、不暗示已执行 |
 | REL-003 | HUMAN | VOICE-006,VOICE-007 | 真人多人/噪声/距离 ASR/KWS | 预注册样本与失败，不用 TTS 代替真人 |
-| REL-004 | BACKLOG | CHAT-012,TOOL-011 | 100 次混合聊天/命令/任务压力 | 0 Fatal/ANR、0 重复动作、0 录音残留 |
+| REL-004 | BACKLOG | CHAT-012,TOOL-011 | 100 次混合聊天/命令/任务压力；支持性系统/App 启动矩阵仅在 Android 14 缺少 `topResumedActivity` 时读取 `mFocusedApp`，不替代混合负载或设备门禁 | 0 Fatal/ANR、0 重复动作、0 录音残留 |
 | REL-005 | BACKLOG | OC-008,ROOT-010 | 弱网、断网、进程杀死、重启和模型超时恢复 | 每种故障回到可解释可停止状态 |
 | REL-006 | BACKLOG | UX-005 | 8–24h 服务组合待机回归 | 精确服务状态、功耗、wakelock、端口证据 |
 | SEC-001 | DONE | ROOT-001 | 双语威胁模型覆盖聊天/通知注入、工具/Schema 投毒、OpenCode 穿越、root 提权与破坏/外传路径；设备级验收仍明确保留 | 双语 STRIDE/滥用用例 |

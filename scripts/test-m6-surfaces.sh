@@ -46,6 +46,12 @@ while IFS='|' read -r kind target expected; do
   fi
   sleep 0.25
   resumed=$("${adb_cmd[@]}" shell dumpsys activity activities </dev/null | grep -m1 'topResumedActivity' || true)
+  # Android 14/Lineage can omit topResumedActivity while the device is sleeping
+  # or the notification shade owns focus. mFocusedApp still identifies the
+  # launched activity, so use it only as a read-only compatibility fallback.
+  if [[ -z "$resumed" ]]; then
+    resumed=$("${adb_cmd[@]}" shell dumpsys window </dev/null | grep -m1 'mFocusedApp' || true)
+  fi
   matched=0
   IFS=',' read -r -a expected_packages <<< "$expected"
   for expected_package in "${expected_packages[@]}"; do
