@@ -1,6 +1,9 @@
 package io.github.toolazytoname.xiaohei;
 
 import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,6 +21,8 @@ final class SystemTtsAdapter {
     private static final int MAX_CHARS = 2048;
     private static final long TIMEOUT_MS = 30000;
     private final Context context;
+    private final AudioManager audioManager;
+    private final AudioFocusRequest focusRequest;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final TtsLifecycle lifecycle = new TtsLifecycle();
     private final SentenceTtsQueue queue = new SentenceTtsQueue();
@@ -28,9 +33,20 @@ final class SystemTtsAdapter {
     private int utteranceSequence;
     private long utteranceRequestedAt;
     private ProcessAudioDuplex.Lease outputLease;
+    private boolean focusHeld;
     private final Runnable timeout = () -> { if (lifecycle.state() == TtsLifecycle.State.SPEAKING) { stop("播报超时，已停止"); } };
 
-    SystemTtsAdapter(Context context) { this.context = context.getApplicationContext(); }
+    SystemTtsAdapter(Context context) {
+        this.context = context.getApplicationContext();
+        this.audioManager = this.context.getSystemService(AudioManager.class);
+        this.focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+            .setAudioAttributes(new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ASSISTANT)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build())
+            .setOnAudioFocusChangeListener(this::onAudioFocusChange)
+            .build();
+    }
     TtsLifecycle.State state() { return lifecycle.state(); }
 
     void initialize(Listener listener) {
@@ -76,6 +92,7 @@ final class SystemTtsAdapter {
                         SentenceTtsQueue.Next next = queue.complete(utteranceGeneration);
                         if (next == null) {
                             releaseOutput();
+                            abandonAudioFocus();
                             Log.i(TAG, "queue_finished generation=" + completedGeneration
                                 + " final_sequence=" + completedSequence + " pending=0");
                             report("播报完成；等待后续输入");
@@ -89,6 +106,7 @@ final class SystemTtsAdapter {
                         if (id.equals(utteranceId) && lifecycle.failSpeaking()) {
                             handler.removeCallbacks(timeout);
                             releaseOutput();
+                            abandonAudioFocus();
                             Log.i(TAG, "queue_failed generation=" + utteranceGeneration
                                 + " sequence=" + utteranceSequence);
                             report("系统 TTS 播报失败");
@@ -110,10 +128,16 @@ final class SystemTtsAdapter {
             report("系统 TTS 中断状态无法恢复");
             return;
         }
-        if (!acquireOutput()) { report("麦克风正在使用；已拒绝同时播报"); return; }
+        if (!acquireAudioFocus()) { report("音频焦点不可用；未开始播报"); return; }
+        if (!acquireOutput()) {
+            abandonAudioFocus();
+            report("麦克风正在使用；已拒绝同时播报");
+            return;
+        }
         SentenceTtsQueue.Next first = queue.replace(text);
         if (first == null || !lifecycle.speak()) {
             releaseOutput();
+            abandonAudioFocus();
             report("系统 TTS 未就绪");
             return;
         }
@@ -125,6 +149,7 @@ final class SystemTtsAdapter {
     private synchronized void speakNext(SentenceTtsQueue.Next next) {
         if (lifecycle.state() == TtsLifecycle.State.WAITING_FOLLOWUP && !lifecycle.speak()) {
             releaseOutput();
+            abandonAudioFocus();
             report("系统 TTS 未就绪");
             return;
         }
@@ -136,6 +161,7 @@ final class SystemTtsAdapter {
         if (result != TextToSpeech.SUCCESS) {
             lifecycle.fail();
             releaseOutput();
+            abandonAudioFocus();
             Log.i(TAG, "queue_rejected generation=" + utteranceGeneration
                 + " sequence=" + utteranceSequence);
             report("系统拒绝播报请求");
@@ -157,6 +183,8 @@ final class SystemTtsAdapter {
             utteranceId = null;
             current = engine;
             releaseOutput();
+            abandonAudioFocus();
+            abandonAudioFocus();
         }
         if (current != null) current.stop();
         if (changed) report(detail);
@@ -188,6 +216,7 @@ final class SystemTtsAdapter {
             current = engine;
             engine = null;
             releaseOutput();
+            abandonAudioFocus();
         }
         if (current != null) { current.stop(); current.shutdown(); }
         report("系统 TTS 已释放");
@@ -197,6 +226,28 @@ final class SystemTtsAdapter {
         if (outputLease != null) return true;
         outputLease = ProcessAudioDuplex.shared().acquireOutput();
         return outputLease != null;
+    }
+
+    private synchronized boolean acquireAudioFocus() {
+        if (focusHeld) return true;
+        if (audioManager == null || audioManager.requestAudioFocus(focusRequest)
+                != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) return false;
+        focusHeld = true;
+        return true;
+    }
+
+    private synchronized void abandonAudioFocus() {
+        if (!focusHeld || audioManager == null) return;
+        audioManager.abandonAudioFocusRequest(focusRequest);
+        focusHeld = false;
+    }
+
+    private void onAudioFocusChange(int change) {
+        if (change != AudioManager.AUDIOFOCUS_LOSS
+                && change != AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+                && change != AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) return;
+        Log.i(TAG, "audio_focus_lost change=" + change);
+        interrupt("系统音频中断；已停止播报并释放输出");
     }
 
     private synchronized void releaseOutput() {
