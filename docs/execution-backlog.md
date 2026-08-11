@@ -115,7 +115,7 @@ ROLLBACK / REMAINS / NEXT
 | TOOL-009 | VERIFY | TOOL-001 | Android media boundary provides only relative media-volume ±1 and output-route observation (Bluetooth/wired/speaker-or-system); it cannot play/pause a session or force a route. Active-session, focus, Bluetooth/headset/speaker matrix and device evidence remain required |
 | TOOL-010 | VERIFY | TOOL-003 | User-enabled Accessibility now exposes exact-label select plus one bounded back/scroll operation in a reviewed package; generic approval labels and automatic text entry are rejected. Visible per-request text confirmation, gateway wiring, app/version matrix and device evidence remain required |
 | TOOL-011 | VERIFY | TOOL-010 | Closed revision-1 registry covers 15 reviewed package targets with exact-select/one-scroll/one-back capabilities and typed fail-closed explanations; it makes no installed-UI version claim. Gateway caller, per-app/version device matrix, changed-page handling, and text-confirmation path remain required |
-| TOOL-012 | VERIFY | TOOL-003 | Metadata-only outcome gate requires a fresh expected foreground-package observation after adapter success; stale/mismatched evidence, failed adapter and repeat verification fail closed; real adapter/observer wiring and reversible catalog evidence remain required |
+| TOOL-012 | VERIFY | TOOL-003 | Outcome gate is wired to every bounded Accessibility click/back/scroll: the adapter acknowledgement is accepted only with a fresh expected foreground-package observation; stale/mismatched evidence, failed adapter and repeat verification fail closed. Real reviewed device/app/version evidence remains required; this narrow path does not certify a reversible-adapter catalog |
 
 ## OpenCode mobile executor
 
