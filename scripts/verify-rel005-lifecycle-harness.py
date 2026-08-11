@@ -9,9 +9,14 @@ required = (
     'assert_no_xiaohei force-stop',
     'assert_no_xiaohei cold-start',
     'assert_no_xiaohei reboot',
+    'pre-reboot',
+    'post-reboot',
+    'expected_boot_id',
+    '/proc/sys/kernel/random/boot_id',
+    'FAIL emulator reboot was not observed',
     'dumpsys activity services',
     'dumpsys media.audio_flinger',
-    '"${adb_cmd[@]}" reboot',
+    'shell svc power reboot',
     '"${adb_cmd[@]}" uninstall "$package"',
     'network_model=not_exercised',
 )
@@ -20,4 +25,8 @@ if missing:
     raise SystemExit('FAIL rel005 lifecycle harness missing ' + ', '.join(missing))
 if '5c9a424d' in script or 'OnePlus' in script:
     raise SystemExit('FAIL rel005 lifecycle harness must not name a physical device')
-print('PASS rel005-lifecycle-harness serial=emulator_only terminal_checks=3 cleanup=trap network_model=not_exercised')
+if ' shell monkey ' in script:
+    raise SystemExit('FAIL rel005 lifecycle harness must use an explicit activity, not launcher discovery')
+if 'shell am start -W -n "$package/.MainActivity"' not in script:
+    raise SystemExit('FAIL rel005 lifecycle harness missing explicit cold-start component')
+print('PASS rel005-lifecycle-harness serial=emulator_only phases=pre+post boot_id=bound terminal_checks=3 cleanup=trap network_model=not_exercised')

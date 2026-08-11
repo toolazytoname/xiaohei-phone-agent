@@ -10,9 +10,9 @@
 
 1. 构建源码型通用 debug APK；不打包 ASR/KWS 模型或凭据。
 2. 启动一次性 Android 14 ARM64 AOSP 模拟器。
-3. 运行 `scripts/test-rel005-emulator-lifecycle.sh emulator-5554 path/to/xiaohei-debug.apk`。
+3. 运行 `scripts/test-rel005-emulator-lifecycle.sh emulator-5554 path/to/xiaohei-debug.apk pre-reboot`，记录其 `boot_id`，发起 guest reboot 后运行 `scripts/test-rel005-emulator-lifecycle.sh emulator-5554 path/to/xiaohei-debug.apk post-reboot <记录的-boot-id>`。在宿主可跨越 ADB reboot 的环境中，仍可使用单命令 `full` 模式。
 
-脚本拒绝除 `emulator-*` 外的所有序列号：安装精确 APK，启动后强制结束，再冷启动/强制结束，重启模拟器并检查 `sys.boot_completed`。每个终态后都检查小黑 PID、`ServiceRecord` 和 AudioFlinger 包名残留。成功时卸载；失败退出时也由 trap 卸载。
+脚本拒绝除 `emulator-*` 外的所有序列号：安装精确 APK，启动后强制结束，再冷启动/强制结束，重启模拟器并要求内核 `boot_id` 改变后才检查 `sys.boot_completed`。每个终态后都检查小黑 PID、`ServiceRecord` 和 AudioFlinger 包名残留。成功时卸载；失败退出时也由 trap 卸载。
 
 ## 必须出现的结果
 
@@ -22,4 +22,4 @@
 PASS rel005-emulator-lifecycle force_stop=clean cold_start=clean reboot=clean uninstall=clean network_model=not_exercised
 ```
 
-当前交付记录尚未产生该结果，所以 `REL-005` 仍为 `BACKLOG`。产生后它也只会把通用生命周期子项推进到 `VERIFY`。真实中转/模型请求、刻意降级的网络、设备进程杀死行为、OnePlus DSP 重 arm 和用户可见恢复仍需要独立的非合成证据。相同网络/模型失败后不得自动重试。
+2026-08-11，独立 Android 14 ARM64 AOSP 模拟器已产生 pre-reboot 和 post-reboot PASS 结果：重启前后内核 boot ID 不同，之后 boot 完成，最终包路径为空且服务/PID 检查为零。这只把通用生命周期子项推进到 `VERIFY`。真实中转/模型请求、刻意降级的网络、设备进程杀死行为、OnePlus DSP 重 arm 和用户可见恢复仍需要独立的非合成证据。相同网络/模型失败后不得自动重试。
