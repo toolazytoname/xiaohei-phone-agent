@@ -158,3 +158,4 @@ Turn a mobile, rooted, OpenCode-capable Android device into a personal agent tha
 - `TOOL-011`：新增 15 个受审包名的版本化语义适配器注册表，给出精确选择/一次滚动/一次返回的封闭能力及类型化失败说明；不把契约 revision 冒充 App UI 验证，真机矩阵仍为 VERIFY。
 - `VOICE-007`：命令与开放对话 ASR 的 A/B 已明确为 HUMAN 门禁：需要预注册真人中文样本和设备准确率/延迟/内存测量，不能用合成或重复样本替代。
 - `REL-004`：OnePlus/Android 14 在锁屏或通知栏前景时不提供 `topResumedActivity`；系统/App 页面矩阵仅以 `mFocusedApp` 作为只读回退，保持原有包名和 Fatal/ANR 判定。
+- `VOICE-001`：当前 OnePlus 8T 未注册系统 TTS 引擎；只读 probe 未下载或改变配置，因此安装/选择引擎后才能继续独立设备验证，现为 HUMAN 门禁。
