@@ -41,4 +41,8 @@ Safe public claim: “Xiaohei is an Android phone-agent product with a broadly c
 
 The custom phrase “Xiaohei Xiaohei” currently means the optional foreground CPU fallback only. The OnePlus DSP profile uses its validated OEM phrase; Xiaohei does not claim a portable custom DSP keyword.
 
+## Conversation voice compatibility
+
+The private model-bearing OnePlus preview supports a visible per-turn Talk control with offline Chinese ASR and system TTS. It is independent of CPU KWS, DSP, Phone Agent, OpenCode, and root. A supported Android audio route may be used only after real-device qualification; route changes deliberately stop the active turn rather than silently moving listening or speech to another device. Generic source-only builds remain honest when no local ASR model is bundled.
+
 Unsafe claim: “Download this APK on any Android phone and get always-on DSP wake word.”

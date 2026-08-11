@@ -25,6 +25,10 @@ Defines one capability-based interface for app button, Quick Settings, shortcut/
 
 Opens a bounded post-wake audio session, applies VAD, invokes a replaceable ASR adapter, and closes audio promptly. It does not keep the microphone open between commands.
 
+### Conversation voice turn
+
+Conversation is a separate, bounded half-duplex path: an explicit **Talk** gesture (or an exact local DSP-entry phrase) starts one eight-second `CONVERSATION` ASR profile, whose partial text is display-only. Final text receives local privacy/control checks before one configured Conversation request and optional system-TTS response. Command hotwords and `CommandRouter` normalization are not inherited. Completion, Stop, lock, leaving the page, audio-focus loss, and audio-route change release input/output/network work; a follow-up always requires an explicit new gesture. Conversation output has no action, tool, notification, file, OpenCode, or root path.
+
 ### Policy Engine
 
 Converts text into a structured intent, selects an action adapter, assigns a risk level, requests confirmation when required, and records a redacted decision. Provider/model choice is an adapter detail, not part of authorization.

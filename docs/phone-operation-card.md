@@ -10,6 +10,7 @@ Applies to internal Alpha `0.2.0-alpha.2`. Save this page on the phone (or in a 
 | CPU “Xiaohei Xiaohei” wake word | Off | Holds the microphone with a foreground notification and uses more power; **does not change DSP** |
 | OnePlus DSP wake word | Available only with a compatible enhancement | Separately controlled; **does not change CPU wake word** |
 | Speech output | Android offline Chinese TTS | Speaks only after a response; it is not an always-on server or wake path |
+| Conversation Talk | Off until you tap Talk | One bounded chat turn; it does not grant phone-action authority or change DSP/CPU KWS |
 | Phone Agent model channel | Off | Stores complex-task configuration only; **saving or switching never starts/stops a service** |
 
 CPU wake word is a portable experimental fallback, not a low-power DSP mode. Use base mode when no compatible DSP profile exists.
@@ -39,6 +40,15 @@ Use offline system TTS as the normal speech-output choice. An online TTS relay (
 - Error: “profile not installed” or a status-read failure does not affect base or CPU modes. Do not repeatedly tap start.
 - Roll back: stop and confirm `DETACHED`, then follow the device-specific install/rollback instructions. Never publish private OEM APKs, models, or logs.
 
+### Bounded voice conversation (private model-bearing preview)
+
+1. From the home screen, open **Xiaohei Conversation** and verify that Conversation is configured. This is separate from Phone Agent and model channels for other tools.
+2. Tap **Talk**, say one ordinary non-sensitive question, and wait for the final transcript. Partials are not sent.
+3. The app runs local privacy/control checks, then sends at most one Conversation turn and may speak the result with offline system TTS.
+4. Tap **Continue talking** for a follow-up. It never automatically reopens the microphone after speech.
+5. **Stop speech** keeps the text context; **Stop** cancels listening/request/speech and pauses; **End chat** clears the in-memory text.
+6. If Bluetooth/headset routing changes, the current turn intentionally stops. Start a new turn only after checking the route.
+
 ### Emergency stop
 
 - Tap “stop all: voice + DSP + CPU wake” in the app, or “stop all” from the ongoing status notification.
@@ -63,7 +73,7 @@ After an edit, confirm the page says configuration was saved and no service was 
 
 ## Permissions and privacy
 
-- Microphone is used only for an invoked short command or CPU wake word explicitly started by you.
+- Microphone is used only for an invoked short command, an explicit Conversation Talk turn, or CPU wake word explicitly started by you.
 - Notification access is optional; it reads current system notifications only when queried and does not retain chat bodies.
 - Accessibility is optional and only serves visible user-started Phone Agent tasks. Payment, banking, password, OTP, and DRM screens are denied by default.
 - Phone Agent status notifications are optional but required for notification stop and the one-time local visual-preview recovery. Android 13+ asks for this permission explicitly; decline it if you do not want those controls.

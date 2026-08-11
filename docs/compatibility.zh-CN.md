@@ -41,4 +41,8 @@ Android 官方说明，被用户选中的 `VoiceInteractionService` 会由系统
 
 目前自定义“小黑小黑”只代表可选前台 CPU 兜底。OnePlus DSP profile 使用已经验证的原厂词；小黑不宣称具备可迁移的自定义 DSP 唤醒词。
 
+## Conversation 语音兼容性
+
+私有、含模型的 OnePlus 预览支持可见的逐轮“说话”按钮，使用离线中文 ASR 和系统 TTS。它与 CPU KWS、DSP、Phone Agent、OpenCode 和 root 相互独立。任何 Android 音频路由必须经真机验收后才可宣传支持；路由变化会刻意停止当前轮次，而不是偷偷把听取或播报转移到另一设备。未内嵌本地 ASR 模型的通用源码包会如实显示不可用。
+
 不能说：“任意 Android 手机下载这个 APK，就能获得常驻 DSP 语音唤醒。”

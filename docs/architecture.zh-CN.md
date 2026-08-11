@@ -25,6 +25,10 @@
 
 命中唤醒后只打开有边界的音频会话，完成 VAD、调用可替换 ASR 并尽快关闭。两条命令之间不保持麦克风录音。
 
+### Conversation 语音轮次
+
+Conversation 是独立、有界的半双工路径：显式点击**说话**（或 DSP 精确本地入口短语）才启动一次最多八秒的 `CONVERSATION` ASR profile，partial 转写只显示。final 转写先过本地隐私/控制检查，才会发送一次已配置 Conversation 请求并可选系统 TTS。该 profile 不继承命令热词或 `CommandRouter` 归一化。完成、停止、锁屏、离开页面、音频焦点丢失和音频路由变化都会释放输入/输出/网络工作；追问始终需要新手势。Conversation 输出没有动作、工具、通知、文件、OpenCode 或 root 路径。
+
 ### Policy Engine
 
 把文本转成结构化意图，选择动作适配器，评估风险，需要时请求确认，并保存脱敏决策。模型/Provider 是适配器选择，不构成操作授权。
