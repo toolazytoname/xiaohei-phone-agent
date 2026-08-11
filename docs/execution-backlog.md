@@ -53,7 +53,7 @@ ROLLBACK / REMAINS / NEXT
 
 | ID | Status | Depends on | Deliverable and acceptance |
 |---|---|---|---|
-| VOICE-001 | VERIFY | BASE-005 | Read-only Chinese TTS probe implemented and built; initial OnePlus/AOSP package probes found no engine, pending candidate-package independent-device UI path |
+| VOICE-001 | HUMAN | BASE-005 | Read-only Chinese TTS probe is implemented and built. The current OnePlus 8T has no registered system TTS engine, so an owner must install/select an engine before the independent-device UI probe can run; no automatic download or engine change is allowed |
 | VOICE-002 | VERIFY | VOICE-001 | System TTS adapter with explicit lifecycle; 10 transitions/build pass, real speech/stop awaits a device with a registered engine |
 | VOICE-003 | DONE | VOICE-002 | Pure TTS lifecycle models `SPEAKING`, `WAITING_FOLLOWUP`, and `INTERRUPTED` transitions; adapter labels completion/interruption without auto-resume; real audio remains gated |
 | VOICE-004 | VERIFY | VOICE-003 | Synchronized input/output ownership arbiter rejects overlap and returns to none on terminal interruption; Android adapter wiring and real audio evidence remain required |
