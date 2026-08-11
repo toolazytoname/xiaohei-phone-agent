@@ -520,7 +520,21 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     private void dispatchTranscript(String text) {
         broker.beginThinking();
-        CommandRouter.Request request = CommandRouter.route(text);
+        RouteClarificationPolicy.Decision route = RouteClarificationPolicy.decide(text);
+        if (route.kind != RouteClarificationPolicy.Kind.ROUTE) {
+            historyView.setText("命令：" + text + "\n" + route.prompt);
+            broker.finishCommand("需要澄清；没有执行；已重新就绪");
+            return;
+        }
+        if (route.route == IntentRouteClassifier.Route.CHAT) {
+            openConversationDraft(text);
+            return;
+        }
+        if (route.route == IntentRouteClassifier.Route.COMPLEX_TASK) {
+            openAgentDraft(text);
+            return;
+        }
+        CommandRouter.Request request = route.command;
         if (request.action == CommandRouter.Action.QUERY_UNREAD_WECHAT
                 || request.action == CommandRouter.Action.QUERY_UNREAD_ALL) {
             showNotificationSummary(request.action == CommandRouter.Action.QUERY_UNREAD_WECHAT);
@@ -554,6 +568,24 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
             return;
         }
         executeRequest(text, request);
+    }
+
+    /** Chat is a user-visible draft only: opening the screen never sends a model request. */
+    private void openConversationDraft(String text) {
+        startActivity(new Intent(this, ConversationActivity.class)
+            .putExtra(ConversationActivity.EXTRA_PREFILL_TEXT, text));
+        historyView.setText("已转到小黑对话；内容仅已预填，等待你点击发送。\n"
+            + "No model request or phone action was started.");
+        broker.finishCommand("已转到对话草稿；没有调用模型或执行动作；已重新就绪");
+    }
+
+    /** Complex text remains a draft for the visible Phone Agent; it never plans or acts here. */
+    private void openAgentDraft(String text) {
+        startActivity(new Intent(this, AgentActivity.class)
+            .putExtra(AgentActivity.EXTRA_TASK_DRAFT, text));
+        historyView.setText("已转到可见 Phone Agent；任务仅已预填，等待你请求规划和确认。\n"
+            + "No plan, model request, or phone action was started.");
+        broker.finishCommand("已转到任务草稿；没有规划或执行；已重新就绪");
     }
 
     private void executeRequest(String text, CommandRouter.Request request) {

@@ -23,6 +23,7 @@ import java.util.Map;
 
 /** Bounded half-duplex chat. Model output is display-only and has zero action authority. */
 public final class ConversationActivity extends Activity {
+    static final String EXTRA_PREFILL_TEXT = "conversation_prefill_text";
     private EditText input;
     private TextView output;
     private TextView state;
@@ -65,9 +66,26 @@ public final class ConversationActivity extends Activity {
         super.onCreate(savedState);
         setTitle("小黑对话 / Xiaohei conversation");
         setContentView(build());
+        consumePrefill(getIntent());
         initializeSystemTtsIfEnabled();
         globalStopRegistration = ApplicationStopHub.register(GlobalStopRegistry.Resource.CONVERSATION,
                 this::stopForGlobalRequest);
+    }
+
+    @Override protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        consumePrefill(intent);
+    }
+
+    /** A route handoff can only populate the editable field; sending remains a separate gesture. */
+    private void consumePrefill(Intent intent) {
+        if (intent == null) return;
+        String text = intent.getStringExtra(EXTRA_PREFILL_TEXT);
+        intent.removeExtra(EXTRA_PREFILL_TEXT);
+        if (text == null || text.trim().isEmpty() || input == null) return;
+        input.setText(text.trim());
+        state.setText("状态：已预填，等待你发送；零模型/动作调用 / Status: draft only; no model/action call");
     }
 
     private View build() {

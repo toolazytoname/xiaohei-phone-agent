@@ -42,8 +42,14 @@ for forbidden in (
 ):
     require(forbidden not in POLICY, f"policy has no execution/model path: {forbidden}")
 
-require("RouteClarificationPolicy" not in MAIN,
-        "ROUTE-003 remains inert before planning/policy/confirmation integration")
+require("RouteClarificationPolicy.Decision route = RouteClarificationPolicy.decide(text);" in MAIN,
+        "MainActivity consumes clarification before routing")
+require("if (route.kind != RouteClarificationPolicy.Kind.ROUTE)" in MAIN
+        and "需要澄清；没有执行；已重新就绪" in MAIN,
+        "clarification remains on Home and finishes without action")
+require("startActivity" not in MAIN[MAIN.index("if (route.kind != RouteClarificationPolicy.Kind.ROUTE)"):
+                                        MAIN.index("if (route.route == IntentRouteClassifier.Route.CHAT)")],
+        "clarification branch cannot navigate")
 require("clarifications=30 target=10 intent=10 scope=10 clear=20" in TEST,
         "exact 50-case redacted acceptance matrix")
 require("打开相册和相机" in TEST and "相册是什么" in TEST and "替我转账给某人" in TEST,
@@ -51,4 +57,4 @@ require("打开相册和相机" in TEST and "相册是什么" in TEST and "替�
 require("guessed_actions=0 model_calls=0 action_calls=0" in TEST,
         "declared no-guess and zero-side-effect acceptance")
 
-print("PASS route clarification cases=50 asks=30 clear=20 guessed_actions=0 model_calls=0 action_calls=0 wired=0")
+print("PASS route clarification cases=50 asks=30 clear=20 guessed_actions=0 model_calls=0 action_calls=0 home_handoff=true")

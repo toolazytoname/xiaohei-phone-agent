@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 /** Visible control surface for bounded semantic Phone Agent tasks. */
 public final class AgentActivity extends Activity {
+    static final String EXTRA_TASK_DRAFT = "phone_agent_task_draft";
     private TextView state;
     private TextView openCodeProgressCard;
     private TextView taskCard;
@@ -29,6 +30,7 @@ public final class AgentActivity extends Activity {
     private EditText taskInput;
     private Button confirmProposal;
     private PhoneAgentClient.Proposal pendingProposal;
+    private boolean routeDraftPending;
     private final TaskCard[] safeCards = new TaskCard[] {
         new TaskCard("系统设置：网络和互联网", "com.android.settings", "网络和互联网"),
         new TaskCard("计算器：数字 1", "com.android.calculator2", "1"),
@@ -43,12 +45,14 @@ public final class AgentActivity extends Activity {
         setTitle("小黑 Phone Agent");
         setContentView(buildView());
         consume(getIntent());
+        consumeTaskDraft(getIntent());
     }
 
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
         consume(intent);
+        consumeTaskDraft(intent);
         if (XiaoheiAccessibilityService.hasVisualRecoveryPreview()) recreate();
     }
 
@@ -208,10 +212,27 @@ public final class AgentActivity extends Activity {
         }
     }
 
+    /** A route handoff can only prefill editable text; planning and execution still need gestures. */
+    private void consumeTaskDraft(Intent intent) {
+        if (intent == null || taskInput == null) return;
+        String text = intent.getStringExtra(EXTRA_TASK_DRAFT);
+        intent.removeExtra(EXTRA_TASK_DRAFT);
+        if (text == null || text.trim().isEmpty()) return;
+        taskInput.setText(text.trim());
+        routeDraftPending = true;
+        state.setText("已预填复杂任务；请先请求规划，再逐项确认。未调用模型或执行动作。\n"
+            + "Complex task draft only; request planning and confirm separately.");
+    }
+
     private void refresh() {
         boolean notificationGranted = Build.VERSION.SDK_INT < 33
             || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
                 == PackageManager.PERMISSION_GRANTED;
+        if (routeDraftPending) {
+            state.setText("已预填复杂任务；请先请求规划，再逐项确认。未调用模型或执行动作。\n"
+                + "Complex task draft only; request planning and confirm separately.");
+            return;
+        }
         state.setText(XiaoheiAccessibilityService.isConnected()
             ? (notificationGranted ? "状态：CONNECTED；等待用户启动任务"
                 : "状态：CONNECTED；状态通知未授权，停止与视觉恢复入口不可用")
@@ -277,6 +298,7 @@ public final class AgentActivity extends Activity {
     private void requestPlan() {
         String task = taskInput.getText().toString().trim();
         if (task.isEmpty()) { state.setText("请先描述任务"); return; }
+        routeDraftPending = false;
         pendingProposal = null;
         confirmProposal.setVisibility(View.GONE);
         state.setText("PLANNING：仅请求一个低风险步骤；此时不会操作手机");
