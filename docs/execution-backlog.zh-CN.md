@@ -64,7 +64,7 @@ NEXT: 唯一下一任务 ID
 | VOICE-002 | DONE | VOICE-001 | 系统 TTS 适配器与显式生命周期 | OnePlus 8T 小黑 Conversation 初始化已验证离线 Android 引擎并进入 `SPEAKING`；可见停止播报按钮产生 `INTERRUPTED`，音轨在 6,976 帧后停止。原子生命周期/utterance 失效可拒绝迟到回调；24 次转换、6 次迟到回调拒绝、完整单测、签名 APK 构建、零 Active Record Client 和零小黑/引擎唤醒锁引用均通过。真人听感与可听时延仍属独立门禁；见 `acceptance-voice-002.zh-CN.md` |
 | VOICE-003 | DONE | VOICE-002 | 纯 TTS 生命周期建模 `SPEAKING`、`WAITING_FOLLOWUP` 和 `INTERRUPTED` 合法转换；适配器标注完成/中断且不自动恢复；真实音频仍受门禁 | 非法跳转拒绝；真实资源归零仍需设备证据 |
 | VOICE-004 | DONE | VOICE-003 | 同步输入/输出所有权协调器 | 绑定身份的进程 lease 已接入系统 TTS、本地 ASR、系统 ASR 会话和可选 CPU KWS。OnePlus 8T 上真实离线 TTS 有 Active Output、无 Recorder；真实离线 ASR 有一条 16 kHz Active Input、无 TTS；可见/全局停止后双方归零。发现的启动前取消竞态现产生 `capture_start_cancelled` 且不打开录音器。完整测试、静态接线、私有签名构建和安装/构建哈希一致均通过；见 `acceptance-voice-004.zh-CN.md` |
-| VOICE-005 | VERIFY | VOICE-004 | 仅信号策略把来电、闹钟、媒体和 Activity 中断映射为停止输入/输出并释放所有权，绝不自动恢复；主页 Activity 暂停已用于 ASR，仍需共享 Android 来源/TTS 接线和设备音频证据 | 每种中断停止 TTS/ASR、状态可解释 |
+| VOICE-005 | VERIFY | VOICE-004 | 仅信号策略把来电、闹钟、媒体和 Activity 中断映射为停止输入/输出并释放所有权，绝不自动恢复。OnePlus Activity/后台证据证明真实本地 ASR 录音被释放、无 Active Record Client 且 DSP 保持 armed；真实来电/闹钟/媒体信号仍需证据；见 `acceptance-voice-005.zh-CN.md` | 每种中断停止 TTS/ASR、状态可解释 |
 | VOICE-006 | DONE | BASE-005 | 30–50 条真人开放中文问句语料协议，原始音频不入 Git | 双语分层模板、脱敏结果格式和重复失败限制已发布 |
 | VOICE-007 | HUMAN | VOICE-006 | 当前命令 ASR 与至少一个开放对话 ASR A/B；必须使用预注册真人中文样本与设备测量，不能用合成重试替代 | WER/语义成功率/延迟/内存，不能只报单句 |
 | VOICE-008 | BACKLOG | VOICE-007 | 命令 ASR 和对话 ASR 独立 profile | 命令热词不会改写聊天文本 |
