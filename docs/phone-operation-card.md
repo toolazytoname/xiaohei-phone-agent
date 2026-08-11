@@ -9,9 +9,12 @@ Applies to internal Alpha `0.2.0-alpha.2`. Save this page on the phone (or in a 
 | Base short commands | Off; invoke from the home screen or Assistant | Does not require DSP, CPU wake word, or Phone Agent |
 | CPU “Xiaohei Xiaohei” wake word | Off | Holds the microphone with a foreground notification and uses more power; **does not change DSP** |
 | OnePlus DSP wake word | Available only with a compatible enhancement | Separately controlled; **does not change CPU wake word** |
+| Speech output | Android offline Chinese TTS | Speaks only after a response; it is not an always-on server or wake path |
 | Phone Agent model channel | Off | Stores complex-task configuration only; **saving or switching never starts/stops a service** |
 
 CPU wake word is a portable experimental fallback, not a low-power DSP mode. Use base mode when no compatible DSP profile exists.
+
+Use offline system TTS as the normal speech-output choice. An online TTS relay (including a Microsoft-compatible service) is optional and must be selected deliberately; it can require network access and is not needed for DSP wake or short offline commands.
 
 ## Daily use
 
