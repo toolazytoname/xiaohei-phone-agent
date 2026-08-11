@@ -174,7 +174,7 @@ NEXT: 唯一下一任务 ID
 | REL-001 | VERIFY | — | OnePlus DSP OFF/ARMED 物理拔线功耗 A/B | 三轮可比 A/B + 8–24h 完整 TSV；亮屏/供电/通话样本作废 |
 | REL-002 | HUMAN | VOICE-002 | 提示音/TTS 真人听感 | 真人确认清晰、音量合适、不暗示已执行 |
 | REL-003 | HUMAN | VOICE-006,VOICE-007 | 真人多人/噪声/距离 ASR/KWS | 预注册样本与失败，不用 TTS 代替真人 |
-| REL-004 | BACKLOG | CHAT-012,TOOL-011 | 100 次混合聊天/命令/任务压力；支持性系统/App 启动矩阵仅在 Android 14 缺少 `topResumedActivity` 时读取 `mFocusedApp`，不替代混合负载或设备门禁 | 0 Fatal/ANR、0 重复动作、0 录音残留 |
+| REL-004 | VERIFY | CHAT-012,TOOL-011 | 仅模拟器的 debug harness 已定义 100 条混合输入：40 个确定性命令必须精确产生 40 次动作，30 个聊天草稿和 20 个复杂任务草稿只能打开各自可编辑页面，10 条歧义必须留在首页且不执行；同时拒绝 crash/ANR 和录音残留。全新 AOSP 实跑及真机/系统信号门禁仍必须完成 | 100 条后无重复执行、无录音残留 |
 | REL-005 | VERIFY | OC-008,ROOT-010 | 带序列号保护的通用无模型 Android 14 ARM64 AOSP 脚本已通过显式强制结束、冷启动、以 boot ID 确认的重启和卸载，且无小黑进程/服务/音频残留。弱网、真实中转/模型超时及 OnePlus DSP 恢复仍是设备门禁；见 `acceptance-rel-005.md`。 | 每种未验证故障仍需回到可解释、可停止状态 |
 | REL-006 | BACKLOG | UX-005 | 8–24h 服务组合待机回归 | 精确服务状态、功耗、wakelock、端口证据 |
 | SEC-001 | DONE | ROOT-001 | 双语威胁模型覆盖聊天/通知注入、工具/Schema 投毒、OpenCode 穿越、root 提权与破坏/外传路径；设备级验收仍明确保留 | 双语 STRIDE/滥用用例 |
