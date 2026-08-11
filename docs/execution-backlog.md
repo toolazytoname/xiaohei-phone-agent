@@ -145,7 +145,7 @@ ROLLBACK / REMAINS / NEXT
 | ROOT-007 | DONE | ROOT-002 | Fixed profile dry-run/diff preview requires distinct exact digests, fresh confirmation and no expiry; result is fixed and no system apply exists |
 | ROOT-008 | DONE | ROOT-003 | In-memory redacted root decision audit and permanent broker-instance revocation; no tokens persist and post-revocation requests remain denied; global-stop wiring remains pending |
 | ROOT-009 | DONE | ROOT-004 | Fail-closed destructive-command, broad/system-path, and credential/payment/evasion denial corpus; all unmatched root-shaped input stays denied and no command executes |
-| ROOT-010 | BACKLOG | ROOT-009 | Install/upgrade/rollback/uninstall on an independent test device first |
+| ROOT-010 | DONE | ROOT-009 | Independent Android 14 ARM64 test device completed source-only code-4 install, code-5 upgrade, expected ordinary downgrade rejection, explicit maintenance rollback, and transactional uninstall with no package/Assistant/audio residue; see `acceptance-root-010.md` |
 
 ## UX and human control
 

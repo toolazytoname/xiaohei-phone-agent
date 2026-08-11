@@ -152,7 +152,7 @@ NEXT: 唯一下一任务 ID
 | ROOT-007 | DONE | ROOT-002 | 固定 profile dry-run/差异预览要求不同精确摘要、新鲜确认且未过期；结果固定且没有系统 apply | 未确认、目标变化、过期全部拒绝 |
 | ROOT-008 | DONE | ROOT-003 | 内存脱敏 root 决定审计与永久 broker 实例撤销；无 Token 持久化且撤销后请求持续拒绝；全局停止接线仍待完成 | 全局停止后无法继续调用 |
 | ROOT-009 | DONE | ROOT-004 | fail-closed 的破坏命令、宽泛/系统路径和凭据/支付/规避拒绝语料库；未匹配 root 形态输入也保持拒绝且无命令执行 | 对抗输入 100% 拒绝，无实际破坏 |
-| ROOT-010 | BACKLOG | ROOT-009 | 独立测试设备上的安装、升级、回滚和卸载 | 主 OnePlus 不作为首轮破坏性试验设备 |
+| ROOT-010 | DONE | ROOT-009 | 独立 Android 14 ARM64 测试设备已完成源码型 code-4 安装、code-5 升级、预期的普通降级拒绝、显式维护回退和事务卸载，且无主包/Assistant/音频残留；见 `acceptance-root-010.zh-CN.md` | 主 OnePlus 不作为首轮破坏性试验设备 |
 
 ## 10. 产品体验与人类控制
 
