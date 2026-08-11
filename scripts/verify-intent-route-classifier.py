@@ -40,8 +40,14 @@ for forbidden in (
 ):
     require(forbidden not in CLASSIFIER, f"classifier has no execution/model path: {forbidden}")
 
-require("IntentRouteClassifier" not in MAIN,
-        "ROUTE-002 is not wired to execute/navigate before ROUTE-003/004")
+require("RouteClarificationPolicy.Decision route = RouteClarificationPolicy.decide(text);" in MAIN,
+        "MainActivity consumes clarification before handoff")
+require("openConversationDraft(text);" in MAIN and "openAgentDraft(text);" in MAIN,
+        "chat and complex routes use separate visible drafts")
+require("ConversationActivity.EXTRA_PREFILL_TEXT" in MAIN and "AgentActivity.EXTRA_TASK_DRAFT" in MAIN,
+        "handoffs carry only explicit draft extras")
+require("ConversationClient.ask(" not in MAIN and "PhoneAgentClient.plan(" not in MAIN,
+        "route handoff cannot send a model request or plan")
 require("cases=100 command=40 chat=35 complex=25" in TEST,
         "exact 100-case redacted matrix")
 require("回复消息是什么意思" in TEST and "打开相册和相机" in TEST and "替我转账给某人" in TEST,
@@ -49,4 +55,4 @@ require("回复消息是什么意思" in TEST and "打开相册和相机" in TES
 require("action_calls=0 model_calls=0 ambiguous=inert" in TEST,
         "declared zero-side-effect acceptance")
 
-print("PASS intent route classifier cases=100 command=40 chat=35 complex=25 execution_paths=0 ambiguous=inert")
+print("PASS intent route classifier cases=100 command=40 chat=prefill_only complex=prefill_only model_start=0 action_start=0 ambiguous=inert")

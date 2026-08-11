@@ -252,6 +252,7 @@ python3 scripts/verify-plan-step-observation.py
 python3 scripts/verify-evidence-changing-recovery.py
 python3 scripts/verify-global-stop-registry.py
 python3 scripts/verify-phone-agent-global-stop.py
+python3 scripts/verify-route-handoff.py
 python3 scripts/verify-audio-interruption-policy.py
 python3 scripts/verify-tool-outcome-evidence.py
 python3 scripts/verify-opencode-web-takeover.py
