@@ -1,6 +1,6 @@
 # 小黑主权移动智能体：长期产品与工程总纲
 
-[English](sovereign-mobile-agent-master-plan.md) · [执行任务账本](execution-backlog.zh-CN.md) · [当前状态](../STATUS.md) · [交付证据矩阵](delivery-evidence-matrix.zh-CN.md)
+[English](sovereign-mobile-agent-master-plan.md) · [自由语音聊天计划](free-voice-chat-delivery-plan.zh-CN.md) · [执行任务账本](execution-backlog.zh-CN.md) · [当前状态](../STATUS.md) · [交付证据矩阵](delivery-evidence-matrix.zh-CN.md)
 
 状态：长期方向文档，不是已完成能力声明。任何“已完成”结论以证据矩阵和精确验收记录为准。
 
@@ -118,6 +118,7 @@ sequenceDiagram
 - 对话默认只保留内存中的有界上下文；长期记忆默认关闭、可查看、可删除。
 - TTS 通过适配器选择系统离线音色或用户中转站，不把单一厂商服务写死。
 - 已实现的单轮网络边界见 [Conversation 有界传输](conversation-transport.zh-CN.md)；它只返回文字，不携带任何动作权限。
+- “文字模型 → 按键语音 → DSP 逐轮 → 真人门禁”的精确顺序、停止条件和证据见[自由语音聊天可执行计划](free-voice-chat-delivery-plan.zh-CN.md)。
 
 ### 5.2 会话与任务编排
 

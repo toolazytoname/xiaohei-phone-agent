@@ -33,6 +33,7 @@ for identifier in (
     "conversation-state",
     "conversation-input",
     "conversation-send",
+    "conversation-talk",
     "conversation-cancel",
     "conversation-stop",
     "conversation-repeat",
@@ -78,6 +79,16 @@ require("final int modelCalls;" in controls and "this.modelCalls = 0;" in contro
         "all conversation controls declare zero model calls")
 require("ConversationClient" not in controls and "ConversationPromptPolicy" not in controls,
         "control policy cannot construct model requests")
+require("new VoiceCommandSession(this" in activity and "AsrProfile.CONVERSATION" in activity,
+        "Talk uses the explicit conversation ASR profile")
+partial = activity.index("void onPartialTranscript")
+final = activity.index("void onFinalTranscript")
+require("send();" not in activity[partial:final] and "send();" in activity[final:],
+        "partial is display-only and only final can send")
+require("CommandRouter" not in activity and "ActionDispatcher" not in activity,
+        "Talk cannot route transcript into commands or actions")
+require("ConversationVoiceTurnCoordinator" in activity,
+        "Talk has an explicit bounded voice-turn lifecycle")
 require("6 轮半双工（无动作权限）" in main, "public main-screen label matches behavior")
 
 tree = ET.parse(MANIFEST)
@@ -87,4 +98,4 @@ matches = [node for node in activities if node.get(namespace + "name") == ".Conv
 require(len(matches) == 1, "one ConversationActivity manifest declaration")
 require(matches[0].get(namespace + "exported") == "false", "ConversationActivity must not be exported")
 
-print("PASS Conversation UI boundary ids=11 exported=false action_paths=0 authority=none half_duplex=6 controls=zero-call")
+print("PASS Conversation UI boundary ids=12 exported=false action_paths=0 authority=none half_duplex=6 talk=conversation_profile partial=zero-call")

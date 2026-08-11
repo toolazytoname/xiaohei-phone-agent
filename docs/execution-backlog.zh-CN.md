@@ -81,7 +81,7 @@ NEXT: 唯一下一任务 ID
 | CHAT-002 | DONE | CHAT-001 | Android Keystore 凭据与备份规则；备份永不含 Token。OnePlus 8T 已完成随机测试 Token 保存、可见无 Token v3 导出、正常恢复清除三个槽，以及离线本地状态恢复；见 `acceptance-chat-002.zh-CN.md` | 构建、配置隔离和备份回归通过 |
 | CHAT-003 | DONE | CHAT-002 | 有界 HTTP/SSE 模型客户端、取消和重定向拒绝 | 11 条确定性传输用例 + 单元、APK 构建和仓库门禁通过；零模型调用 |
 | CHAT-004 | DONE | CHAT-003 | 单轮文字聊天 UI，不带动作权限 | 生命周期/静态门禁及全新 AOSP 模拟器用户路径 SSE 回复通过；模型不可调用工具 |
-| CHAT-005 | BACKLOG | CHAT-004,VOICE-002 | 单轮“说一句、答一句”闭环 | 真人提问 → 文本 → TTS；全局停止有效 |
+| CHAT-005 | BACKLOG | CHAT-004,VOICE-002 | 按[自由语音聊天可执行计划](free-voice-chat-delivery-plan.zh-CN.md)完成独立开放 ASR、单轮“说一句、答一句”和按键多轮闭环 | 真人提问 → 文本 → 模型 → 离线 TTS；全局停止有效；输入/输出不重叠；不自动开麦 |
 | CHAT-006 | DONE | CHAT-004 | 内存会话：turn、时间和 token 三重预算 | 纯 Java 内核与契约上下限一致；超限/超时/取消释放正文引用，失败 turn 可回滚，无持久化或恢复路径 |
 | CHAT-007 | DONE | CHAT-006 | 3–8 轮半双工追问窗口 | 6 轮 UI 接入有界上下文；11 条指代/结束/超时/切模型/锁屏/后台等确定性用例及全新 AOSP 流式 mock 用户路径通过 |
 | CHAT-008 | DONE | CHAT-006 | 系统 Prompt 与隐私上下文最小化 | 版本化静态 Envelope；20 注入、10 工具伪造、5 敏感形态、非法边界及零动作/隐私静态门禁通过 |

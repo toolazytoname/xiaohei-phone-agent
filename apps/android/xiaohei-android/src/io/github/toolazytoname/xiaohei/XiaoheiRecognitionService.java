@@ -26,6 +26,13 @@ public final class XiaoheiRecognitionService extends RecognitionService {
                 ? SpeechRecognizer.ERROR_RECOGNIZER_BUSY : SpeechRecognizer.ERROR_CLIENT);
             return;
         }
+        AsrProfile profile = AsrProfile.fromId(
+            recognizerIntent.getStringExtra(VoiceCommandSession.EXTRA_ASR_PROFILE));
+        if (profile == null) {
+            Log.i(TAG, "capture_rejected invalid_asr_profile=true");
+            error(callback, SpeechRecognizer.ERROR_CLIENT);
+            return;
+        }
         ProcessAudioDuplex.Lease inputLease = ProcessAudioDuplex.shared().acquireInput();
         if (inputLease == null) {
             Log.i(TAG, "capture_rejected output_owner_active=true");
@@ -39,7 +46,8 @@ public final class XiaoheiRecognitionService extends RecognitionService {
                 recognizerIntent.getLongExtra(VoiceCommandSession.EXTRA_MAX_DURATION_MS, 8000)));
         }
         final long boundedMaximumMs = maximumMs;
-        worker = new Thread(() -> recognize(callback, boundedMaximumMs, inputLease), "xiaohei-local-asr");
+        worker = new Thread(() -> recognize(callback, boundedMaximumMs, inputLease, profile),
+            "xiaohei-local-asr");
         worker.start();
     }
 
@@ -61,10 +69,11 @@ public final class XiaoheiRecognitionService extends RecognitionService {
         }
     }
 
-    private void recognize(Callback callback, long maximumMs, ProcessAudioDuplex.Lease inputLease) {
+    private void recognize(Callback callback, long maximumMs, ProcessAudioDuplex.Lease inputLease,
+                           AsrProfile profile) {
         AudioRecord audio = null;
         long startedAt = System.currentTimeMillis();
-        try (LocalAsrEngine engine = new LocalAsrEngine(this)) {
+        try (LocalAsrEngine engine = new LocalAsrEngine(this, profile)) {
             int minimum = AudioRecord.getMinBufferSize(16000, AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT);
             audio = createRecognitionAudioRecord(minimum);
@@ -80,7 +89,7 @@ public final class XiaoheiRecognitionService extends RecognitionService {
                 activeAudio = audio;
                 audio.startRecording();
                 Log.i(TAG, "capture_started source=" + audio.getAudioSource()
-                    + " maximum_ms=" + maximumMs);
+                    + " maximum_ms=" + maximumMs + " profile=" + profile.id());
             }
             if (cancelled) return;
             callback.readyForSpeech(new Bundle());

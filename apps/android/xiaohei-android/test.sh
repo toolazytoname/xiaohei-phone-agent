@@ -9,6 +9,22 @@ javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/CommandRouterTest.java"
 java -cp "$test_dir" io.github.toolazytoname.xiaohei.CommandRouterTest
 javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/AsrProfile.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/AsrProfileTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.AsrProfileTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/AsrProvider.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/AsrProviderTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.AsrProviderTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ConversationVoiceTurnCoordinator.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/ConversationVoiceTurnCoordinatorTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.ConversationVoiceTurnCoordinatorTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
+  "$project_dir/src/io/github/toolazytoname/xiaohei/ConversationEntryPolicy.java" \
+  "$project_dir/tests/io/github/toolazytoname/xiaohei/ConversationEntryPolicyTest.java"
+java -cp "$test_dir" io.github.toolazytoname.xiaohei.ConversationEntryPolicyTest
+javac -encoding UTF-8 -source 8 -target 8 -d "$test_dir" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/AgentPolicy.java" \
   "$project_dir/src/io/github/toolazytoname/xiaohei/SensitiveActionDenialPolicy.java" \
   "$project_dir/tests/io/github/toolazytoname/xiaohei/AgentPolicyTest.java"

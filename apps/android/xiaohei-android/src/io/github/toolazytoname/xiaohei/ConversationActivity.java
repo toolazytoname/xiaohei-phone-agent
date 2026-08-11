@@ -24,10 +24,12 @@ import java.util.Map;
 /** Bounded half-duplex chat. Model output is display-only and has zero action authority. */
 public final class ConversationActivity extends Activity {
     static final String EXTRA_PREFILL_TEXT = "conversation_prefill_text";
+    static final String EXTRA_START_VOICE_TURN = "conversation_start_voice_turn";
     private EditText input;
     private TextView output;
     private TextView state;
     private Button send;
+    private Button talk;
     private Button cancel;
     private Button stop;
     private Button repeat;
@@ -42,6 +44,8 @@ public final class ConversationActivity extends Activity {
     private final StringBuilder visibleTranscript = new StringBuilder();
     private String lastAssistantReply;
     private SystemTtsAdapter systemTts;
+    private VoiceCommandSession voiceSession;
+    private final ConversationVoiceTurnCoordinator voiceTurn = new ConversationVoiceTurnCoordinator();
     private ApplicationStopHub.Registration globalStopRegistration;
     private final ConversationSessionCoordinator coordinator = new ConversationSessionCoordinator();
     private final ConversationControlPolicy.State controls = new ConversationControlPolicy.State();
@@ -68,6 +72,7 @@ public final class ConversationActivity extends Activity {
         setContentView(build());
         consumePrefill(getIntent());
         initializeSystemTtsIfEnabled();
+        consumeVoiceStart(getIntent());
         globalStopRegistration = ApplicationStopHub.register(GlobalStopRegistry.Resource.CONVERSATION,
                 this::stopForGlobalRequest);
     }
@@ -76,6 +81,7 @@ public final class ConversationActivity extends Activity {
         super.onNewIntent(intent);
         setIntent(intent);
         consumePrefill(intent);
+        consumeVoiceStart(intent);
     }
 
     /** A route handoff can only populate the editable field; sending remains a separate gesture. */
@@ -86,6 +92,15 @@ public final class ConversationActivity extends Activity {
         if (text == null || text.trim().isEmpty() || input == null) return;
         input.setText(text.trim());
         state.setText("状态：已预填，等待你发送；零模型/动作调用 / Status: draft only; no model/action call");
+    }
+
+    /** Only the non-exported in-app wake route may request one immediately visible listening turn. */
+    private void consumeVoiceStart(Intent intent) {
+        if (intent == null || !intent.getBooleanExtra(EXTRA_START_VOICE_TURN, false)) return;
+        intent.removeExtra(EXTRA_START_VOICE_TURN);
+        mainHandler.post(() -> {
+            if (!destroyed && voiceSession == null && pending == null) startVoiceTurn();
+        });
     }
 
     private View build() {
@@ -123,6 +138,12 @@ public final class ConversationActivity extends Activity {
         send.setContentDescription("conversation-send");
         send.setOnClickListener(view -> send());
         root.addView(send);
+
+        talk = new Button(this);
+        talk.setText("说话（仅本轮聊天，不执行手机操作） / Talk");
+        talk.setContentDescription("conversation-talk");
+        talk.setOnClickListener(view -> startVoiceTurn());
+        root.addView(talk);
 
         cancel = new Button(this);
         cancel.setText("取消当前模型请求");
@@ -201,6 +222,11 @@ public final class ConversationActivity extends Activity {
             state.setText("状态：已暂停；点“继续聊”后再发送 / Status: paused; press Continue");
             return;
         }
+        boolean fromVoice = voiceTurn.state() == ConversationVoiceTurnCoordinator.State.REVIEWING;
+        if (fromVoice && !voiceTurn.beginThinking()) {
+            state.setText("状态：语音轮次已失效；请重新点说话 / Status: voice turn expired");
+            return;
+        }
         ConversationSessionCoordinator.BeginResult begin = coordinator.begin(
                 userText, currentProfileFingerprint(), SystemClock.elapsedRealtime()
         );
@@ -215,25 +241,31 @@ public final class ConversationActivity extends Activity {
                 clearVisible("Conversation 模型配置已变化；旧上下文已清空，请再次发送 / Profile changed; resend fresh");
                 return;
             case INVALID_TEXT:
+                if (fromVoice) voiceTurn.fail();
                 state.setText("状态：请输入有效文字 / Status: enter valid text");
                 return;
             case BUSY:
+                if (fromVoice) voiceTurn.fail();
                 state.setText("状态：上一请求尚未完成 / Status: previous request still active");
                 return;
             case TOKEN_BUDGET_CLEARED:
+                if (fromVoice) voiceTurn.fail();
                 clearVisible("Token 预算已到，内存上下文已清空 / Token budget reached; session cleared");
                 return;
             case TIMEOUT_CLEARED:
+                if (fromVoice) voiceTurn.fail();
                 clearVisible("会话总时长已到，内存上下文已清空 / Session timed out and was cleared");
                 return;
             case REQUEST_READY:
                 break;
             default:
+                if (fromVoice) voiceTurn.fail();
                 state.setText("状态：会话不可用，请重新开始 / Status: start a new session");
                 return;
         }
         if (!controls.markRequestStarted()) {
             coordinator.abort(SystemClock.elapsedRealtime());
+            if (fromVoice) voiceTurn.fail();
             state.setText("状态：控制状态拒绝并发请求 / Status: local control rejected request");
             return;
         }
@@ -255,6 +287,57 @@ public final class ConversationActivity extends Activity {
         call.bind(next::cancel);
     }
 
+    private void startVoiceTurn() {
+        if (controls.requestInFlight() || pending != null) {
+            state.setText("状态：正在等待模型回复，暂不能录音 / Status: waiting for model");
+            return;
+        }
+        if (!controls.canSend()) {
+            state.setText("状态：已暂停；点“继续聊”后再说 / Status: paused; press Continue");
+            return;
+        }
+        interruptSpeech("开始听取前已停止播报 / Speech stopped before listening");
+        if (voiceTurn.state() != ConversationVoiceTurnCoordinator.State.IDLE
+                && voiceTurn.state() != ConversationVoiceTurnCoordinator.State.WAITING_FOLLOWUP) {
+            voiceTurn.reset();
+        }
+        if (!voiceTurn.beginListening()) {
+            state.setText("状态：语音状态忙；请重试一次 / Status: voice state busy");
+            return;
+        }
+        voiceSession = new VoiceCommandSession(this, new VoiceCommandSession.Listener() {
+            @Override public void onSpeechReady() {
+                state.setText("状态：正在听；本轮结束后才会发送 / Status: listening");
+            }
+            @Override public void onPartialTranscript(String text) {
+                if (!voiceTurn.partial()) return;
+                input.setText(text);
+                state.setText("状态：正在听（未发送） / Status: listening; not sent");
+            }
+            @Override public void onFinalTranscript(String text) {
+                voiceSession = null;
+                if (!voiceTurn.finalTranscript()) return;
+                input.setText(text);
+                state.setText("状态：转写完成，正在本地检查 / Status: transcript ready; local check");
+                send();
+            }
+            @Override public void onSpeechError(String safeDetail) {
+                voiceSession = null;
+                voiceTurn.fail();
+                state.setText("状态：" + safeDetail + "；未发送模型 / Status: no model call");
+                setRunning(false);
+            }
+        }, AsrProfile.CONVERSATION);
+        if (!voiceSession.isAvailable()) {
+            voiceSession = null;
+            voiceTurn.fail();
+            state.setText("状态：聊天 ASR 不可用；未自动切换 / Status: conversation ASR unavailable");
+            return;
+        }
+        voiceSession.start();
+        setRunning(false);
+    }
+
     private void cancelCurrent() {
         PendingConversationCall current = pending;
         if (current == null || !current.requestCancel()) return;
@@ -272,6 +355,7 @@ public final class ConversationActivity extends Activity {
             if (result.cancelled) {
                 coordinator.abort(now);
                 controls.markRequestFinished(false);
+                if (voiceTurn.state() == ConversationVoiceTurnCoordinator.State.THINKING) voiceTurn.fail();
                 state.setText("状态：请求已取消，可继续当前会话 / Status: request cancelled");
                 output.setText(visibleOr("当前请求已取消；未执行任何动作"));
                 setRunning(false);
@@ -285,6 +369,7 @@ public final class ConversationActivity extends Activity {
                 }
                 coordinator.abort(now);
                 controls.markRequestFinished(false);
+                if (voiceTurn.state() == ConversationVoiceTurnCoordinator.State.THINKING) voiceTurn.fail();
                 state.setText("状态：请求失败，本轮未加入上下文 / Status: failed; turn rolled back");
                 output.setText(result.text);
                 setRunning(false);
@@ -303,6 +388,9 @@ public final class ConversationActivity extends Activity {
             input.setText("");
             if (localFallback) showLocalFallbackStatus(now);
             else showReadyStatus(now);
+            if (voiceTurn.state() == ConversationVoiceTurnCoordinator.State.THINKING) {
+                voiceTurn.beginSpeaking();
+            }
             speakReply(reply);
             setRunning(false);
         } else if (completion == ConversationSessionCoordinator.Code.TURN_LIMIT_CLEARED) {
@@ -352,6 +440,9 @@ public final class ConversationActivity extends Activity {
             coordinator.abort(now);
             closePending();
         }
+        if (action == ConversationControlPolicy.Action.STOP
+                || action == ConversationControlPolicy.Action.CLEAR
+                || action == ConversationControlPolicy.Action.END) stopVoiceListening();
         switch (action) {
             case STOP:
                 interruptSpeech("聊天已停止，播报已中断 / Chat stopped; speech interrupted");
@@ -430,6 +521,12 @@ public final class ConversationActivity extends Activity {
         if (send != null) send.setEnabled(!running && controls.canSend());
         if (cancel != null) cancel.setEnabled(running);
         if (input != null) input.setEnabled(!running && controls.canSend());
+        if (talk != null) {
+            talk.setText(voiceTurn.state() == ConversationVoiceTurnCoordinator.State.WAITING_FOLLOWUP
+                    ? "继续说（新一轮聊天，不执行手机操作） / Continue talking"
+                    : "说话（仅本轮聊天，不执行手机操作） / Talk");
+            talk.setEnabled(!running && controls.canSend() && voiceSession == null);
+        }
         if (stop != null) stop.setEnabled(true);
         if (repeat != null) repeat.setEnabled(controls.canRepeat());
         if (clear != null) clear.setEnabled(true);
@@ -447,13 +544,25 @@ public final class ConversationActivity extends Activity {
         systemTts = new SystemTtsAdapter(this);
         systemTts.initialize((ttsState, detail) -> runOnUiThread(() -> {
             if (destroyed || state == null) return;
+            if (ttsState == TtsLifecycle.State.WAITING_FOLLOWUP
+                    && voiceTurn.state() == ConversationVoiceTurnCoordinator.State.SPEAKING) {
+                voiceTurn.speechFinished();
+            } else if (ttsState == TtsLifecycle.State.FAILED
+                    && voiceTurn.state() == ConversationVoiceTurnCoordinator.State.SPEAKING) {
+                voiceTurn.fail();
+            }
             state.setText("状态：" + detail + " / TTS: " + ttsState.name());
             setRunning(controls.requestInFlight());
         }));
     }
 
     private void speakReply(String reply) {
-        if (systemTts == null || reply == null || reply.trim().isEmpty()) return;
+        if (systemTts == null || reply == null || reply.trim().isEmpty()) {
+            if (voiceTurn.state() == ConversationVoiceTurnCoordinator.State.SPEAKING) {
+                voiceTurn.speechFinished();
+            }
+            return;
+        }
         systemTts.speak(reply);
         setRunning(controls.requestInFlight());
     }
@@ -465,6 +574,7 @@ public final class ConversationActivity extends Activity {
     }
 
     private boolean stopForGlobalRequest() {
+        stopVoiceListening();
         closePending();
         if (systemTts != null) systemTts.stop("全局停止已中断播报 / Global stop interrupted speech");
         coordinator.clearByUser();
@@ -516,6 +626,7 @@ public final class ConversationActivity extends Activity {
             closePending();
             clearVisible("已离开聊天页面，内存上下文已清空 / Left chat; session cleared");
         }
+        stopVoiceListening();
         super.onStop();
     }
 
@@ -526,6 +637,7 @@ public final class ConversationActivity extends Activity {
             receiverRegistered = false;
         }
         coordinator.onBackgrounded();
+        stopVoiceListening();
         closePending();
         controls.apply(ConversationControlPolicy.Action.CLEAR);
         visibleTranscript.setLength(0);
@@ -540,5 +652,16 @@ public final class ConversationActivity extends Activity {
             globalStopRegistration = null;
         }
         super.onDestroy();
+    }
+
+    private void stopVoiceListening() {
+        VoiceCommandSession current = voiceSession;
+        voiceSession = null;
+        if (current != null) current.stop();
+        if (voiceTurn.state() == ConversationVoiceTurnCoordinator.State.LISTENING
+                || voiceTurn.state() == ConversationVoiceTurnCoordinator.State.REVIEWING
+                || voiceTurn.state() == ConversationVoiceTurnCoordinator.State.THINKING) {
+            voiceTurn.stop();
+        }
     }
 }

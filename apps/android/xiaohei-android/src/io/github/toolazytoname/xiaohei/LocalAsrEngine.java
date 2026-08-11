@@ -17,13 +17,15 @@ final class LocalAsrEngine implements AutoCloseable {
     private final Object recognizer;
     private final Object stream;
 
-    LocalAsrEngine(Context context) throws Exception {
+    LocalAsrEngine(Context context, AsrProfile profile) throws Exception {
+        if (profile == null) throw new IllegalArgumentException("missing ASR profile");
         File modelDir = new File(context.getFilesDir(), "asr/zh-14m");
         String encoder = copyAsset(context, MODEL + "encoder-epoch-99-avg-1.int8.onnx", modelDir);
         String decoder = copyAsset(context, MODEL + "decoder-epoch-99-avg-1.onnx", modelDir);
         String joiner = copyAsset(context, MODEL + "joiner-epoch-99-avg-1.int8.onnx", modelDir);
         String tokens = copyAsset(context, MODEL + "tokens.txt", modelDir);
-        String hotwords = copyAsset(context, COMMAND_HOTWORDS, modelDir);
+        String hotwords = profile.usesCommandHotwords()
+            ? copyAsset(context, COMMAND_HOTWORDS, modelDir) : "";
 
         Object feature = configure("com.k2fsa.sherpa.onnx.FeatureConfig",
             new String[] { "setSampleRate", "setFeatureDim", "setDither" },
@@ -46,7 +48,7 @@ final class LocalAsrEngine implements AutoCloseable {
             new Class<?>[] { featureClass, modelClass, boolean.class,
                 String.class, int.class, String.class, float.class },
             new Object[] { feature, model, true,
-                "modified_beam_search", 4, hotwords, 2.0f });
+                profile.decodingMethod(), 4, hotwords, profile.hotwordScore() });
         Class<?> configClass = Class.forName("com.k2fsa.sherpa.onnx.OnlineRecognizerConfig");
         Constructor<?> ctor = Class.forName("com.k2fsa.sherpa.onnx.OnlineRecognizer")
             .getConstructor(AssetManager.class, configClass);

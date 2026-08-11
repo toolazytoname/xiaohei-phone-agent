@@ -19,6 +19,8 @@ final class VoiceCommandSession implements RecognitionListener {
     private static final String TAG = "XiaoheiVoice";
     static final String EXTRA_MAX_DURATION_MS =
         "io.github.toolazytoname.xiaohei.extra.MAX_DURATION_MS";
+    static final String EXTRA_ASR_PROFILE =
+        "io.github.toolazytoname.xiaohei.extra.ASR_PROFILE";
     interface Listener {
         void onSpeechReady();
         void onPartialTranscript(String text);
@@ -30,14 +32,21 @@ final class VoiceCommandSession implements RecognitionListener {
     private final Listener listener;
     private final AudioManager audioManager;
     private final AudioFocusRequest focusRequest;
+    private final AsrProfile asrProfile;
     private SpeechRecognizer recognizer;
     private boolean active;
     private boolean focusHeld;
     private ProcessAudioDuplex.Lease systemInputLease;
 
     VoiceCommandSession(Context context, Listener listener) {
+        this(context, listener, AsrProfile.COMMAND);
+    }
+
+    VoiceCommandSession(Context context, Listener listener, AsrProfile asrProfile) {
+        if (asrProfile == null) throw new IllegalArgumentException("missing ASR profile");
         this.context = context.getApplicationContext();
         this.listener = listener;
+        this.asrProfile = asrProfile;
         this.audioManager = this.context.getSystemService(AudioManager.class);
         this.focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)
             .setAudioAttributes(new AudioAttributes.Builder()
@@ -57,7 +66,8 @@ final class VoiceCommandSession implements RecognitionListener {
 
     String channelDescription() {
         if (usesLocalAsr()) return LocalAsrEngine.isBundled()
-            ? "小黑离线中文 ASR（已内置）" : "小黑离线中文 ASR（模型未内置）";
+            ? "小黑离线中文 ASR（已内置；" + asrProfile.id() + "）"
+            : "小黑离线中文 ASR（模型未内置）";
         return SpeechRecognizer.isRecognitionAvailable(context)
             ? "Android 系统识别服务" : "Android 系统识别服务（不可用）";
     }
@@ -115,6 +125,7 @@ final class VoiceCommandSession implements RecognitionListener {
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "zh-CN");
             intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+            intent.putExtra(EXTRA_ASR_PROFILE, asrProfile.id());
             intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 1200);
             intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 900);
             if (maxDurationMs > 0) intent.putExtra(EXTRA_MAX_DURATION_MS, maxDurationMs);

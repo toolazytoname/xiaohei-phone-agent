@@ -1,6 +1,6 @@
 # Xiaohei Sovereign Mobile Agent: Long-Term Product and Engineering Plan
 
-[简体中文](sovereign-mobile-agent-master-plan.zh-CN.md) · [Execution backlog](execution-backlog.md) · [Current status](../STATUS.md) · [Delivery evidence](delivery-evidence-matrix.md)
+[简体中文](sovereign-mobile-agent-master-plan.zh-CN.md) · [Free-voice delivery plan](free-voice-chat-delivery-plan.md) · [Execution backlog](execution-backlog.md) · [Current status](../STATUS.md) · [Delivery evidence](delivery-evidence-matrix.md)
 
 Status: long-term direction, not a completion claim. The evidence matrix and exact acceptance records remain authoritative.
 

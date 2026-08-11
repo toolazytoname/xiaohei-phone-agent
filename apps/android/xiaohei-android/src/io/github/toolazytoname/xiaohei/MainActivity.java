@@ -520,6 +520,10 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
 
     private void dispatchTranscript(String text) {
         broker.beginThinking();
+        if (ConversationEntryPolicy.startsVoiceConversation(text)) {
+            openConversationVoiceTurn();
+            return;
+        }
         RouteClarificationPolicy.Decision route = RouteClarificationPolicy.decide(text);
         if (route.kind != RouteClarificationPolicy.Kind.ROUTE) {
             historyView.setText("命令：" + text + "\n" + route.prompt);
@@ -577,6 +581,15 @@ public final class MainActivity extends Activity implements WakewordBroker.Liste
         historyView.setText("已转到小黑对话；内容仅已预填，等待你点击发送。\n"
             + "No model request or phone action was started.");
         broker.finishCommand("已转到对话草稿；没有调用模型或执行动作；已重新就绪");
+    }
+
+    /** A DSP/manual wake command may explicitly request one visible, bounded chat listen turn. */
+    private void openConversationVoiceTurn() {
+        startActivity(new Intent(this, ConversationActivity.class)
+            .putExtra(ConversationActivity.EXTRA_START_VOICE_TURN, true));
+        historyView.setText("已进入小黑对话，正在开启一轮聊天听取；不会执行手机动作。\n"
+            + "One explicit chat listen turn was requested; no phone action was started.");
+        broker.finishCommand("已进入对话听取；短命令录音已释放；已重新就绪");
     }
 
     /** Complex text remains a draft for the visible Phone Agent; it never plans or acts here. */
