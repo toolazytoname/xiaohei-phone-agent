@@ -123,6 +123,8 @@ Test exact model-call counts across success, ASR/HTTP/TTS failures, cancel, lock
 
 ### FVC-050 — Bounded multi-turn voice follow-up
 
+Code sub-gate `FVC-050A` has passed: see [half-duplex multi-turn voice code-gate acceptance](acceptance-fvc-050.md). It does not replace the real acoustic and resource acceptance of `FVC-050B` on the OnePlus.
+
 - [ ] Continue Talking opens exactly one ASR turn from `WAITING_FOLLOWUP`.
 - [ ] Voice and text share the existing six-turn/2048-token/five-minute context.
 - [ ] exact spoken Stop/Repeat/Clear/Continue/End controls remain local with zero model calls.

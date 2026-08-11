@@ -206,6 +206,7 @@ python3 scripts/verify-github-progress-manifest.py
 python3 scripts/test-status-summary.py
 python3 scripts/verify-conversation-ui-boundary.py
 python3 scripts/verify-conversation-voice-turn.py
+python3 scripts/verify-conversation-followup.py
 python3 scripts/verify-conversation-memory-boundary.py
 python3 scripts/verify-conversation-prompt-boundary.py
 python3 scripts/verify-tts-channel-boundary.py

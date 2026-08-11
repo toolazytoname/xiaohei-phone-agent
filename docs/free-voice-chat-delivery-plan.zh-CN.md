@@ -157,6 +157,8 @@ stateDiagram-v2
 
 依赖：`FVC-040`。
 
+代码级子门禁 `FVC-050A` 已通过：见 [半双工多轮语音代码门禁验收](acceptance-fvc-050.zh-CN.md)。它不替代 `FVC-050B` 的 OnePlus 两轮真实声学与资源验收。
+
 - [ ] `WAITING_FOLLOWUP` 显示“继续说”，一次点击只开启一个新 ASR turn。
 - [ ] 语音和文字共用同一 6 轮/2048 token/5 分钟 coordinator，不能各有隐形上下文。
 - [ ] 精确语音控制“停止/重说/清空/继续聊/结束聊天”走本地 `ConversationControlPolicy`，模型调用为 0。
