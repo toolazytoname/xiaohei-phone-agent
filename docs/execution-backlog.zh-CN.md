@@ -60,8 +60,8 @@ NEXT: 唯一下一任务 ID
 
 | ID | 状态 | 依赖 | 交付物 | 完成证据 |
 |---|---|---|---|---|
-| VOICE-001 | HUMAN | BASE-005 | 真机探测已安装中文 Android TTS、音色、离线能力和初始化失败 | 只读探针已实现并构建；当前 OnePlus 8T 没有已注册系统 TTS 引擎，必须由所有者安装/选择引擎后才能运行独立设备 UI probe；禁止自动下载或改变引擎 |
-| VOICE-002 | VERIFY | VOICE-001 | 系统 TTS 适配器与显式生命周期 | 10 个状态机转换与 APK 构建通过；无注册引擎设备上的真实播报/停止待验 |
+| VOICE-001 | DONE | BASE-005 | OnePlus 8T 已按所有者授权安装与 F-Droid 签名索引 SHA-256 一致的离线引擎并设为 Android 默认；小黑独立只读 UI 探针返回 `READY`：4 个中文音色全部离线，简体中文可用。引擎内置 FastSpeech2 示例实际交付 81,600 帧音频，且没有该引擎的唤醒锁引用；精确哈希和边界见 `acceptance-voice-001.zh-CN.md` |
+| VOICE-002 | VERIFY | VOICE-001 | 系统 TTS 适配器与显式生命周期 | 10 个状态机转换与 APK 构建通过，且真机现已有已注册离线引擎；仍需独立验证小黑 Conversation 经该适配器播报/停止 |
 | VOICE-003 | DONE | VOICE-002 | 纯 TTS 生命周期建模 `SPEAKING`、`WAITING_FOLLOWUP` 和 `INTERRUPTED` 合法转换；适配器标注完成/中断且不自动恢复；真实音频仍受门禁 | 非法跳转拒绝；真实资源归零仍需设备证据 |
 | VOICE-004 | VERIFY | VOICE-003 | 同步输入/输出所有权协调器拒绝重叠，并在终态中断时归零；仍需 Android 适配器接线和真实音频证据 | 真机证明录音与 TTS 不重叠 |
 | VOICE-005 | VERIFY | VOICE-004 | 仅信号策略把来电、闹钟、媒体和 Activity 中断映射为停止输入/输出并释放所有权，绝不自动恢复；主页 Activity 暂停已用于 ASR，仍需共享 Android 来源/TTS 接线和设备音频证据 | 每种中断停止 TTS/ASR、状态可解释 |
